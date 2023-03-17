@@ -2,7 +2,8 @@
 /*Written in term 1 2023****************************************************************/
 body {
   color: black;
-  font-family: "verdana";
+  font-family: 'Open Sans'
+  font-style: medium;
   overflow: hidden;
 }
 

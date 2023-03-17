@@ -42,7 +42,7 @@
 <!--*************************************************************
   BODY
 **************************************************************-->
-<body onload="fbR_initialise(), fb_readAll(fbV_HIGHSCORE, fbV_highScoreArray, fbR_procUserHighScoreAll)">
+<body onload="fbR_initialise(), fb_readAll(fbV_HIGHSCORE, fbV_flappyHighScoreArray, fbR_procFlappyUserHighScoreAll)">
   <!--nav bar-->
   <div class="topnav" id="myTopnav">
     <a href="/../index.html">Home</a>
@@ -58,10 +58,9 @@
   <!--headers end-->
 
   <div class="leaderBoard_page">
-
-    
-    <div id = "leaderBoard">
-      <div id = "leaderBoard_title" class="leaderBoard_title">Loading leaderboard...</div>
+    <div id = "leaderBoard_title" class="leaderBoard_title">Loading leaderboard...</div>
+    <div class = "leaderBoard_container">
+      <div id = "leaderBoard"></div>
     </div>
   </div>
   <!--footer-->

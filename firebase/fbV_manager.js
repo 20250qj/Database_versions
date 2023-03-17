@@ -8,7 +8,7 @@ console.log('%c' + MODULENAME + ': ', 'color: blue;');
 // database variables
 const fbV_DETAILS = "userDetails";      //<=============== Firebase paths
 const fbV_ROLES = "userRoles";      //<=============== Firebase paths
-const fbV_HIGHSCORE = "userHighScores";      //<=============== Firebase paths
+const fbV_FLAPPYSCOREPATH = "userFlappyHighScores";      //<=============== Firebase paths
 
 var fbV_loginStatus = ' ';
 var fbV_readStatus = ' ';
@@ -18,12 +18,12 @@ var fbV_userDetails = {  //<=============== Object to store the details of the c
   uid: '',
   email: '',
   name: '',
-  photoURL: '',
-  score: ''
+  photoURL: ''
 };
 
-var fbV_userHighScore = {  //<=============== Object to store the name of the current user
+var fbV_flappyHighScore = {  //<=============== Object to store the name of the current user
   highScore: '',
+  score: '',
   uid: '',
   name: '',
   photoURL: ''
@@ -34,7 +34,7 @@ var fbV_userRoles = {  //<=============== Object to store the role of the curren
   name: ''
 }
 
-var fbV_highScoreArray = [];   //<=============== Object to store the leaderBoard
+var fbV_flappyHighScoreArray = [];   //<=============== Object to store the leaderBoard
 
 const fbV_apiKey = "AIzaSyBcsj4cU4YG7H4v7p_-OzsbYrfZFaIbOqY";
 const fbV_authDomain = "comp-2022---martin.firebaseapp.com";

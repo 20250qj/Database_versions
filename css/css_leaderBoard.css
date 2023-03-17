@@ -37,11 +37,9 @@ body {
 
 /*titles and sub titles****************************************************************/
 .leaderBoard_title{
-  color: white;
-  font-size: 50px;
-  margin-bottom: 60px;
-  text-align: center;
-  text-shadow: 2px 2px 8px #BFACE2;
+  color: #00020b;
+  font-size: 40px;
+  margin-bottom: 40px;
 }
 
 .leaderBoard_h_sub{
@@ -101,16 +99,16 @@ body {
 
 /*background for the page****************************************************************/
 .leaderBoard_page {
-  background-color: #00020b;
+ background-color: white;
   border: none;
   width: 1200px;
+  margin: auto;
   height: 1800px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   padding-left: 80px;
   padding-right: 80px;
+  padding-top: 40px;
   padding-bottom: 40px;
-  padding-top: 60px;
-  margin: auto;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 
@@ -152,7 +150,7 @@ body {
 
 /*leaderBoard****************************************************************/
 .leaderBoard_row {
-  background-image: linear-gradient(to right, rgba(13, 0, 29, 1), rgba(0, 2, 11, 0)); 
+  background-image: linear-gradient(to right, rgba(8, 0, 16, 1), rgba(0, 2, 11, 0)); 
   color: white;
   text-shadow: 2px 2px 8px #BFACE2;
   text-align: left;
@@ -160,8 +158,9 @@ body {
   padding-top: 10px;
   padding-bottom: 10px;
   padding-left: 20px;
+  margin-bottom: 20px;
+  margin-top: 20px;
   transition: transform .5s;
-  margin: 20px;
   border-style: hidden;
   border-left-style: solid;
   border-width: 2.5px;
@@ -181,6 +180,17 @@ body {
 
 .leaderBoard_img:hover {
   transform: scale(1.2)
+}
+
+.leaderBoard_container {
+  padding-top: 40px;
+  padding-left: 80px;
+  background-color: #00020b;
+  border: none;
+  border-radius: 10px;
+  width: 100%;
+  height: 50%;
+  margin: auto;
 }
 
 /*footer****************************************************************/

@@ -149,7 +149,7 @@ function flappy_confirm() {
       
       //Allowing users to continue with their last score from database
       x = document.getElementById("score");
-      flappy_score = Number(fbV_userDetails.score);
+      flappy_score = Number(fbV_flappyHighScore.score);
       x.innerHTML = flappy_score;
 
       //Starting the game by calling the setup function.
@@ -312,7 +312,7 @@ function flappy_addScore(flappy_bird, collider) {
   flappy_score += 1;
 
   //Writing to data base
-  fbV_userDetails.score = flappy_score;
+  fbV_flappyHighScore.score = flappy_score;
   console.log("Calling writeRec.");
   fb_writeRec(fbV_DETAILS, fbV_userDetails.uid, fbV_userDetails);
 
@@ -345,12 +345,12 @@ function flappy_restart() {
   console.log("flappy_restart();");
 
   //Writing to data base
-  fbV_userDetails.score = flappy_score;
+  fbV_flappyHighScore.score = flappy_score;
   console.log("Calling writeRec.");
   fb_writeRec(fbV_DETAILS, fbV_userDetails.uid, fbV_userDetails);
 
   //Checking high score
-  flappy_checkHighScore(fbV_HIGHSCORE, fbV_userHighScore.uid, fbV_userHighScore, fbR_procUserHighScore, flappy_score);
+  flappy_checkHighScore(fbV_FLAPPYSCOREPATH, fbV_flappyHighScore.uid, fbV_flappyHighScore, fbR_procUserHighScore, flappy_score);
 
   //Reseting variables
   flappy_ready = false;
@@ -368,12 +368,6 @@ function flappy_restart() {
 
   //Restarting
   flappy_confirm();
-
-  //Done here to make sure score is only reset after high score was checked.
-  flappy_score = 0;
-  fbV_userDetails.score = flappy_score;
-  console.log("Calling writeRec.");
-  fb_writeRec(fbV_DETAILS, fbV_userDetails.uid, fbV_userDetails);
 }
 
 function flappy_checkHighScore(_path, _key, _save, _procfunc, score) {
@@ -389,6 +383,12 @@ function flappy_checkHighScore(_path, _key, _save, _procfunc, score) {
     fb_writeRec(_path, _save.uid, _save);
     console.log("High score is: " + _save.highScore);
   }
+  
+  //Resetting here to make sure score is only reset after high score was checked.
+  flappy_score = 0;
+  fbV_flappyHighScore.score = flappy_score;
+  console.log("Calling writeRec.");
+  fb_writeRec(fbV_FLAPPYSCOREPATH, fbV_flappyHighScore.uid, fbV_flappyHighScore);
 }
 
 /*******************************************************/
