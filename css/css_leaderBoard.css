@@ -1,0 +1,198 @@
+/*This was written by Martin Jin****************************************************************/
+/*Written in term 1 2023****************************************************************/
+body {
+  color: black;
+  font-family: 'Open Sans'
+  font-style: medium;
+  overflow: hidden;
+}
+
+/*nav bar****************************************************************/
+.topnav {
+  overflow: auto;
+  background-color: #00020b;
+  width: 100vw;
+}
+
+.topnav a {
+  overflow: auto;
+  float: left;
+  display: block;
+  width: 15%;
+  color: #BFACE2;
+  text-align: center;
+  padding: 12px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.topnav a:hover {
+  background-color: #393053;
+}
+
+.topnav a.active {
+  color: #e2daf2;
+  border-bottom: 3px solid #BFACE2;
+}
+
+/*titles and sub titles****************************************************************/
+.leaderBoard_title{
+  color: white;
+  font-size: 50px;
+  margin-bottom: 60px;
+  text-align: center;
+  text-shadow: 2px 2px 8px #BFACE2;
+}
+
+.leaderBoard_h_sub{
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 80px;
+  padding-right: 80px;
+  font-size: 50px;
+  background-color: #00020b;
+  color: #e2daf2;
+  border: none;
+  border-color: #BFACE2;
+  border-bottom-style: solid;
+}
+
+.leaderBoard_h{
+  color: white;
+  font-size: 75px;
+  text-align: center;
+  text-shadow: 2px 2px 8px #BFACE2;
+  font-family: "helvetica";
+  bottom: 70%;
+  position: absolute;
+}
+
+/*buttons****************************************************************/
+.button {
+  border: none;
+  padding: 9px 20px;
+  text-decoration: none;
+  font-size: 16px;
+  background-color: #000725; 
+  border-style: hidden;
+  border-left-style: solid;
+  border-width: 2.5px;
+  border-color: #BFACE2;
+  color: #e2daf2; 
+  box-shadow: 0px 0px 4px #BFACE2;
+}
+
+.button:hover {
+  color: #BFACE2;
+}
+
+/*centering elements****************************************************************/
+.center {
+  text-align: center;
+  margin: auto;
+}
+
+.center2 {
+  text-align: center;
+  position: absolute;
+  margin: auto;
+  width: 100%;
+}
+
+/*background for the page****************************************************************/
+.leaderBoard_page {
+  background-color: #00020b;
+  border: none;
+  width: 1200px;
+  height: 1800px;
+  padding-left: 80px;
+  padding-right: 80px;
+  padding-bottom: 40px;
+  padding-top: 60px;
+  margin: auto;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+
+/*paragraphs****************************************************************/
+.paragraph{
+  padding-left: 80px;
+  padding-right: 80px;
+  line-height: 20px;
+  font-size: 14px;
+  color: #00020b;
+}
+
+/*image****************************************************************/
+.leaderBoard_h_background {
+  background-image: url("/images/background.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  height: 300px;
+  position: relative;
+}
+
+.leaderBoard_title_img{
+  color: white;
+  font-size: 40px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.imageRight {
+  padding-right: 80px;
+  transition: .4s;
+}
+
+.imageRight:hover {
+  transform: scale(1.2);
+}
+
+/*leaderBoard****************************************************************/
+.leaderBoard_row {
+  background-image: linear-gradient(to right, rgba(13, 0, 29, 1), rgba(0, 2, 11, 0)); 
+  color: white;
+  text-shadow: 2px 2px 8px #BFACE2;
+  text-align: left;
+  font-size: 18px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 20px;
+  transition: transform .5s;
+  margin: 20px;
+  border-style: hidden;
+  border-left-style: solid;
+  border-width: 2.5px;
+  border-color: #BFACE2;
+}
+
+.leaderBoard_row:hover {
+  transform: scale(1.15)
+}
+
+.leaderBoard_img {
+  height: 5%;
+  width: 5%;
+  transition: transform .5s;
+  border-radius: 50%;
+}
+
+.leaderBoard_img:hover {
+  transform: scale(1.2)
+}
+
+/*footer****************************************************************/
+footer{
+  border: none;
+  color: #BFACE2;
+  background-color: #00020b;
+  bottom: 0;
+  width: 100vw;
+  position: fixed;
+  height: 55px;
+  text-align: center;
+  border-color: #BFACE2;
+  border-top-style: solid;
+}
