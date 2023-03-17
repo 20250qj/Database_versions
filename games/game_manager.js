@@ -40,6 +40,10 @@ function manager_checkLeaderBoard(_data) {
 /*************************************************************/
 function manager_displayLeaderBoard(_data) {
   console.log("manager_displayLeaderBoard();");
+
+  //Setting the title now that leader board is loaded
+  document.getElementById("leaderBoard_title").innerHTML = "Flappy bird high scores:";
+  
   let leaderBoard = document.getElementById("leaderBoard");
   
   for (i = 0; i < _data.length; i++) {
