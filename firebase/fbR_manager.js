@@ -5,18 +5,19 @@ MODULENAME = "fbR_manager.js";
 console.log('%c' + MODULENAME + ': ', 'color: blue;');
 
 /**************************************************************/
-// fbR_procUserLogin(user, _save, loginStatus)
+// fbR_procUserLogin(user, _save, loginStatus, _callBack)
 // Process user login data
-// Input:  the user's data and loucation to save data to
+// Input:  the user's data and loucation to save data to, _callBack function
 // Return:  
 /**************************************************************/
-function fbR_procUserLogin(user, _save, loginStatus) {
+function fbR_procUserLogin(user, _save, loginStatus, _callBack) {
   //Saving the login data
   loginStatus = 'logged in';
   _save.uid = user.uid;
   _save.email = user.email;
   _save.name = user.displayName;
   _save.photoURL = user.photoURL;
+  fb_writeRec(fbV_DETAILS, _save.uid, _save);
 
   //Creating the user highscore data for the first login, or saving them
   //if the user has already logged in.
@@ -25,10 +26,14 @@ function fbR_procUserLogin(user, _save, loginStatus) {
   fbV_flappyHighScore.photoURL = _save.photoURL;
 
   //Checking if the user has an existing highscore.
-  console.log("Calling readRec.")
   fb_readRec(fbV_FLAPPYSCOREPATH, fbV_flappyHighScore.uid, fbV_flappyHighScore, fbR_procUserHighScore);
 
   console.log('fbR_login: status = ' + loginStatus);
+
+  //Calling call back function and updating the value, if there was one
+  if (_callBack !== null) {
+    fb_readRec(fbV_FLAPPYSCOREPATH, fbV_flappyHighScore.uid, fbV_flappyHighScore, fbR_procUserHighScore, _callBack);
+  }
 }
 
 /**************************************************************/
@@ -66,7 +71,7 @@ function fbR_initialise() {
 // Return:  
 /**************************************************************/
 function fbR_procUserDetails(snapshot, _save, readStatus) {
-  console.log("fbR_procUserRoles();");
+  console.log("fbR_procUserDetails();");
   if (snapshot.val() == null) {
     readStatus = "Not found";
   }
@@ -79,8 +84,8 @@ function fbR_procUserDetails(snapshot, _save, readStatus) {
     _save.uid = dbData.uid;
     _save.name = dbData.name;
     _save.photoURL = dbData.photoURL;
-    _save.score = dbData.score;
   }
+  console.log('fbR_procUserDetails: status = ' + readStatus);
 }
 
 /**************************************************************/
@@ -102,6 +107,7 @@ function fbR_procUserRoles(snapshot, _save, readStatus) {
     _save.role = dbData.role;
     _save.name = dbData.name;
   }
+  console.log('fbR_procUserRoles: status = ' + readStatus);
 }
 
 /**************************************************************/
@@ -131,6 +137,7 @@ function fbR_procUserDetailsAll(snapshot, _save, readStatus) {
       })
     }
   }
+  console.log('fbR_procUserDetailsAll: status = ' + readStatus);
 }
 
 /**************************************************************/
@@ -160,15 +167,16 @@ function fbR_procUserRolesAll(snapshot, _save, readStatus) {
       })
     }
   }
+  console.log('fbR_procUserRolesAll: status = ' + readStatus);
 }
 
 /**************************************************************/
-// fbR_procUserHighScore(snapshot, _save, readStatus)
+// fbR_procUserHighScore(snapshot, _save, readStatus, _callBack)
 // Processes userHighScores path
-// Input: the data and loucation to save to
+// Input: the data and loucation to save to, optional _callBack
 // Return:  
 /**************************************************************/
-function fbR_procUserHighScore(snapshot, _save, readStatus) {
+function fbR_procUserHighScore(snapshot, _save, readStatus, _callBack) {
   console.log("fbR_procUserHighScore();");
   if (snapshot.val() == null) {
     readStatus = "Not found";
@@ -191,15 +199,19 @@ function fbR_procUserHighScore(snapshot, _save, readStatus) {
     console.log("No existing highScore and score data.")
     fb_writeRec(fbV_FLAPPYSCOREPATH, _save.uid, fbV_flappyHighScore);
   }
+  console.log('fbR_procUserHighScore: status = ' + readStatus);
+  if (_callBack === manager_login) {
+    _callBack();
+  }
 }
 
 /**************************************************************/
-// fbR_procFlappyUserHighScoreAll(snapshot, _save, readStatus)
+// fbR_procFlappyUserHighScoreAll(snapshot, _save, readStatus, _callBack)
 // Process read all data in user high scores path
-// Input:  the data and loucation to save to
+// Input:  the data and loucation to save to, optional _callBack function.
 // Return:  
 /**************************************************************/
-function fbR_procFlappyUserHighScoreAll(snapshot, _save, readStatus) {
+function fbR_procFlappyUserHighScoreAll(snapshot, _save, readStatus, _callBack) {
   console.log("fbR_procFlappyUserHighScoreAll();")
   if (snapshot.val() == null) {
     readStatus = "Not found";
@@ -208,7 +220,6 @@ function fbR_procFlappyUserHighScoreAll(snapshot, _save, readStatus) {
     readStatus = "OK";
     console.log(snapshot.val());
     let dbData = snapshot.val();
-    console.log(dbData);
     let dbKeys = Object.keys(dbData);
     console.log(dbKeys);
 
@@ -220,8 +231,12 @@ function fbR_procFlappyUserHighScoreAll(snapshot, _save, readStatus) {
         photoURL: dbData[key].photoURL
       })
     }
+    console.log('fbR_procFlappyUserHighScoreAll: status = ' + readStatus);
   }
-  manager_checkLeaderBoard(_save);
+  //Calling the callBack function
+  if (_callBack === manager_checkLeaderBoard) {
+    _callBack(_save);
+  }
 }
 
 /**************************************************************/

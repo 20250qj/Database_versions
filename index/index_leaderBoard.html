@@ -36,13 +36,13 @@
   <script defer src="/firebase/fb_io.js"></script>
   <script defer src="/firebase/fbR_manager.js"></script>
   <script defer src="/firebase/fbV_manager.js"></script>
-  <script defer src="/games/game_manager.js"></script>
+  <script defer src="/index/index_manager.js"></script>
 </head>
 
 <!--*************************************************************
   BODY
 **************************************************************-->
-<body onload="fbR_initialise(), fb_readAll(fbV_HIGHSCORE, fbV_flappyHighScoreArray, fbR_procFlappyUserHighScoreAll)">
+<body onload="fbR_initialise(), fb_readAll(fbV_FLAPPYSCOREPATH, fbV_flappyHighScoreArray, fbR_procFlappyUserHighScoreAll, manager_checkLeaderBoard)">
   <!--nav bar-->
   <div class="topnav" id="myTopnav">
     <a href="/../index.html">Home</a>

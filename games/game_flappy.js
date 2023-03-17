@@ -169,9 +169,11 @@ function flappy_confirm() {
 function setup() {
   console.log("setup();");
 
-  //Logging the user in
+  //Initialising fire base
   fbR_initialise();
-  fb_login(fbV_userDetails, fbR_procUserLogin);
+
+  //Getting saved values from session storage
+  manager_getValues();
 
   cnv = new Canvas(windowWidth, windowHeight);
   pipeGroup = new Group();
@@ -314,7 +316,7 @@ function flappy_addScore(flappy_bird, collider) {
   //Writing to data base
   fbV_flappyHighScore.score = flappy_score;
   console.log("Calling writeRec.");
-  fb_writeRec(fbV_DETAILS, fbV_userDetails.uid, fbV_userDetails);
+  fb_writeRec(fbV_FLAPPYSCOREPATH, fbV_userDetails.uid, fbV_flappyHighScore);
 
   console.log("score: " + flappy_score);
   document.getElementById("score").innerHTML = flappy_score;

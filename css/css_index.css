@@ -105,9 +105,8 @@ h1::after {
 }
 
 /*buttons****************************************************************/
-.button {
+.button_login{
   border: none;
-  padding: 9px 20px;
   text-decoration: none;
   font-size: 16px;
   background-color: #000725; 
@@ -117,6 +116,27 @@ h1::after {
   border-color: #BFACE2;
   color: #e2daf2; 
   box-shadow: 0px 0px 4px #BFACE2;
+  width: 120px;
+  height: 40px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.button{
+  border: none;
+  text-decoration: none;
+  font-size: 16px;
+  background-color: #000725; 
+  border-style: hidden;
+  border-left-style: solid;
+  border-width: 2.5px;
+  border-color: #BFACE2;
+  color: #e2daf2; 
+  box-shadow: 0px 0px 4px #BFACE2;
+  width: 120px;
+  height: 40px;
+  margin-left: 50%;
+  margin-right: 50%;
 }
 
 .button:hover {
@@ -125,12 +145,10 @@ h1::after {
 
 /*centering****************************************************************/
 .center {
-  text-align: center;
   bottom: 40%;
-  left: 45%;
   position:absolute;
-  width: 150px;
-  margin: auto;
+  padding: 10px;
+  width: 100%;
 }
 
 .center2 {
@@ -140,10 +158,16 @@ h1::after {
   width: 100%;
 }
 
-.center_button {
-  margin-top: 15px;
-  margin-left: 80px;
-  width: 200px;
+.center_button_row2 {
+  bottom: 35%;
+  position:absolute;
+  padding: 10px;
+  width: 100%;
+}
+
+/*hide elements before user has logged in****************************************************************/
+.preLogin {
+  display: none;
 }
 
 /*footer****************************************************************/
