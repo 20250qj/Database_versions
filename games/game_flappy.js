@@ -142,7 +142,7 @@ function flappy_confirm() {
       x.style.display = "none";
       x = document.getElementById("score");
       x.style.display = "block";
-      
+
       //Allowing users to continue with their last score from database
       x = document.getElementById("score");
       flappy_score = fbV_flappyHighScore.score;
@@ -164,7 +164,6 @@ function flappy_confirm() {
 /*************************************************************/
 function setup() {
   console.log("setup();");
-  manager_getValues();
 
   cnv = new Canvas(windowWidth, windowHeight);
   pipeGroup = new Group();
@@ -306,12 +305,12 @@ function flappy_addScore(flappy_bird, collider) {
 
   //Writing to data base
   fbV_flappyHighScore.score = flappy_score;
-  
+
   console.log(fbV_flappyHighScore);
   fb_writeRec(fbV_FLAPPYSCOREPATH, fbV_userDetails.uid, fbV_flappyHighScore);
 
   //Saving values to session storage
-  manager_saveValues()
+  manager_saveValues();
 
   console.log("score: " + flappy_score);
   document.getElementById("score").innerHTML = flappy_score;
@@ -346,7 +345,7 @@ function flappy_restart() {
   fb_writeRec(fbV_DETAILS, fbV_userDetails.uid, fbV_userDetails);
 
   //Saving values to session storage
-  manager_saveValues()
+  manager_saveValues();
 
   //Checking high score
   flappy_checkHighScore(fbV_FLAPPYSCOREPATH, fbV_flappyHighScore.uid, fbV_flappyHighScore, fbR_procUserHighScore, flappy_score);
@@ -385,13 +384,13 @@ function flappy_checkHighScore(_path, _key, _save, _procfunc, score) {
   if (score > _save.highScore) {
     _save.highScore = score;
     fb_writeRec(_path, _save.uid, _save);
-    
+
     //Saving values to session storage
     manager_saveValues();
-    
+
     console.log("High score is: " + _save.highScore);
   }
-  
+
   //Resetting here to make sure score is only reset after high score was checked.
   flappy_score = 0;
   fbV_flappyHighScore.score = flappy_score;

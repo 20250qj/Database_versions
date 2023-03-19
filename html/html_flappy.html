@@ -34,18 +34,18 @@
   <!-- firebase end ******************************************-->
   
   <!-- My modules ******************************************-->
-  <script defer src="/firebase/fb_io.js"></script>
-  <script defer src="/firebase/fbR_manager.js"></script>
-  <script defer src="/firebase/fbV_manager.js"></script>
+  <script defer src="/firebase/firebase_fb.js"></script>
+  <script defer src="/firebase/firebase_fbR.js"></script>
+  <script defer src="/firebase/firebase_fbV.js"></script>
   <script defer src="/games/game_flappy.js"></script>
-  <script defer src="/index/index_manager.js"></script>
+  <script defer src="/games/game_manager.js"></script>
 </head>
 <!--*************************************************************
   BODY
 **************************************************************-->
 
 <!--Getting data from session storage, and reading the score of the user-->
-<body onload="fbR_initialise(), fb_readRec(fbV_FLAPPYSCOREPATH, fbV_flappyHighScore.uid, fbV_flappyHighScore, fbR_procUserHighScore);">
+<body onload="fbR_initialise(), manager_getValues(), manager_checkLogin([]);">
   <!--headers-->
   <header id="header" class="flappy_h center2">Flappy bird</header>
 
