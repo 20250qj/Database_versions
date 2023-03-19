@@ -167,8 +167,6 @@ function manager_disableLogin() {
 /*************************************************************/
 function manager_saveValues() {
   console.log("manager_saveValues();");
-  console.log(fbV_userDetails);
-  console.log(fbV_flappyHighScore);
 
   //Setting the login status
   sessionStorage.setItem("loginStatus", fbV_loginStatus);
@@ -210,8 +208,10 @@ function manager_getValues() {
     fbV_flappyHighScore[userFlappyHighScoreKeys[i]] = sessionStorage.getItem(userFlappyHighScoreKeys[i]);
   }
 
-  console.log(fbV_userDetails);
-  console.log(fbV_flappyHighScore);
+  //Converting to a number
+  fbV_flappyHighScore.highScore = Number(fbV_flappyHighScore.highScore);
+  //Converting to a number before writing
+  fbV_flappyHighScore.score = Number(fbV_flappyHighScore.score);
 }
 
 /*******************************************************/
