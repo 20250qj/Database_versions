@@ -10,7 +10,7 @@ const fbV_DETAILS = "userDetails";      //<=============== Firebase paths
 const fbV_ROLES = "userRoles";      //<=============== Firebase paths
 const fbV_FLAPPYSCOREPATH = "userFlappyHighScores";      //<=============== Firebase paths
 
-var fbV_loginStatus = ' ';
+var fbV_loginStatus = 'logged out';
 var fbV_readStatus = ' ';
 var fbV_writeStatus = ' ';
 
@@ -21,7 +21,7 @@ var fbV_userDetails = {  //<=============== Object to store the details of the c
   photoURL: ''
 };
 
-var fbV_flappyHighScore = {  //<=============== Object to store the name of the current user
+var fbV_flappyHighScore = {  //<=============== Object to store the scores of the current user
   highScore: '',
   score: '',
   uid: '',

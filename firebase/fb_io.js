@@ -58,6 +58,11 @@ function fb_login(_save, _procfunc, _callBack) {
 function fb_logout() {
   console.log('%cfb_logout: ', 'color: brown;');
   firebase.auth().signOut();
+  
+  //Setting login status to logged out in session storage
+  fbV_loginStatus = 'logged out';
+  sessionStorage.setItem("loginStatus", fbV_loginStatus);
+  window.location.reload();
 }
 
 /**************************************************************/

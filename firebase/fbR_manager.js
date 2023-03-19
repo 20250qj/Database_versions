@@ -155,7 +155,6 @@ function fbR_procUserRolesAll(snapshot, _save, readStatus) {
     readStatus = "OK";
     console.log(snapshot.val());
     let dbData = snapshot.val();
-    console.log(dbData);
     let dbKeys = Object.keys(dbData);
     console.log(dbKeys);
 
@@ -199,6 +198,7 @@ function fbR_procUserHighScore(snapshot, _save, readStatus, _callBack) {
     console.log("No existing highScore and score data.")
     fb_writeRec(fbV_FLAPPYSCOREPATH, _save.uid, fbV_flappyHighScore);
   }
+  //Calling the call back function
   console.log('fbR_procUserHighScore: status = ' + readStatus);
   if (_callBack === manager_login) {
     _callBack();

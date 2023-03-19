@@ -42,7 +42,7 @@
 <!--*************************************************************
   BODY
 **************************************************************-->
-<body>
+<body onLoad="fbR_initialise(), manager_checkLogin([])">
   <!--nav bar-->
   <div class="topnav" id="myTopnav">
     <a href="index.html" class="active">Home</a>
@@ -65,21 +65,21 @@
   <!--buttons-->
   <div class="center">
     <button class="button" id = "loginButton">
-      <a onclick="fbR_initialise(), fb_login(fbV_userDetails, fbR_procUserLogin, manager_login);" style="text-decoration: none">
+      <a onclick="fb_login(fbV_userDetails, fbR_procUserLogin, manager_login)" style="text-decoration: none">
         Login
       </a>
     </button>
   </div>
   <div class="center">
     <button class="button preLogin"  id = "playButton">
-      <a href = "index/index_flappy.html" style="text-decoration: none">
+      <a href = "index/index_games.html" style="text-decoration: none">
         Play now!
       </a>
     </button>
   </div>
   <div class="center_button_row2">
     <button class="button preLogin" id = "logOutButton">
-      <a onclick="" style="text-decoration: none">
+      <a onclick="fb_logout()" style="text-decoration: none">
         Log out
       </a>
     </button>

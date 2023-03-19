@@ -88,8 +88,18 @@ function manager_displayLeaderBoard(_data) {
 /*************************************************************/
 function manager_login() {
   console.log("manager_login();")
-  alert("You have logged in.");
+  alert("You are logged in.");
 
+  manager_clearButtons();
+  manager_saveValues();
+}
+
+/*************************************************************/
+//manager_clearButtons()
+//clears login button and displays play and log out button on the landing page
+/*************************************************************/
+function manager_clearButtons() {
+  console.log("manager_clearButtons();");
   //Array of ids that needs to be hidden after logging in
   const PRELOGINELEMENTS = ['loginButton'];
 
@@ -107,18 +117,58 @@ function manager_login() {
     let x = document.getElementById(AFTERLOGINELEMENTS[i]);
     x.style.display = "block";
   }
-  manager_saveValues();
+}
+
+/*************************************************************/
+//manager_checkLogin()
+//checks if user has logged in, disable links if not
+//Called when user clicks on play button
+//input: array of ids to be disabled
+//return: n/a
+/*************************************************************/
+function manager_checkLogin(ids) {
+  console.log("manager_checkLogin();");
+  
+  //Get login status from session storage if is not null
+  if (sessionStorage.getItem("loginStatus") !== null) { fbV_loginStatus = sessionStorage.getItem("loginStatus")};
+  console.log(fbV_loginStatus);
+  
+  //If not logged in then disable buttons
+  if (fbV_loginStatus !== 'logged in' && ids !== null) {
+    for (i = 0; i < ids.length; i++) {
+      let x = document.getElementById(ids[i]);
+      x.setAttribute("href", "");
+      x.addEventListener("click", manager_disableLogin);
+    }
+  }
+  
+  //If at home page and logged in, remove login button
+  if (fbV_loginStatus === 'logged in' && window.location.href === 
+      "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/index.html"
+     ) {
+    manager_clearButtons();
+  }
+}
+
+/*************************************************************/
+//manager_disableLogin()
+//dummy function that alerts user when clicking on a disabled button
+//Called by manager_checkLogin()
+/*************************************************************/
+function manager_disableLogin() {
+  console.log("manager_disableLogin();");
+  alert("You must be logged in to acess this feature.");
 }
 
 /*************************************************************/
 //manager_saveValues()
 //Saves values to session storage after login
 //Called by manager_login()
-//input: n/a
-//return: n/a
 /*************************************************************/
 function manager_saveValues() {
-  console.log("manager_saveValues();")
+  console.log("manager_saveValues();");
+  console.log(fbV_userDetails);
+  console.log(fbV_flappyHighScore);
 
   //Setting the login status
   sessionStorage.setItem("loginStatus", fbV_loginStatus);
@@ -142,31 +192,11 @@ function manager_saveValues() {
 }
 
 /*************************************************************/
-//manager_checkLogin()
-//checks if user has logged in
-//Called when user clicks on play button
-//input: array of ids to be disabled
-//return: n/a
-/*************************************************************/
-function manager_checklogin(ids) {
-  console.log("manager_checklogin();")
-  fbV_loginStatus = sessionStorage.getItem("loginStatus");
-  
-  //If not logged in then disable buttons
-  if (fbV_loginStatus !== 'logged in') {
-    for (i = 0; i < ids.length; i++) {
-      let x = document.getElementById(ids[i]);
-      x.setAttribute("pointer-events", "none")
-    }
-  }
-}
-
-/*************************************************************/
 //manager_getValues()
 //get values from session storage
 /*************************************************************/
 function manager_getValues() {
-  console.log("manager_getValues();")
+  console.log("manager_getValues();");
 
   //Getting the keys of the objects to iterate through and get the values from session storage
   let userDetailsKeys = Object.keys(fbV_userDetails);
@@ -183,3 +213,7 @@ function manager_getValues() {
   console.log(fbV_userDetails);
   console.log(fbV_flappyHighScore);
 }
+
+/*******************************************************/
+//  END OF APP
+/*******************************************************/
