@@ -1,6 +1,6 @@
 /*******************************************************/
 // Flappy bird
-// Written by: Maritn jin
+// Written by: Martin jin
 // Started on: 14/2/23
 // Finished on: 15/2/23
 // V.1.1.0
@@ -9,7 +9,7 @@
 // when you touch the pipe, but instead when the bird is bounced
 // off the screen, everything else is standard.
 /*******************************************************/
-MODULENAME = "flappy.js";
+MODULENAME = "game_flappy.js";
 console.log('%c' + MODULENAME + ': ', 'color: blue;');
 
 /*******************************************************/
@@ -79,7 +79,7 @@ function flappy_createSprites() {
   bird.resize(flappy_BIRDSIZE + flappy_BIRDSIZE / flappy_BIRDSIZERATIO, flappy_BIRDSIZE);
 
   //Walls
-  wall_bottom = new Sprite(width / 2, height, width, flappy_WALLHEIGHT, "k");
+  wall_bottom = new Sprite(width / 2, height + flappy_WALLHEIGHT, width, flappy_WALLHEIGHT, "k");
   wall_bottom.addImage(hidden);
   hidden.resize(width, flappy_WALLHEIGHT);
 
@@ -91,9 +91,7 @@ function flappy_createSprites() {
 /*************************************************************/
 //flappy_startGame()
 //Starts the program.
-//called by: Play button on index.html.
-//input: n/a
-//return: n/a
+//called by: Play button on html_flappy.html.
 /*************************************************************/
 function flappy_startGame() {
   console.log("flappy_startGame();");
@@ -114,10 +112,8 @@ function flappy_startGame() {
 
 /*************************************************************/
 //flappy_confirm()
-//flappy_confirms the start of a game.
+//flappy_confirms the start of a game, requires user to press W.
 //called by: flappy_startGame()
-//input: n/a
-//return: n/a
 /*************************************************************/
 function flappy_confirm() {
   console.log("flappy_confirm();");
@@ -159,12 +155,11 @@ function flappy_confirm() {
 //setup()
 //Sets up movement and creates sprites.
 //called by: flappy_confirm()
-//input: n/a
-//return: n/a
 /*************************************************************/
 function setup() {
   console.log("setup();");
 
+  //Creating canvas and groups
   cnv = new Canvas(windowWidth, windowHeight);
   pipeGroup = new Group();
   colliderGroup = new Group();
@@ -196,9 +191,7 @@ function setup() {
 /*************************************************************/
 //draw()
 //Refreshes the background 60/s.
-//called when player is flappy_ready.
-//input: n/a
-//return: n/a
+//called when player is ready.
 /*************************************************************/
 function draw() {
   if (flappy_ready === true) {
@@ -220,8 +213,6 @@ function draw() {
 //flappy_createPipes()
 //Spawns in pipes.
 //called by flappy_intervalPipes()
-//input: n/a
-//return: n/a
 /*************************************************************/
 function flappy_createPipes() {
   console.log("flappy_createPipes();")
@@ -274,7 +265,6 @@ function flappy_createPipes() {
 //Creates pipes at set intervals.
 //called by setup()
 //input: interval
-//return: n/a
 /*************************************************************/
 function flappy_intervalPipes(interval) {
   console.log("flappy_intervalPipes();");
@@ -286,9 +276,8 @@ function flappy_intervalPipes(interval) {
 /*************************************************************/
 //flappy_addScore()
 //Giving the player score.
-//called by setup()
+//called by the callback function upon collision.
 //input: param1, the collider that has collided with the bird.
-//return: n/a
 /*************************************************************/
 function flappy_addScore(flappy_bird, collider) {
   console.log("flappy_addScore();");
@@ -307,7 +296,7 @@ function flappy_addScore(flappy_bird, collider) {
   fbV_flappyHighScore.score = flappy_score;
 
   console.log(fbV_flappyHighScore);
-  fb_writeRec(fbV_FLAPPYSCOREPATH, fbV_userDetails.uid, fbV_flappyHighScore);
+  fb_writeRec(fbV_FLAPPYSCOREPATH, fbV_userDetails.uid, fbV_flappyHighScore, fbR_procWriteError);
 
   //Saving values to session storage
   manager_saveValues();
@@ -319,10 +308,8 @@ function flappy_addScore(flappy_bird, collider) {
 
 /*************************************************************/
 //flappy_killBird()
-//Ends game when player touches pipe
-//called by setup()
-//input: n/a
-//return: n/a
+//Stops the bird from flying when user hits the pipe
+//called by callback function upon collision with pipe.
 /*************************************************************/
 function flappy_killBird() {
   console.log("Bird died.")
@@ -334,15 +321,13 @@ function flappy_killBird() {
 //flappy_restart()
 //restarts the game
 //called by draw() if player dies;
-//input: n/a
-//return: n/a
 /*************************************************************/
 function flappy_restart() {
   console.log("flappy_restart();");
 
   //Writing to data base
   fbV_flappyHighScore.score = flappy_score;
-  fb_writeRec(fbV_DETAILS, fbV_userDetails.uid, fbV_userDetails);
+  fb_writeRec(fbV_DETAILS, fbV_userDetails.uid, fbV_userDetails, fbR_procWriteError);
 
   //Saving values to session storage
   manager_saveValues();
@@ -361,7 +346,7 @@ function flappy_restart() {
   pipeGroup.remove();
   colliderGroup.remove();
 
-  //Stopping pipe spawn
+  //Stopping pipes spawning
   clearInterval(flappy_pipeSpawn);
 
   //Restarting
@@ -372,18 +357,18 @@ function flappy_restart() {
 //flappy_checkHighScore()
 //checks if current score is high score
 //called by flappy_restart()
-//input: n/a
-//return: n/a
+//input: _path and _key to check, loucation to save data,
+//       _procFunc to process the read data, score to check.
 /*************************************************************/
-function flappy_checkHighScore(_path, _key, _save, _procfunc, score) {
+function flappy_checkHighScore(_path, _key, _save, _procFunc, score) {
   console.log("flappy_checkHighScore();");
   //Reading user highscore
-  fb_readRec(_path, _key, _save, _procfunc);
+  fb_readRec(_path, _key, _save, _procFunc);
 
   //Updating high score
   if (score > _save.highScore) {
     _save.highScore = score;
-    fb_writeRec(_path, _save.uid, _save);
+    fb_writeRec(_path, _save.uid, _save, fbR_procWriteError);
 
     //Saving values to session storage
     manager_saveValues();
@@ -394,7 +379,7 @@ function flappy_checkHighScore(_path, _key, _save, _procfunc, score) {
   //Resetting here to make sure score is only reset after high score was checked.
   flappy_score = 0;
   fbV_flappyHighScore.score = flappy_score;
-  fb_writeRec(fbV_FLAPPYSCOREPATH, fbV_flappyHighScore.uid, fbV_flappyHighScore);
+  fb_writeRec(_path, _key, _save, fbR_procWriteError);
 
   //Saving values to session storage
   manager_saveValues();

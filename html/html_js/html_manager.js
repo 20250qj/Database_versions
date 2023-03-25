@@ -1,20 +1,22 @@
 /**************************************************************/
-// game_manager.js
+// html_manager.js
 /**************************************************************/
-MODULENAME = "game_manager.js";
+MODULENAME = "html_manager.js";
 console.log('%c' + MODULENAME + ': ', 'color: blue;');
 
+//varaible to store the contents of the leader board
 var leaderBoardContents = []
 
 /*************************************************************/
 //manager_checkLeaderBoard(_data)
 //Checks the user high scores, gets data from firebase
-//called when page loads
-//input: n/a
-//return: n/a
+//called as a call back by proc userHighScores all
+//input: data from firebase
 /*************************************************************/
 function manager_checkLeaderBoard(_data) {
   console.log("manager_checkLeaderBoard();");
+
+  //Creating variable to store one row of data.
   let row = '';
 
   //Sorts high score from high to low
@@ -35,8 +37,7 @@ function manager_checkLeaderBoard(_data) {
 //manager_displayLeaderBoard(_data)
 //Displays the leader board
 //called when page loads
-//input: n/a
-//return: n/a
+//input: what to put on the leaderboard
 /*************************************************************/
 function manager_displayLeaderBoard(_data) {
   console.log("manager_displayLeaderBoard();");
@@ -82,14 +83,16 @@ function manager_displayLeaderBoard(_data) {
 /*************************************************************/
 //manager_login()
 //Creates elements after login.
-//Called when login finishes
-//input: n/a
-//return: n/a
+//Called when login finishes - callback function
 /*************************************************************/
 function manager_login() {
   console.log("manager_login();")
-  alert("You are logged in.");
+  alert("You have logged in!");
 
+  //Check registraiton if user has logged in
+  fb_readRec(fbV_DETAILS, fbV_userDetails.uid, form_registerDetails, fbR_procRegistration, manager_checkReg, fbV_REGISTRATIONDIR);
+
+  //Clearing buttons and saving values
   manager_clearButtons();
   manager_saveValues();
 }
@@ -121,17 +124,17 @@ function manager_clearButtons() {
 
 /*************************************************************/
 //manager_checkLogin()
-//checks if user has logged in, disable links if not
+//Does different things based on what page the user is on, 
+//and whether if they are logged in.
 //Called when user clicks on play button
 //input: array of ids to be disabled
-//return: n/a
 /*************************************************************/
 function manager_checkLogin(ids) {
   console.log("manager_checkLogin();");
   
   //Get login status from session storage if is not null
   if (sessionStorage.getItem("loginStatus") !== null) { fbV_loginStatus = sessionStorage.getItem("loginStatus")};
-  console.log(fbV_loginStatus);
+  console.log("User is " + fbV_loginStatus);
   
   //If not logged in then disable buttons
   if (fbV_loginStatus !== 'logged in' && ids !== null) {
@@ -143,10 +146,29 @@ function manager_checkLogin(ids) {
   }
   
   //If at home page and logged in, remove login button
-  if (fbV_loginStatus === 'logged in' && window.location.href === 
+  if (fbV_loginStatus === 'logged in') { 
+    if (window.location.href === 
       "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/index.html"
+     ){
+      manager_clearButtons();
+    }
+  }
+  
+  //If at game page somehow without logging in, kick user back to home page
+  if (fbV_loginStatus !== 'logged in' && window.location.href === 
+      "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/html/html_flappy.html"
      ) {
-    manager_clearButtons();
+    alert("How did you get here without logging in?");
+    alert("Not that it matters, go login.");
+    window.location = "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/index.html";
+  }
+
+  //If at register without logging in, kick user back to home page
+  if (fbV_loginStatus !== 'logged in' && window.location.href === 
+      "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/html/html_register.html"
+     ) {
+    alert("Please login first");
+    window.location = "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/index.html";
   }
 }
 
@@ -157,7 +179,7 @@ function manager_checkLogin(ids) {
 /*************************************************************/
 function manager_disableLogin() {
   console.log("manager_disableLogin();");
-  alert("You must be logged in to acess this feature.");
+  alert("You must be logged in to access this feature.");
 }
 
 /*************************************************************/
@@ -168,7 +190,7 @@ function manager_disableLogin() {
 function manager_saveValues() {
   console.log("manager_saveValues();");
 
-  //Setting the login status
+  //Setting the login status.
   sessionStorage.setItem("loginStatus", fbV_loginStatus);
   
   //Creating an array of key value pairs to save to session storage
@@ -212,6 +234,25 @@ function manager_getValues() {
   fbV_flappyHighScore.highScore = Number(fbV_flappyHighScore.highScore);
   //Converting to a number before writing
   fbV_flappyHighScore.score = Number(fbV_flappyHighScore.score);
+}
+
+/*************************************************************/
+//manager_checkReg()
+//checks if user is registered.
+//called as a call back function by proc resgister
+/*************************************************************/
+function manager_checkReg() {
+  console.log("manager_checkReg();");
+  
+  //Checking if there is registration data
+  if (form_registerDetails.userName === "" || form_registerDetails.userName === null) {
+    fbV_registerStatus = "not registered";
+  }
+  else {fbV_registerStatus = "registered";}
+  console.log("User is " + fbV_registerStatus);
+  
+  //Saving registerStatus to session storage
+  sessionStorage.setItem("registerStatus", fbV_registerStatus);
 }
 
 /*******************************************************/

@@ -1,23 +1,23 @@
 /**************************************************************/
-// fbR_manager.js
+// firebase_fbR
 /**************************************************************/
-MODULENAME = "fbR_manager.js";
+MODULENAME = "firebase_fbR.js";
 console.log('%c' + MODULENAME + ': ', 'color: blue;');
 
 /**************************************************************/
 // fbR_procUserLogin(user, _save, loginStatus, _callBack)
 // Process user login data
-// Input:  the user's data and loucation to save data to, _callBack function
-// Return:  
+// Input:  the user's data and loucation to save data to, _callBack function.
 /**************************************************************/
 function fbR_procUserLogin(user, _save, loginStatus, _callBack) {
+  console.log("fbR_procUserLogin();")
   //Saving the login data
   loginStatus = 'logged in';
   _save.uid = user.uid;
   _save.email = user.email;
   _save.name = user.displayName;
   _save.photoURL = user.photoURL;
-  fb_writeRec(fbV_DETAILS, _save.uid, _save);
+  fb_writeRec(fbV_DETAILS, _save.uid, _save, fbR_procWriteError, fbV_LOGINDETAILSDIR);
 
   //Creating the user highscore data for the first login, or saving them
   //if the user has already logged in.
@@ -25,12 +25,9 @@ function fbR_procUserLogin(user, _save, loginStatus, _callBack) {
   fbV_flappyHighScore.name = _save.name;
   fbV_flappyHighScore.photoURL = _save.photoURL;
 
-  //Checking if the user has an existing highscore.
-  fb_readRec(fbV_FLAPPYSCOREPATH, fbV_flappyHighScore.uid, fbV_flappyHighScore, fbR_procUserHighScore);
-
   console.log('fbR_login: status = ' + loginStatus);
 
-  //Calling call back function and updating the value, if there was one
+  //Checking if user has a high score or not.
   if (_callBack !== null) {
     fb_readRec(fbV_FLAPPYSCOREPATH, fbV_flappyHighScore.uid, fbV_flappyHighScore, fbR_procUserHighScore, _callBack);
   }
@@ -40,8 +37,6 @@ function fbR_procUserLogin(user, _save, loginStatus, _callBack) {
 // fbR_initialise()
 // Called by setup()
 // Initialize firebase
-// Input:  n/a
-// Return: n/a
 /**************************************************************/
 function fbR_initialise() {
   console.log('%cfb_initialise: ', 'color: brown;');
@@ -68,7 +63,6 @@ function fbR_initialise() {
 // fbR_procUserDetails(snapshot, _save, readStatus)
 // Processes userDetails path
 // Input:  the data and loucation to save to
-// Return:  
 /**************************************************************/
 function fbR_procUserDetails(snapshot, _save, readStatus) {
   console.log("fbR_procUserDetails();");
@@ -92,7 +86,6 @@ function fbR_procUserDetails(snapshot, _save, readStatus) {
 // fbR_procUserRoles(snapshot, _save, readStatus)
 // Processes userRoles path
 // Input: the data and loucation to save to
-// Return:  
 /**************************************************************/
 function fbR_procUserRoles(snapshot, _save, readStatus) {
   console.log("fbR_procUserRoles();");
@@ -114,7 +107,6 @@ function fbR_procUserRoles(snapshot, _save, readStatus) {
 // fbR_procUserDetailsAll(snapshot, _save, readStatus)
 // Process for readAll for the userDetails path
 // Input:  the data and loucation to save to
-// Return:  
 /**************************************************************/
 function fbR_procUserDetailsAll(snapshot, _save, readStatus) {
   console.log("fbR_procUserDetailsAll();")
@@ -144,7 +136,6 @@ function fbR_procUserDetailsAll(snapshot, _save, readStatus) {
 // fbR_procUserRolesAll(snapshot, _save, readStatus)
 // Process read all data in user roles path
 // Input:  the data and loucation to save to
-// Return:  
 /**************************************************************/
 function fbR_procUserRolesAll(snapshot, _save, readStatus) {
   console.log("fbR_procUserRolesAll();")
@@ -173,7 +164,6 @@ function fbR_procUserRolesAll(snapshot, _save, readStatus) {
 // fbR_procUserHighScore(snapshot, _save, readStatus, _callBack)
 // Processes userHighScores path
 // Input: the data and loucation to save to, optional _callBack
-// Return:  
 /**************************************************************/
 function fbR_procUserHighScore(snapshot, _save, readStatus, _callBack) {
   console.log("fbR_procUserHighScore();");
@@ -196,11 +186,12 @@ function fbR_procUserHighScore(snapshot, _save, readStatus, _callBack) {
     _save.highScore = 0;
     _save.score = 0;
     console.log("No existing highScore and score data.")
-    fb_writeRec(fbV_FLAPPYSCOREPATH, _save.uid, fbV_flappyHighScore);
+    fb_writeRec(fbV_FLAPPYSCOREPATH, _save.uid, fbV_flappyHighScore, fbR_procWriteError);
   }
-  //Calling the call back function
   console.log('fbR_procUserHighScore: status = ' + readStatus);
-  if (_callBack === manager_login) {
+
+  //Calling the call back function if given one
+  if (_callBack != null) {
     _callBack();
   }
 }
@@ -208,8 +199,7 @@ function fbR_procUserHighScore(snapshot, _save, readStatus, _callBack) {
 /**************************************************************/
 // fbR_procFlappyUserHighScoreAll(snapshot, _save, readStatus, _callBack)
 // Process read all data in user high scores path
-// Input:  the data and loucation to save to, optional _callBack function.
-// Return:  
+// Input:  the data and loucation to save to, optional _callBack function. 
 /**************************************************************/
 function fbR_procFlappyUserHighScoreAll(snapshot, _save, readStatus, _callBack) {
   console.log("fbR_procFlappyUserHighScoreAll();")
@@ -233,9 +223,55 @@ function fbR_procFlappyUserHighScoreAll(snapshot, _save, readStatus, _callBack) 
     }
     console.log('fbR_procFlappyUserHighScoreAll: status = ' + readStatus);
   }
-  //Calling the callBack function
-  if (_callBack === manager_checkLeaderBoard) {
+  //Passing the call back function the data read, if is the check leaderboard func.
+  if (_callBack == manager_checkLeaderBoard) {
     _callBack(_save);
+  }
+}
+
+/**************************************************************/
+// fbR_procWriteError(error)
+// Process errors for the fb_writeRec function
+// Input:  error
+/**************************************************************/
+function fbR_procWriteError(error) {
+  console.log("fbR_procWriteError();");
+  if (error) {
+    console.log(error);
+    fbV_writeStatus = "Failed";
+  } 
+  else {
+    fbV_writeStatus = "OK";
+  }
+}
+
+/**************************************************************/
+// fbR_procRegistration()
+// Process registration details
+// Input:  the data and loucation to save to, optional _callBack function.
+/**************************************************************/
+function fbR_procRegistration(snapshot, _save, readStatus, _callBack) {
+  console.log("fbR_procRegistration();");
+  if (snapshot.val() == null) {
+    readStatus = "Not found";
+  }
+  else {
+    readStatus = "OK";
+    console.log(snapshot.val());
+    let dbData = snapshot.val();
+
+    _save.userName = dbData.userName
+    _save.userAddress = dbData.userAddress
+    _save.userCountry = dbData.userCountry
+    _save.userPN = dbData.userPN
+    _save.userAge = dbData.userAge
+    _save.userGender = dbData.userGender
+  }
+  console.log('fbR_procRegistration: status = ' + readStatus);
+
+  //Calling call back function if given one
+  if (_callBack != null) {
+    _callBack();
   }
 }
 

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>12COMP assessment</title>
+  <meta charset="UTF-8">
+  <meta name="description" content="12COMP assessment">
+  <meta name="author" content="?????">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="/assets/images/dtec_favicon.PNG">
+
+  <!-- stylesheets *******************************************-->
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="/css/css_register.css">
+
+  <!-- P5.js & P5.play ***************************************-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.5.0/p5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.10.2/addons/p5.sound.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.dom.min.js"></script>
+  <script src="https://p5play.org/v3/planck.min.js"></script>
+  <script src="https://p5play.org/v3/p5play.js"></script>
+
+  <!-- firebase start ****************************************-->
+  <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
+  <!-- Firebase App (core Firebase SDK) always required & must be listed 1st -->
+  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-app.js"></script>
+  <!-- Add Firebase products that you want to use -->
+  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-analytics.js"></script>
+  <!-- firebase end ******************************************-->
+
+  <!-- JQUERY ************************************************-->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+  <!-- Your modules ******************************************-->
+  <script defer src="/firebase/firebase_fb.js"></script>
+  <script defer src="/firebase/firebase_fbR.js"></script>
+  <script defer src="/firebase/firebase_fbV.js"></script>
+  <script defer src="/html/html_js/html_manager.js"></script>
+  <script defer src="/html/html_js/html_form.js"></script>
+</head>
+
+<!--*************************************************************
+  BODY
+**************************************************************-->
+<body onload="fbR_initialise(), manager_checkLogin([]), manager_getValues(), form_checkReg();">
+  <!--nav bar-->
+  <div class="topnav" id="myTopnav">
+    <a href="/../index.html">Home</a>
+    <a href="/html/html_games.html">Games</a>
+    <a href="/html/html_leaderBoard.html">Leader Board</a>
+    <a href="/html/html_register.html" class="active">Register</a>
+  </div>
+  <!--nav bar end-->
+
+  <!--headers-->
+  <div class="register_h_background"></div>
+  <header class="register_h center2">Martin's games</header>
+  <div class="register_h_sub w3-container">Register</div>
+  <!--headers end-->
+
+  <div class = "backgroundImage">
+    <!--page-->
+    <div class="register_page">
+      <!--ROW/////////////////////////////////////////////////////-->
+      <div class="w3-row">
+        <!--COLUMN LEFT/////////////////////////////////////////////////////-->
+        <div class="w3-col s6 m6 l6">
+          <form>
+            <!--form-->
+            <!--text boxes-->
+            <div class="form">
+              <div class="p_form">Username:</div>
+              <input type="text" name="userName" id="userName" size="35" placeholder="Enter your username"><br>
+              <div class="error_msg" id="nameMsg"></div>
+  
+              <div class="marginTop p_form">Phone number:</div>
+              <input type="text" name="userPN" id="userPN" size="35" placeholder="Enter you phone number"><br>
+              <div class="error_msg" id="phoneMsg"></div>
+  
+              <div class="marginTop p_form">Age:</div>
+              <input type="text" name="userAge" id="userAge" size="35"
+                placeholder="Enter your age (need to be 16 or over)"><br>
+              <div class="error_msg" id="ageMsg"></div>
+  
+              <div class="marginTop p_form">Address:</div>
+              <input type="text" name="userAddress" id="userAddress" size="35" placeholder="Enter your address"><br>
+              <div class="error_msg" id="addressMsg"></div>
+  
+              <!--radio buttons-->
+              <div class="marginTop p_form">Gender:</div>
+              <div class="form-check margin_radio">
+                <input class="form-check-input marginLeft" type="radio" name="gender" id="male" value="male">
+                <label class="form-check-label p_radio" for="male">
+                  Male
+                </label>
+              </div>
+              <div class="form-check margin_radio">
+                <input class="form-check-input marginLeft" type="radio" name="gender" id="female" checked value="female">
+                <label class="form-check-label p_radio" for="female">
+                  Female
+                </label>
+              </div>
+              <div class="form-check margin_radio">
+                <input class="form-check-input marginLeft" type="radio" name="gender" id="other" value="other">
+                <label class="form-check-label p_radio" for="other">
+                  Other
+                </label>
+              </div>
+              <!--radio button end-->
+  
+              <!--text boxes-->
+              <div class="marginTop p_form">Country:</div>
+              <input type="text" name="userCountry" id="userCountry" size="35"
+                placeholder="Enter your Country of birth"><br>
+              <div id="countryMsg" class="error_msg"></div>
+            </div>
+          </form>
+          <!---form end-->
+  
+          <!--submit button-->
+          <div>
+            <button class="button">
+              <a onclick="form_submit();" style="text-decoration: none" id="submitButton">
+                Submit
+              </a>
+            </button>
+          </div>
+        </div>
+        <!--COLUMN LEFT END/////////////////////////////////////////////////////-->
+  
+        <!--COLUMN RIGHT/////////////////////////////////////////////////////-->
+        <div class="w3-col s6 m6 l6 margin_rules">
+          <div class="p_rules">
+            UserName must be no longer than 10 characters and no less than 1.<br>
+            You Phone number must be between 10 - 14 digits.<br>
+            You must be over the age of 16 and younger than 100.<br>
+            You Address must be between 1 - 99 characters.<br>
+            You Country must be between 1 - 99 characters.<br>
+          </div>
+        </div>
+        <!--COLUMN RIGHT END/////////////////////////////////////////////////////-->
+      </div>
+      <!--ROW END/////////////////////////////////////////////////////-->
+    </div>
+    <!--page end-->
+  </div>
+
+  <!--footer-->
+  <footer>
+    <p>copyright Martin</p>
+  </footer>
+  <!--footer end-->
+</body>
+
+</html>
+<!--*************************************************************
+  END OF INDEX.HTML
+**************************************************************-->

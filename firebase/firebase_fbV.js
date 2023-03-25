@@ -1,7 +1,7 @@
 /**************************************************************/
-// fbV_manager.js
+// firebase_fbV.js
 /**************************************************************/
-MODULENAME = "fbV_manager.js";
+MODULENAME = "firebase_fbV.js";
 console.log('%c' + MODULENAME + ': ', 'color: blue;');
 
 /*dbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdb*/
@@ -9,8 +9,11 @@ console.log('%c' + MODULENAME + ': ', 'color: blue;');
 const fbV_DETAILS = "userDetails";      //<=============== Firebase paths
 const fbV_ROLES = "userRoles";      //<=============== Firebase paths
 const fbV_FLAPPYSCOREPATH = "userFlappyHighScores";      //<=============== Firebase paths
+const fbV_REGISTRATIONDIR = "registrationDetails";      //<=============== Firebase paths
+const fbV_LOGINDETAILSDIR = "loginDetails";      //<=============== Firebase paths
 
 var fbV_loginStatus = 'logged out';
+var fbV_registerStatus = "not registered";
 var fbV_readStatus = ' ';
 var fbV_writeStatus = ' ';
 

@@ -2,7 +2,7 @@
 /*Written in term 1 2023****************************************************************/
 body {
   color: black;
-  font-family: 'Open Sans'
+  font-family: 'Open Sans';
   font-style: medium;
   overflow: hidden;
 }
@@ -131,6 +131,8 @@ h1::after {
   position:absolute;
   padding: 10px;
   width: 100%;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .center2 {
