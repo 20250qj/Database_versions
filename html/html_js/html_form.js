@@ -185,25 +185,40 @@ function form_validateData() {
 //If user is registered already kick them out
 //called on load.
 /*************************************************************/
-function form_checkReg() {
+function form_checkReg(ids) {
+  console.log("form_checkReg();");
   //Get register status from session storage if is not null
   if (sessionStorage.getItem("registerStatus") !== null) {fbV_registerStatus = sessionStorage.getItem("registerStatus")};
   console.log("User is " + fbV_registerStatus);
 
+
+  //If logged in but not registered in then disable buttons
+  if (fbV_registerStatus !== 'registered' && ids !== null && fbV_loginStatus !== 'logged out') {
+    for (i = 0; i < ids.length; i++) {
+      let x = document.getElementById(ids[i]);
+      x.setAttribute("href", "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/html/html_register.html");
+      x.addEventListener("click", form_disableButton);
+    }
+  }
+
   //If user tries to acess register page when they are reigstered, kick them out.
-  console.log("form_checkReg();");
-  if (fbV_registerStatus == "registered") {
+  if (fbV_registerStatus == "registered" && window.location.href == 
+      "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/html/html_register.html"
+     ) {
     alert("You are already registered");
     window.location = "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/index.html";
   }
+}
 
-  //If user isnt registered, make them registered first.
-  if (window.location.herf == "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/html/html_games.html") {
-    if (fbV_registerStatus != "registered" && fbV_loginStatus != "logged out") {
-      alert("Please register first.");
-      window.location = "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/html/html_register.html";
-    }
-  }
+/*************************************************************/
+//form_disableButton()
+//If user tries to play game without registering redirect them to register page
+//called when user tires to click on disabled button.
+/*************************************************************/
+function form_disableButton() {
+  console.log("form_disableButton();");
+  //If user isnt registered and tries to play game, make them register first.
+  alert("Please register first.");
 }
 
 /*******************************************************/

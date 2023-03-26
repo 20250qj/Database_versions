@@ -141,7 +141,7 @@ function manager_checkLogin(ids) {
     for (i = 0; i < ids.length; i++) {
       let x = document.getElementById(ids[i]);
       x.setAttribute("href", "");
-      x.addEventListener("click", manager_disableLogin);
+      x.addEventListener("click", manager_disableButton);
     }
   }
   
@@ -173,12 +173,12 @@ function manager_checkLogin(ids) {
 }
 
 /*************************************************************/
-//manager_disableLogin()
+//manager_disableButton()
 //dummy function that alerts user when clicking on a disabled button
 //Called by manager_checkLogin()
 /*************************************************************/
-function manager_disableLogin() {
-  console.log("manager_disableLogin();");
+function manager_disableButton() {
+  console.log("manager_disableButton();");
   alert("You must be logged in to access this feature.");
 }
 
