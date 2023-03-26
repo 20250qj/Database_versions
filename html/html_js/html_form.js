@@ -160,6 +160,17 @@ function form_write() {
     console.log("Validation failed.")
     return;
   }
+
+  //Disabling submit button
+  x = document.getElementById("submitButton");
+  x.disabled = true;
+  alert("Submitted");
+
+  //Updating registration status
+  fbV_registerStatus = "registered";
+  sessionStorage.setItem("registerStatus", fbV_registerStatus);
+
+  //Writing details to database
   fb_writeRec(fbV_DETAILS, fbV_userDetails.uid, form_registerDetails, fbR_procWriteError, fbV_REGISTRATIONDIR);
 }
 
@@ -187,6 +198,7 @@ function form_validateData() {
 /*************************************************************/
 function form_checkReg(ids) {
   console.log("form_checkReg();");
+  
   //Get register status from session storage if is not null
   if (sessionStorage.getItem("registerStatus") !== null) {fbV_registerStatus = sessionStorage.getItem("registerStatus")};
   console.log("User is " + fbV_registerStatus);

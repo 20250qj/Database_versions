@@ -2,8 +2,7 @@
 /*Written in term 1 2023****************************************************************/
 body {
   color: black;
-  font-family: 'Open Sans';
-  font-style: medium;
+  font-family: 'verdana';
   overflow: hidden;
 }
 
@@ -151,8 +150,6 @@ body {
 }
 
 .p_form {
-  font-family: 'Open Sans';
-  font-style: medium;
   font-smooth: auto;
   font-weight: 500;
 }

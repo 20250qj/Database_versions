@@ -163,12 +163,16 @@ function manager_checkLogin(ids) {
     window.location = "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/index.html";
   }
 
-  //If at register without logging in, kick user back to home page
-  if (fbV_loginStatus !== 'logged in' && window.location.href === 
-      "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/html/html_register.html"
-     ) {
-    alert("Please login first");
-    window.location = "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/index.html";
+  //If at register or leaderboard without logging in, kick user back to home page
+  if (fbV_loginStatus !== 'logged in') {
+    if (window.location.href === "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/html/html_register.html") {
+      alert("Please login first");
+      window.location = "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/index.html";
+    }
+    if (window.location.href === "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/html/html_leaderBoard.html") {
+      alert("Please login first");
+      window.location = "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/index.html";
+    }
   }
 }
 
@@ -247,6 +251,10 @@ function manager_checkReg() {
   //Checking if there is registration data
   if (form_registerDetails.userName === "" || form_registerDetails.userName === null) {
     fbV_registerStatus = "not registered";
+
+    //Going to register page if user is not registered
+    alert("Please register to play my games.");
+    window.location = "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/html/html_register.html";
   }
   else {fbV_registerStatus = "registered";}
   console.log("User is " + fbV_registerStatus);

@@ -12,9 +12,12 @@ console.log('%c' + MODULENAME + ': ', 'color: blue;');
 /**************************************************************/
 function fb_login(_save, _procFunc, _callBack, _procError) {
   console.log('%cfb_login: ', 'color: brown;');
-
+  
+  //Disabling login button
+  document.getElementById("loginButton").disabled = true;
+  
   firebase.auth().onAuthStateChanged(newLogin);
-
+  
   /*-----------------------------------------*/
   // newLogin(user)
   /*-----------------------------------------*/
@@ -56,14 +59,17 @@ function fb_logout() {
   console.log('%cfb_logout: ', 'color: brown;');
   firebase.auth().signOut();
   
-  //Setting login status to logged out in session storage
+  //Setting login and registration status to logged out in session storage
   fbV_loginStatus = 'logged out';
+  fbV_registrationStatus = 'not registered';
+  
   sessionStorage.setItem("loginStatus", fbV_loginStatus);
+  sessionStorage.setItem("registerStatus", fbV_registrationStatus);
   window.location.reload();
 }
 
 /**************************************************************/
-// fb_writeRec(_path, _key, _data, _procFunc)
+// fb_writeRec(_path, _key, _data, _procFunc, _dir)
 // Write a specific record & key to the DB
 // Input:  path to write to, the key and the data to write
 //         procFunc to process the errors, optional dir.
@@ -109,7 +115,7 @@ function fb_readAll(_path, _data, _procFunc, _callBack) {
 }
 
 /**************************************************************/
-// fb_readRec(_path, _key, _data, _procFunc, _callBack)
+// fb_readRec(_path, _key, _data, _procFunc, _callBack, _dir)
 // Read a specific DB record
 // Input:  path & key of record to read and where to save the data
 //         optional call back function, optional dir
@@ -138,6 +144,7 @@ function fb_readRec(_path, _key, _save, _procFunc, _callBack, _dir) {
     console.log(error);
   }
 }
+
 /**************************************************************/
 //    END OF MODULE
 /**************************************************************/

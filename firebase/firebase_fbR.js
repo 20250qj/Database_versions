@@ -11,6 +11,7 @@ console.log('%c' + MODULENAME + ': ', 'color: blue;');
 /**************************************************************/
 function fbR_procUserLogin(user, _save, loginStatus, _callBack) {
   console.log("fbR_procUserLogin();")
+  
   //Saving the login data
   loginStatus = 'logged in';
   _save.uid = user.uid;
