@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Platformer game</title>
+  <meta charset="UTF-8">
+  <meta name="description" content="12COMP P5.play">
+  <meta name="keywords" content="12COMP, P5.play">
+  <meta name="author" content="???">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- stylesheets *******************************************-->
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="/css/css_platformer.css">
+
+  <!-- P5.js & P5.play ***************************************-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.5.0/p5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.10.2/addons/p5.sound.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.dom.min.js"></script>
+  <script src="https://p5play.org/v3/planck.min.js"></script>
+  <script src="https://p5play.org/v3/p5play.js"></script>
+
+  <!-- JQUERY ************************************************-->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+  <!-- firebase start ****************************************-->
+  <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
+  <!-- Firebase App (core Firebase SDK) always required & must be listed 1st -->
+  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-app.js"></script>  
+  <!-- Add Firebase products that you want to use -->
+  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-auth.js"></script>  
+  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-analytics.js"></script> 
+  <!-- firebase end ******************************************-->
+  
+  <!-- My modules ******************************************-->
+  <script defer src="/firebase/firebase_fb.js"></script>
+  <script defer src="/firebase/firebase_fbR.js"></script>
+  <script defer src="/firebase/firebase_fbV.js"></script>
+  <script defer src="/games/platformer/platformer_PFSetUp.js"></script>
+  <script defer src="/html/html_js/html_manager.js"></script>
+</head>
+<!--*************************************************************
+  BODY
+**************************************************************-->
+
+<!--Getting data from session storage, and reading the score of the user-->
+<body onload="fbR_initialise(), manager_getValues(), manager_checkLogin([]);">
+  <!--headers-->
+  <header id="header" class="platformer_h center2">Platformer game test</header>
+  
+  <!--button-->
+  <div id="start_button" class="center">
+    <button class="button" onclick="PFSetUp_startGame();" style="text-decoration: none">
+      Play now!
+    </button>
+  </div>
+
+  <!--exit button-->
+  <div id="exit_button" class="center_exit">
+    <a href="/../index.html" style="text-decoration: none">
+      <button class="button_exit">
+        &larr; Back
+      </button>
+    </a>
+  </div>
+</body>
+
+</html>
+<!--*************************************************************
+  END OF INDEX.HTML
+**************************************************************-->

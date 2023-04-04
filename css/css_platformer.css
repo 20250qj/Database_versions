@@ -1,10 +1,10 @@
 /*This was written by Martin Jin****************************************************************/
 /*Written in term 1 2023****************************************************************/
 html, body {
+  overflow: hidden;
   color: black;
   font-family: "verdana";
   background-color: #62daff;
-  overflow: hidden;
 }
 
 /*buttons****************************************************************/
@@ -65,7 +65,7 @@ html, body {
   width: 100%;
 }
 /*headers****************************************************************/
-.flappy_h {
+.platformer_h {
   color: white;
   font-size: 70px;
   text-shadow: 2px 2px 8px #00ff1e;

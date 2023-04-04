@@ -3,7 +3,6 @@
 body {
   color: black;
   font-family: "verdana";
-  overflow: hidden;
 }
 
 /*nav bar****************************************************************/
@@ -86,13 +85,13 @@ body {
   color: #BFACE2;
 }
 
-/*centering elements****************************************************************/
-.center {
+.button_align {
   text-align: center;
   margin: auto;
 }
 
-.center2 {
+/*centering elements****************************************************************/
+.center {
   text-align: center;
   position: absolute;
   margin: auto;

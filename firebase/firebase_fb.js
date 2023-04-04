@@ -33,19 +33,16 @@ function fb_login(_save, _procFunc, _callBack, _procError) {
       var provider = new firebase.auth.GoogleAuthProvider();
       firebase.auth().signInWithPopup(provider).then(function(result) {
         fbV_loginStatus = 'logged in via popup';
-        _procFunc(user, _save, fbV_loginStatus, _callBack);
+        _procFunc(result.user, _save, fbV_loginStatus, _callBack);
       })
-        .catch(function(error) {
-          if (error) {
-            if (user == null) {
-              console.log('fb_login: user not currently logged in');
-            }  else {
-              fbV_loginStatus = 'failed';
-              console.log('%cfb_login: ' + error.code + ', ' +
-              error.message, 'color: red;');
-            }
-          }
-        });
+      // Catch errors
+      .catch(function(error) {
+        if (error) {
+          loginStatus = 'failed';
+          console.log('%cfb_login: ' + error.code + ', ' +
+            error.message, 'color: red;');
+        }
+      });
     }
   }
 }
@@ -69,12 +66,12 @@ function fb_logout() {
 }
 
 /**************************************************************/
-// fb_writeRec(_path, _key, _data, _procFunc, _dir)
+// fb_writeRec(_path, _key, _data, _procFunc, _dir, _callBack)
 // Write a specific record & key to the DB
 // Input:  path to write to, the key and the data to write
-//         procFunc to process the errors, optional dir.
+//         procFunc to process the errors, optional dir and callBack
 /**************************************************************/
-function fb_writeRec(_path, _key, _data, _procFunc, _dir) {
+function fb_writeRec(_path, _key, _data, _procFunc, _dir, _callBack) {
   fbV_writeStatus = "waiting...";
   //If writing to a directory in side the _key
   if (_dir != null) {
@@ -82,14 +79,19 @@ function fb_writeRec(_path, _key, _data, _procFunc, _dir) {
       'color: brown;');
   
     firebase.database().ref(_path + '/' + _key + '/' + _dir).set(_data,
-    _procFunc);
+    gotError);
   } else {
     //If writing just to the key
     console.log('%cfb_WriteRec: path= ' + _path + '  key= ' + _key,
       'color: brown;');
   
     firebase.database().ref(_path + '/' + _key).set(_data,
-    _procFunc);
+    gotError);
+  }
+
+  //Recieves the error from write rec, then call procFunc to process it
+  function gotError(error) {
+    _procFunc(error, _callBack);
   }
 }
 

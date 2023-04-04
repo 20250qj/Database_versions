@@ -171,7 +171,7 @@ function form_write() {
   sessionStorage.setItem("registerStatus", fbV_registerStatus);
 
   //Writing details to database
-  fb_writeRec(fbV_DETAILS, fbV_userDetails.uid, form_registerDetails, fbR_procWriteError, fbV_REGISTRATIONDIR);
+  fb_writeRec(fbV_DETAILS, fbV_userDetails.uid, form_registerDetails, fbR_procWriteError, fbV_REGISTRATIONDIR, form_registerSuccess);
 }
 
 /*************************************************************/
@@ -224,8 +224,7 @@ function form_checkReg(ids) {
 
 /*************************************************************/
 //form_disableButton()
-//If user tries to play game without registering redirect them to register page
-//called when user tires to click on disabled button.
+//Dummy function that is called when user clicks on button without registering
 /*************************************************************/
 function form_disableButton() {
   console.log("form_disableButton();");
@@ -233,6 +232,16 @@ function form_disableButton() {
   alert("Please register first.");
 }
 
+/*************************************************************/
+//form_registerSuccess()
+//A callback function that is passed in write rec,
+//called when write is finished to inform user.
+/*************************************************************/
+function form_registerSuccess() {
+  console.log("form_registerSuccess();")
+  alert("Sucessful registration.");
+  window.location = "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/html/html_games.html";
+}
 /*******************************************************/
 //  END OF APP
 /*******************************************************/

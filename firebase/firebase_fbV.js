@@ -11,6 +11,7 @@ const fbV_ROLES = "userRoles";      //<=============== Firebase paths
 const fbV_FLAPPYSCOREPATH = "userFlappyHighScores";      //<=============== Firebase paths
 const fbV_REGISTRATIONDIR = "registrationDetails";      //<=============== Firebase paths
 const fbV_LOGINDETAILSDIR = "loginDetails";      //<=============== Firebase paths
+const fbV_PLATFORMERSCOREPATH = "userPlatformerHihgScores";
 
 var fbV_loginStatus = 'logged out';
 var fbV_registerStatus = "not registered";

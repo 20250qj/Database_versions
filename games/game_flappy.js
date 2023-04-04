@@ -55,8 +55,6 @@ const flappy_KEYDISPLAY = "W";
 //preload()
 //Preloads the images.
 //Called when page is loaded.
-//input: n/a
-//return: n/a
 /*************************************************************/
 function preload() {
   console.log("preload();");
@@ -69,8 +67,6 @@ function preload() {
 //flappy_createSprites()
 //Sets up loucation of sprites.
 //called by: setup()
-//input: n/a
-//return: n/a
 /*************************************************************/
 function flappy_createSprites() {
   //Sprites

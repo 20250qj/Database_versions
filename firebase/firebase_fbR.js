@@ -11,7 +11,7 @@ console.log('%c' + MODULENAME + ': ', 'color: blue;');
 /**************************************************************/
 function fbR_procUserLogin(user, _save, loginStatus, _callBack) {
   console.log("fbR_procUserLogin();")
-  
+
   //Saving the login data
   loginStatus = 'logged in';
   _save.uid = user.uid;
@@ -169,7 +169,12 @@ function fbR_procUserRolesAll(snapshot, _save, readStatus) {
 function fbR_procUserHighScore(snapshot, _save, readStatus, _callBack) {
   console.log("fbR_procUserHighScore();");
   if (snapshot.val() == null) {
+    //If user dosen't have an entry, create one
     readStatus = "Not found";
+    _save.highScore = 0;
+    _save.score = 0;
+    console.log("No existing highScore and score data.")
+    fb_writeRec(fbV_FLAPPYSCOREPATH, _save.uid, fbV_flappyHighScore, fbR_procWriteError);
   }
   else {
     readStatus = "OK";
@@ -182,13 +187,7 @@ function fbR_procUserHighScore(snapshot, _save, readStatus, _callBack) {
     _save.photoURL = dbData.photoURL;
     _save.name = dbData.name;
   }
-  //checking if the user has a high score entry, if not then create one for the user.
-  if (_save.highScore === null || _save.highScore === '' || _save.score === null || _save.score === '') {
-    _save.highScore = 0;
-    _save.score = 0;
-    console.log("No existing highScore and score data.")
-    fb_writeRec(fbV_FLAPPYSCOREPATH, _save.uid, fbV_flappyHighScore, fbR_procWriteError);
-  }
+
   console.log('fbR_procUserHighScore: status = ' + readStatus);
 
   //Calling the call back function if given one
@@ -231,19 +230,21 @@ function fbR_procFlappyUserHighScoreAll(snapshot, _save, readStatus, _callBack) 
 }
 
 /**************************************************************/
-// fbR_procWriteError(error)
+// fbR_procWriteError(error, _callBack)
 // Process errors for the fb_writeRec function
-// Input:  error
+// Input:  error, optional _callBack
 /**************************************************************/
-function fbR_procWriteError(error) {
+function fbR_procWriteError(error, _callBack) {
   console.log("fbR_procWriteError();");
   if (error) {
     console.log(error);
     fbV_writeStatus = "Failed";
-  } 
+  }
   else {
     fbV_writeStatus = "OK";
   }
+  //calling call bcak if given one
+  if (_callBack != null) { _callBack(); }
 }
 
 /**************************************************************/
