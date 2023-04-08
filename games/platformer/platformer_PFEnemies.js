@@ -17,15 +17,15 @@ console.log('%c' + MODULENAME + ': ', 'color: blue;');
 const PFEnemies_ENEMYSIZE = 50;
 const PFEnemies_FRICTION = 0;
 const PFEnemies_HITCOLDDOWN = 300;
-const PFEnemies_proxmity = 70;
+const PFEnemies_proxmity = 200;
 
 //Weak enemy variables
 const PFEnemies_WEAKENEMYHEALTH = 2;
-const PFEnemies_TOTALWENEMIES = 2;
+const PFEnemies_TOTALWENEMIES = 1;
 const PFEnemies_ENEMIESARRAY = [];
 const PFEnemies_WEAKENEMYSPEED = 5;
 const PFEnemies_WEAKENEMYJUMPSTRENGTH = -16;
-const PFEnemies_WEAKENEMYXKNOCKBACK = 10;
+const PFEnemies_WEAKENEMYXKNOCKBACK = 5;
 const PFEnemies_WEAKENEMYYKNOCKBACK = -10;
 const PFEnemies_WEAKENEMYBOUNCE = 0;
 
@@ -53,14 +53,14 @@ function PFEnemies_spawnEnemies() {
     enemy.rotationLock = true;
     enemy.onSurface = false;
     enemy.onColdDown = false;
-    enemy.bounciness = PFEnemies_WEAKENEMYBOUNCE;
+    enemy.bounciness = PFEnemies_WEAKENEMYBOUNCE
+    enemy.stunned = false;
 
     //Adding to array of enemies
     PFEnemies_ENEMIESARRAY.push(enemy);
 
     //Adding to groups
     weakEnemies.add(enemy);
-    gravityEffectedSprites.add(enemy);
     PFWorld_GRAVITYEFFECTEDSPRITES.push(enemy)
   }
 }
@@ -72,9 +72,25 @@ function PFEnemies_spawnEnemies() {
 //input: param1, the specific enemy that was hit
 /*************************************************************/
 function PFEnemies_hit(param1, enemy) {
+  if (enemy.stunned === false) {
+    //Timeout function that enables the enemy to move again after a cold down
+    enemy.stunned = true;
+
+    //Determining which side the enemy was hit from, then sending the enemy in that direction
+    let dx = enemy.x - PFSetUp_player.x;
+    if (dx > 0) { enemy.vel.x = PFEnemies_WEAKENEMYXKNOCKBACK; }
+    else { enemy.vel.x = -PFEnemies_WEAKENEMYXKNOCKBACK; };
+    enemy.vel.y = PFSetUp_SWORDYKNOCKBACK;
+
+    setTimeout(function() {
+      enemy.stunned = false;
+    }, 1000);
+  }
+
   if (enemy.onColdDown === false) {
     enemy.onSurface = false;
     enemy.health -= 1;
+
     console.log("PFEnemies_hit();");
 
     //Putting enemy on hit cold down
@@ -118,16 +134,16 @@ function PFEnemies_WEMove() {
 
     //If difference is positive (below the player), jump when it can.
     //Using one because of very small decimal differences causing the enemy to jump
-    if (dy > 1 && weakEnemy.onSurface === true) {
+    if (dy > 1 && weakEnemy.onSurface === true && enemy.stunned === false) {
       weakEnemy.vel.y = PFEnemies_WEAKENEMYJUMPSTRENGTH;
       weakEnemy.onSurface = false;
     };
 
     //If the enemy is within proximity stop moving towards player
-    if (abs(dx) <= PFEnemies_proxmity) { weakEnemy.vel.x = 0; continue;};
+    if (abs(dx) <= PFEnemies_proxmity && enemy.stunned === false) { weakEnemy.vel.x = 0; continue; };
     //If difference is negative, player must be to the right. Else is to the left
-    if (dx < 0) { weakEnemy.vel.x = PFEnemies_WEAKENEMYSPEED }
-    else { weakEnemy.vel.x = -PFEnemies_WEAKENEMYSPEED };
+    if (dx < 0 && enemy.stunned === false) { weakEnemy.vel.x = PFEnemies_WEAKENEMYSPEED }
+    else if (enemy.stunned === false) { weakEnemy.vel.x = -PFEnemies_WEAKENEMYSPEED };
   }
 }
 
@@ -153,7 +169,7 @@ function PFEnemies_WEHit(param1, enemy) {
 
     //Determining which side the player was hit from, then sending the player in that direction
     let dx = enemy.x - PFSetUp_player.x;
-    if (dx > 0) { PFSetUp_player.vel.x = -PFEnemies_WEAKENEMYXKNOCKBACK;}
+    if (dx > 0) { PFSetUp_player.vel.x = -PFEnemies_WEAKENEMYXKNOCKBACK; }
     else { PFSetUp_player.vel.x = PFEnemies_WEAKENEMYXKNOCKBACK; };
     PFSetUp_player.vel.y = PFEnemies_WEAKENEMYYKNOCKBACK;
     console.log("PFEnemies_WEhit();");

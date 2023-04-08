@@ -26,23 +26,14 @@ const PFWorld_PLATFORMARRAY = [];
 const PFWorld_PLATFORMSIZE = 200;
 const PFWorld_PLATFORMTHICKNESS = 8;
 const PFWorld_PLATFORMBOUNCE = 0;
+const PFWorld_JUMPCOLDDOWN = 20;
+const PFWorld_PLATFORMFRICTION = 0;
 
 //
 /**************************************************************************************************************/
 // V GRAVITY SECTION OF THE CODE V
 /**************************************************************************************************************/
 //
-
-/*************************************************************/
-//PFWorld_onSurface()
-//sets onSurface property of sprites, and if they can jump
-//called as a callback function when sprites collide with a standable surface
-//Input: some parameter I dont know, the sprite that collides with the surface
-/*************************************************************/
-function PFWorld_onSurface(param1, sprite) {
-  sprite.onSurface = true;
-}
-
 
 /*************************************************************/
 //PFWorld_setGravity()
@@ -54,9 +45,26 @@ function PFWorld_setGravity() {
     let sprite = PFWorld_GRAVITYEFFECTEDSPRITES[i];
 
     //Accelerating the sprite into the floor
-    if (sprite.vel.y < PFWorld_GRAVITYMAX) { 
-      sprite.vel.y += PFWorld_GRAVITYACCELERATION; 
-      sprite.onSurface === false;
+    if (sprite.vel.y < PFWorld_GRAVITYMAX) {
+      sprite.vel.y += PFWorld_GRAVITYACCELERATION;
+      sprite.onSurface = false;
+    }
+  }
+}
+
+/*************************************************************/
+//PFWorld_checkFloorTime()
+//checks how many frames sprite was colliding with a platform
+//called by: draw()
+/*************************************************************/
+function PFWorld_checkFloorTime() {
+  for (i = 0; i < PFWorld_GRAVITYEFFECTEDSPRITES.length; i++) {
+    let sprite = PFWorld_GRAVITYEFFECTEDSPRITES[i];
+
+    sprite.collidingFrames = platformGroup.colliding(sprite);
+    
+    if (sprite.collidingFrames > PFWorld_JUMPCOLDDOWN) {
+      sprite.onSurface = true;
     }
   }
 }
@@ -87,6 +95,7 @@ function PFWorld_createPlatForms() {
 
     platform = new Sprite(platformX, platformY, PFWorld_PLATFORMSIZE * 2, PFWorld_PLATFORMTHICKNESS, "k");
     platform.bounciness = PFWorld_PLATFORMBOUNCE;
+    platform.friction = PFWorld_PLATFORMFRICTION;
     platformGroup.add(platform);
   }
 }

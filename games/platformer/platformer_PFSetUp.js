@@ -23,6 +23,8 @@ var PFSetUp_swordSwinging = false;
 var PFSetUp_swordDir = "right";
 const PFSetUp_SWORDSIZE = 70;
 const PFSetUp_SWORDXOFFSET = 70;
+const PFSetUp_SWORDXKNOCKBACK = 10;
+const PFSetUp_SWORDYKNOCKBACK = -10;
 
 //Player variables
 const PFSetUp_SPAWNXDISPLACEMENT = 0.2;
@@ -35,6 +37,7 @@ const PFSetUp_PLAYERFRICTION = 0;
 const PFSetUp_PLAYERHEALTH = 5;
 const PFSetUp_PLAYERBOUNCE = 0;
 
+var PFSetUp_playerOnFloorTime = 0;
 var PFSetUp_playerDied = false;
 
 //Player movement
@@ -82,7 +85,6 @@ function setup() {
   allEntities = new Group();
   weakEnemies = new Group();
   platformGroup = new Group();
-  gravityEffectedSprites = new Group;
 
   //Only call functions when user clicks on start button;
   if (PFSetUp_gameStarted !== true) {return;}
@@ -114,8 +116,12 @@ function draw() {
     if (PFSetUp_swordDir == "right") { PFSetUp_sword.pos = { x: PFSetUp_player.x + PFSetUp_SWORDXOFFSET, y: PFSetUp_player.y }; }
     if (PFSetUp_swordDir == "left") { PFSetUp_sword.pos = { x: PFSetUp_player.x - PFSetUp_SWORDXOFFSET * 1.05, y: PFSetUp_player.y }; }
   }
-  //Setting up movement and gravity of the sprites
+  
+  //Calculating gravity on sprites first
   PFWorld_setGravity();
+  //Seeing if sprite is on a surface second, if its on a surface, because is called after gravity it will
+  //overwrite the onSurface = false in gravity.
+  PFWorld_checkFloorTime();
   PFEnemies_WEMove();
 }
 
@@ -163,6 +169,7 @@ function PFSetUp_createSprites() {
   PFSetUp_player.friction = PFSetUp_PLAYERFRICTION;
   PFSetUp_player.health = PFSetUp_PLAYERHEALTH;
   PFSetUp_player.bounciness = PFSetUp_PLAYERBOUNCE;
+  PFSetUp_player.collidingFrames = 0;
   //Hit colddown
   PFSetUp_player.onColdDown = false;
   PFSetUp_player.stunned = false;
@@ -177,8 +184,7 @@ function PFSetUp_createSprites() {
   //Adding platforms
   platformGroup.add(PFSetUp_wallBottom);
 
-  //Adding gravity effected sprites
-  gravityEffectedSprites.add(PFSetUp_player);
+  //Adding to gravity effected sprites
   PFWorld_GRAVITYEFFECTEDSPRITES.push(PFSetUp_player);
 }
 
@@ -279,8 +285,6 @@ function PFSetUp_movement() {
 function PFSetUp_setColliders() {
   console.log("PFSetUp_setColliders()");
   
-  //All floors and platforms colliding with entities
-  platformGroup.collides(gravityEffectedSprites, PFWorld_onSurface);
   //When sword hits an enemy
   PFSetUp_sword.collides(weakEnemies, PFEnemies_hit);
   //When enemy hits player
