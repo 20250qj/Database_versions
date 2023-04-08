@@ -14,6 +14,7 @@ console.log('%c' + MODULENAME + ': ', 'color: blue;');
 /*******************************************************/
 
 //Wall variables
+const PFSetUp_WALLBOUNCE = 0;
 const PFSetUp_WALLTHICKNESS = 8;
 const PFSetUp_PLATFORMFRICTION = 0;
 
@@ -21,7 +22,7 @@ const PFSetUp_PLATFORMFRICTION = 0;
 var PFSetUp_swordSwinging = false;
 var PFSetUp_swordDir = "right";
 const PFSetUp_SWORDSIZE = 70;
-const PFSetUp_SWORDXOFFSET = 75;
+const PFSetUp_SWORDXOFFSET = 70;
 
 //Player variables
 const PFSetUp_SPAWNXDISPLACEMENT = 0.2;
@@ -31,6 +32,8 @@ const PFSetUp_PLAYERHEIGHT = 50;
 const PFSetUp_PLAYERXSPEED = 5;
 const PFSetUp_PLAYERSWINGSPEED = 220;
 const PFSetUp_PLAYERFRICTION = 0;
+const PFSetUp_PLAYERHEALTH = 5;
+const PFSetUp_PLAYERBOUNCE = 0;
 
 var PFSetUp_playerDied = false;
 
@@ -78,22 +81,23 @@ function setup() {
   //Groups
   allEntities = new Group();
   weakEnemies = new Group();
-  platforms = new Group();
+  platformGroup = new Group();
   gravityEffectedSprites = new Group;
 
-  //Only call setup when user clicks on start button;
-  if (PFSetUp_gameStarted === true) {
-    console.log("setup();");
+  //Only call functions when user clicks on start button;
+  if (PFSetUp_gameStarted !== true) {return;}
+  console.log("setup();");
 
-    //Creating sprites
-    PFSetUp_createSprites();
-    //Setting up call backs
-    PFSetUp_setColliders();
-    //setting up movement for the sprites
-    PFSetUp_movement();
-    //Spawning enemies
-    PFEnemies_spawnEnemies();
-  }
+  //Creating sprites
+  PFSetUp_createSprites();
+  //Setting up call backs
+  PFSetUp_setColliders();
+  //setting up movement for the sprites
+  PFSetUp_movement();
+  //Spawning enemies
+  PFEnemies_spawnEnemies();
+  //Creating platforms
+  PFWorld_createPlatForms();
 }
 
 /*************************************************************/
@@ -102,16 +106,17 @@ function setup() {
 /*************************************************************/
 function draw() {
   //Only call draw when user clicks on start button;
-  if (PFSetUp_gameStarted === true) {
-    background("#62daff");
+  if (PFSetUp_gameStarted !== true) {return;}
+  background("#62daff");
 
-    //Sword gose to player as long as user is swinging it
-    if (PFSetUp_swordSwinging === true) {
-      if (PFSetUp_swordDir == "right") { PFSetUp_sword.pos = { x: PFSetUp_player.x + PFSetUp_SWORDXOFFSET, y: PFSetUp_player.y }; }
-      if (PFSetUp_swordDir == "left") { PFSetUp_sword.pos = { x: PFSetUp_player.x - PFSetUp_SWORDXOFFSET * 1.05, y: PFSetUp_player.y }; }
-    }
-    PFWorld_setGravity();
+  //Sword gose to player as long as user is swinging it
+  if (PFSetUp_swordSwinging === true) {
+    if (PFSetUp_swordDir == "right") { PFSetUp_sword.pos = { x: PFSetUp_player.x + PFSetUp_SWORDXOFFSET, y: PFSetUp_player.y }; }
+    if (PFSetUp_swordDir == "left") { PFSetUp_sword.pos = { x: PFSetUp_player.x - PFSetUp_SWORDXOFFSET * 1.05, y: PFSetUp_player.y }; }
   }
+  //Setting up movement and gravity of the sprites
+  PFWorld_setGravity();
+  PFEnemies_WEMove();
 }
 
 /*************************************************************/
@@ -126,18 +131,22 @@ function PFSetUp_createSprites() {
   PFSetUp_wallBottom = new Sprite(width / 2, height, width, PFSetUp_WALLTHICKNESS, "k");
   PFSetUp_wallBottom.color = "black";
   PFSetUp_wallBottom.friction = PFSetUp_PLATFORMFRICTION;
+  PFSetUp_wallBottom.bounciness = PFSetUp_WALLBOUNCE;
 
   PFSetUp_wallTop = new Sprite(width / 2, 0, width, PFSetUp_WALLTHICKNESS, "k");
   PFSetUp_wallTop.addImage(hidden);
   hidden.resize(width, PFSetUp_WALLTHICKNESS);
+  PFSetUp_wallTop.bounciness = PFSetUp_WALLBOUNCE;
 
   PFSetUp_wallLeft = new Sprite(0, height / 2, PFSetUp_WALLTHICKNESS, height, "k");
   PFSetUp_wallLeft.addImage(hidden);
   hidden.resize(PFSetUp_WALLTHICKNESS, height);
+  PFSetUp_wallLeft.bounciness = PFSetUp_WALLBOUNCE;
 
   PFSetUp_wallRight = new Sprite(width, height / 2, PFSetUp_WALLTHICKNESS, height, "k");
   PFSetUp_wallRight.addImage(hidden);
   hidden.resize(PFSetUp_WALLTHICKNESS, height);
+  PFSetUp_wallRight.bounciness = PFSetUp_WALLBOUNCE;
 
   //Creating the sword
   PFSetUp_sword = new Sprite(PFSetUp_SPAWNXDISPLACEMENT * width, PFSetUp_SPAWNYDISPLACEMENT * height,
@@ -148,11 +157,15 @@ function PFSetUp_createSprites() {
   //Creating the character
   PFSetUp_player = new Sprite(PFSetUp_SPAWNXDISPLACEMENT * width, PFSetUp_SPAWNYDISPLACEMENT * height,
     PFSetUp_PLAYERWIDTH, PFSetUp_PLAYERHEIGHT, "d");
-  //Don't allow player to spin;
+  //Properties of the player sprite
   PFSetUp_player.rotationLock = true
-  PFSetUp_player.onFloor = false;
-  PFSetUp_player.canJump = false;
-  PFSetUp_player.friction = PFSetUp_playerFriction;
+  PFSetUp_player.onSurface = false;
+  PFSetUp_player.friction = PFSetUp_PLAYERFRICTION;
+  PFSetUp_player.health = PFSetUp_PLAYERHEALTH;
+  PFSetUp_player.bounciness = PFSetUp_PLAYERBOUNCE;
+  //Hit colddown
+  PFSetUp_player.onColdDown = false;
+  PFSetUp_player.stunned = false;
   
   //Adding to group of all sprites
   allEntities.add(PFSetUp_player);
@@ -162,11 +175,11 @@ function PFSetUp_createSprites() {
   allEntities.add(PFSetUp_wallRight);
 
   //Adding platforms
-  platforms.add(PFSetUp_wallBottom);
+  platformGroup.add(PFSetUp_wallBottom);
 
   //Adding gravity effected sprites
   gravityEffectedSprites.add(PFSetUp_player);
-  PFWorld_gravityEffectedSprites.push(PFSetUp_player);
+  PFWorld_GRAVITYEFFECTEDSPRITES.push(PFSetUp_player);
 }
 
 /*************************************************************/
@@ -203,15 +216,14 @@ function PFSetUp_movement() {
     if (event.code === PFSetUp_JUMPKEY
       && PFSetUp_playerDied === false
       //Can Jump when on floor
-      && PFSetUp_player.canJump === true) {
+      && PFSetUp_player.onSurface === true && PFSetUp_player.stunned === false) {
       PFSetUp_player.vel.y = PFSetUp_JUMPSTRENGTH;
-      PFSetUp_player.canJump = false;
-      PFSetUp_player.onFloor = false;
+      PFSetUp_player.onSurface = false;
     }
     //Left code
     //can only go left when right key is not down
     if (event.code === PFSetUp_LEFTKEY
-      && PFSetUp_playerDied === false) {
+      && PFSetUp_playerDied === false && PFSetUp_player.stunned === false) {
       PFSetUp_player.vel.x = -PFSetUp_PLAYERXSPEED;
       PFSetUp_lKeyDown = true;
 
@@ -221,7 +233,7 @@ function PFSetUp_movement() {
     //Right code
     //can only go right if left key is not down
     if (event.code === PFSetUp_RIGHTKEY
-      && PFSetUp_playerDied === false) {
+      && PFSetUp_playerDied === false && PFSetUp_player.stunned === false) {
       PFSetUp_player.vel.x = PFSetUp_PLAYERXSPEED;
       PFSetUp_rKeyDown = true;
 
@@ -234,7 +246,7 @@ function PFSetUp_movement() {
   document.addEventListener("keyup", function(event) {
     //Left code
     //Velocity set to 0 when left key is let go of
-    if (event.code === PFSetUp_LEFTKEY && PFSetUp_playerDied === false) {
+    if (event.code === PFSetUp_LEFTKEY && PFSetUp_playerDied === false && PFSetUp_player.stunned === false) {
       //Left key is up so set to false
       PFSetUp_lKeyDown = false;
       //If the left key was let go and the right key isnt pressed down set speed to 0.
@@ -246,7 +258,7 @@ function PFSetUp_movement() {
     }
     //Right code
     //Velocity set to 0 when left key is let go of
-    if (event.code === PFSetUp_RIGHTKEY && PFSetUp_playerDied === false) {
+    if (event.code === PFSetUp_RIGHTKEY && PFSetUp_playerDied === false && PFSetUp_player.stunned === false) {
       //Right key is up so set to false
       PFSetUp_rKeyDown = false;
       //If the right key was let go and the left key isnt pressed down set speed to 0.
@@ -268,10 +280,11 @@ function PFSetUp_setColliders() {
   console.log("PFSetUp_setColliders()");
   
   //All floors and platforms colliding with entities
-  platforms.collides(gravityEffectedSprites, PFWorld_onSurface);
-
+  platformGroup.collides(gravityEffectedSprites, PFWorld_onSurface);
   //When sword hits an enemy
   PFSetUp_sword.collides(weakEnemies, PFEnemies_hit);
+  //When enemy hits player
+  PFSetUp_player.collides(weakEnemies, PFEnemies_WEHit);
 }
 
 //
