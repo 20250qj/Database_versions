@@ -17,6 +17,8 @@ console.log('%c' + MODULENAME + ': ', 'color: blue;');
 const PFSetUp_WALLBOUNCE = 0;
 const PFSetUp_WALLTHICKNESS = 8;
 const PFSetUp_PLATFORMFRICTION = 0;
+const PFSetUp_GRASSCOLOR = "#4eff70";
+const PFSetUp_GROUNDTHICKNESS = 20;
 
 //Sword variables
 var PFSetUp_swordSwinging = false;
@@ -90,7 +92,6 @@ function preload() {
   //Transparent image
   hidden = loadImage('/game_assets/transparent.png');
   sword = loadImage('/game_assets/sword.png');
-  grass = loadImage('/game_assets/grass.png');
 }
 
 /*************************************************************/
@@ -101,10 +102,10 @@ function preload() {
 function setup() {
   cnv = new Canvas(windowWidth, windowHeight);
   //Setting the min max heights and y values for platform spawns after canvas is created
-  PFWorld_platFormMinY = 0.9 * height;
-  PFWorld_platFormMaxY = 0.79 * height;
-  PFWorld_platFormMaxHeight = 0.21 * height;
-  PFWorld_platFormMinHeight = 0.1 * height;
+  PFWorld_platFormMinY = 0.90 * height;
+  PFWorld_platFormMaxY = 0.77 * height;
+  PFWorld_platFormMaxHeight = 0.23 * height;
+  PFWorld_platFormMinHeight = 0.12 * height;
 
   //Groups
   weakEnemies = new Group();
@@ -161,12 +162,11 @@ function PFSetUp_createSprites() {
   console.log("PFSetUp_createSprites();");
 
   //Creating bounderies
-  PFSetUp_wallBottom = new Sprite(width / 2, height, width * 1000, PFSetUp_WALLTHICKNESS, "k");
+  PFSetUp_wallBottom = new Sprite(width / 2, height, width * 1000, PFSetUp_GROUNDTHICKNESS, "k");
   PFSetUp_wallBottom.color = "black";
   PFSetUp_wallBottom.bounciness = PFSetUp_WALLBOUNCE;
   PFSetUp_wallBottom.friction = 100;
-  PFSetUp_wallTop.addImage(grass);
-  hidden.resize(width, PFSetUp_WALLTHICKNESS);
+  PFSetUp_wallBottom.color = PFSetUp_GRASSCOLOR;
 
   PFSetUp_wallTop = new Sprite(width / 2, 0, width, PFSetUp_WALLTHICKNESS, "k");
   PFSetUp_wallTop.addImage(hidden);

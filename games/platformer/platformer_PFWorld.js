@@ -24,11 +24,11 @@ const PFWorld_GRAVITYEFFECTEDSPRITES = [];
 const PFWorld_PLATFORMNUM = 3;
 const PFWorld_PLATFORMARRAY = [];
 const PFWorld_PLATFORMSIZE = 200;
-const PFWorld_PLATFORMTHICKNESS = 8;
+const PFWorld_PLATFORMTHICKNESS = 10;
 const PFWorld_PLATFORMBOUNCE = 0;
 const PFWorld_JUMPCOLDDOWN = 20;
 const PFWorld_PLATFORMFRICTION = 0;
-const PFWorld_platFORMCOLOR = "#999999";
+const PFWorld_platFORMCOLOR = "#ff7a00";
 
 //platform check function varaibles
 const PFWorld_platFormMaxDistance = 600;

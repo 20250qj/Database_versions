@@ -29,8 +29,8 @@ const PFEnemies_WEAKENEMYXKNOCKBACK = 5;
 const PFEnemies_WEAKENEMYYKNOCKBACK = -10;
 const PFEnemies_WEAKENEMYBOUNCE = 0;
 const PFEnemies_WEAKENEMYSTUNDUR = 500;
-const PFEnemies_WEAKENEMYCOLOR = "#26ffb0";
-const PFEnemies_WEAKENEMYHITCOLOR = "#ff2675";
+const PFEnemies_WEAKENEMYCOLOR = "#ff2675";
+const PFEnemies_WEAKENEMYHITCOLOR = "#ffb8d2";
 
 //
 /**************************************************************************************************************/
@@ -177,7 +177,9 @@ function PFEnemies_WEHit(param1, enemy) {
     PFSetUp_player.onSurface = false;
     PFSetUp_player.health -= 1;
 
-    //Hit audio
+    //player hit audio
+    oof.pause();
+    oof.currentTime = 0
     oof.play();
 
     //Determining which side the player was hit from, then sending the player in that direction
