@@ -29,6 +29,8 @@ const PFEnemies_WEAKENEMYXKNOCKBACK = 5;
 const PFEnemies_WEAKENEMYYKNOCKBACK = -10;
 const PFEnemies_WEAKENEMYBOUNCE = 0;
 const PFEnemies_WEAKENEMYSTUNDUR = 500;
+const PFEnemies_WEAKENEMYCOLOR = "#26ffb0";
+const PFEnemies_WEAKENEMYHITCOLOR = "#ff2675";
 
 //
 /**************************************************************************************************************/
@@ -56,6 +58,7 @@ function PFEnemies_spawnEnemies() {
     enemy.onColdDown = false;
     enemy.bounciness = PFEnemies_WEAKENEMYBOUNCE
     enemy.stunned = false;
+    enemy.color = PFEnemies_WEAKENEMYCOLOR;
 
     //Adding to array of enemies
     PFEnemies_ENEMIESARRAY.push(enemy);
@@ -76,8 +79,10 @@ function PFEnemies_hit(param1, enemy) {
   if (enemy.stunned === false) {
     //Timeout function that enables the enemy to move again after a cold down
     enemy.stunned = true;
+    enemy.color = PFEnemies_WEAKENEMYHITCOLOR;
     setTimeout(function() {
       enemy.stunned = false;
+      enemy.color = PFEnemies_WEAKENEMYCOLOR;
     }, PFSetUp_SWORDSTUNDUR);
 
     //Determining which side the enemy was hit from, then sending the enemy in that direction
@@ -91,6 +96,9 @@ function PFEnemies_hit(param1, enemy) {
     enemy.onSurface = false;
     enemy.health -= 1;
 
+    //hit audio, is cloned to allow mutiple of the same audio to be played at the same time
+    hit.cloneNode(true).play()
+    
     console.log("PFEnemies_hit();");
 
     //Putting enemy on hit cold down
@@ -168,6 +176,9 @@ function PFEnemies_WEHit(param1, enemy) {
   if (PFSetUp_player.onColdDown === false) {
     PFSetUp_player.onSurface = false;
     PFSetUp_player.health -= 1;
+
+    //Hit audio
+    oof.play();
 
     //Determining which side the player was hit from, then sending the player in that direction
     let dx = enemy.x - PFSetUp_player.x;

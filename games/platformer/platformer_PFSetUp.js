@@ -38,6 +38,7 @@ const PFSetUp_PLAYERSWINGSPEED = 220;
 const PFSetUp_PLAYERFRICTION = 0;
 const PFSetUp_PLAYERHEALTH = 5;
 const PFSetUp_PLAYERBOUNCE = 0;
+const PFSetUp_PLAYERCOLOR = "#008aff";
 
 var PFSetUp_playerOnFloorTime = 0;
 var PFSetUp_playerDied = false;
@@ -57,6 +58,21 @@ var PFSetUp_gameStarted = false;
 //array that stores the sprites thats on the floor
 var PFSetUp_onFloorEntities = [];
 
+//Audio
+var backGroundMusic = new Audio('/game_assets/game_sounds/platformerMusic.mp3');
+backGroundMusic.volume = 0.2;
+backGroundMusic.loop = true;
+
+var swordSwoosh = new Audio('/game_assets/game_sounds/swordSwoosh.mp3');
+swordSwoosh.volume = 0.1;
+swordSwoosh.playbackRate = 1.5;
+
+var hit = new Audio('/game_assets/game_sounds/hit.mp3');
+hit.volume = 0.1;
+
+var oof = new Audio('/game_assets/game_sounds/oof.mp3');
+oof.volume = 0.2;
+
 //
 /**************************************************************************************************************/
 // V GAME SETUP SECTION OF THE CODE V
@@ -74,6 +90,7 @@ function preload() {
   //Transparent image
   hidden = loadImage('/game_assets/transparent.png');
   sword = loadImage('/game_assets/sword.png');
+  grass = loadImage('/game_assets/grass.png');
 }
 
 /*************************************************************/
@@ -88,13 +105,13 @@ function setup() {
   PFWorld_platFormMaxY = 0.79 * height;
   PFWorld_platFormMaxHeight = 0.21 * height;
   PFWorld_platFormMinHeight = 0.1 * height;
-  
+
   //Groups
   weakEnemies = new Group();
   platformGroup = new Group();
 
   //Only call functions when user clicks on start button;
-  if (PFSetUp_gameStarted !== true) {return;}
+  if (PFSetUp_gameStarted !== true) { return; }
   console.log("setup();");
 
   //Creating sprites
@@ -115,7 +132,7 @@ function setup() {
 /*************************************************************/
 function draw() {
   //Only call draw when user clicks on start button;
-  if (PFSetUp_gameStarted !== true) {return;}
+  if (PFSetUp_gameStarted !== true) { return; }
   background("#62daff");
 
   //Sword gose to player as long as user is swinging it
@@ -123,7 +140,7 @@ function draw() {
     if (PFSetUp_swordDir == "right") { PFSetUp_sword.pos = { x: PFSetUp_player.x + PFSetUp_SWORDXOFFSET, y: PFSetUp_player.y }; }
     if (PFSetUp_swordDir == "left") { PFSetUp_sword.pos = { x: PFSetUp_player.x - PFSetUp_SWORDXOFFSET * 1.05, y: PFSetUp_player.y }; }
   }
-  
+
   //Calculating gravity on sprites first
   PFWorld_setGravity();
   //Seeing if sprite is on a surface second, if its on a surface, because is called after gravity it will
@@ -148,6 +165,8 @@ function PFSetUp_createSprites() {
   PFSetUp_wallBottom.color = "black";
   PFSetUp_wallBottom.bounciness = PFSetUp_WALLBOUNCE;
   PFSetUp_wallBottom.friction = 100;
+  PFSetUp_wallTop.addImage(grass);
+  hidden.resize(width, PFSetUp_WALLTHICKNESS);
 
   PFSetUp_wallTop = new Sprite(width / 2, 0, width, PFSetUp_WALLTHICKNESS, "k");
   PFSetUp_wallTop.addImage(hidden);
@@ -175,6 +194,7 @@ function PFSetUp_createSprites() {
   PFSetUp_player.health = PFSetUp_PLAYERHEALTH;
   PFSetUp_player.bounciness = PFSetUp_PLAYERBOUNCE;
   PFSetUp_player.collidingFrames = 0;
+  PFSetUp_player.color = PFSetUp_PLAYERCOLOR;
   //Hit colddown
   PFSetUp_player.onColdDown = false;
   PFSetUp_player.stunned = false;
@@ -204,6 +224,9 @@ function PFSetUp_startGame() {
   //Starting the game
   PFSetUp_gameStarted = true;
   setup();
+
+  //Playing music
+  backGroundMusic.play();
 }
 
 /*************************************************************/
@@ -282,7 +305,7 @@ function PFSetUp_movement() {
 /*************************************************************/
 function PFSetUp_setColliders() {
   console.log("PFSetUp_setColliders()");
-  
+
   //When sword hits an enemy
   PFSetUp_sword.collides(weakEnemies, PFEnemies_hit);
   //When enemy hits player
@@ -309,7 +332,7 @@ function PFSetUp_setColliders() {
 /*************************************************************/
 function mouseClicked() {
   //cant click before game starts
-  if (PFSetUp_gameStarted === false) {return;}
+  if (PFSetUp_gameStarted === false) { return; }
   //console.log("mouseClicked();");
   PFSetUp_swingSword();
 }
@@ -327,12 +350,17 @@ function PFSetUp_swingSword() {
     return;
   }
 
+  //Sword audio
+  swordSwoosh.pause();
+  swordSwoosh.currentTime = 0
+  swordSwoosh.play();
+
   //setting the "annimation"
   PFSetUp_sword.rotation = 0;
   //if player is swinging to the right set rotation to clock wise, other wise is left and set to anticlock wise
-  if (PFSetUp_swordDir == "right") {PFSetUp_sword.rotationSpeed = PFSetUp_SWORDROTATIONSPEED;}
-  else {PFSetUp_sword.rotationSpeed = -PFSetUp_SWORDROTATIONSPEED;}
-  
+  if (PFSetUp_swordDir == "right") { PFSetUp_sword.rotationSpeed = PFSetUp_SWORDROTATIONSPEED; }
+  else { PFSetUp_sword.rotationSpeed = -PFSetUp_SWORDROTATIONSPEED; }
+
   PFSetUp_swordSwinging = true;
 
   //Clearing sword "annimation"

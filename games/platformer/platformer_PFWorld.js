@@ -28,6 +28,7 @@ const PFWorld_PLATFORMTHICKNESS = 8;
 const PFWorld_PLATFORMBOUNCE = 0;
 const PFWorld_JUMPCOLDDOWN = 20;
 const PFWorld_PLATFORMFRICTION = 0;
+const PFWorld_platFORMCOLOR = "#999999";
 
 //platform check function varaibles
 const PFWorld_platFormMaxDistance = 600;
@@ -117,6 +118,7 @@ function PFWorld_createPlatForms(x1, x2, y1, y2) {
     platform = new Sprite(platformX, platformY, PFWorld_PLATFORMSIZE * 2, PFWorld_PLATFORMTHICKNESS, "k");
     platform.bounciness = PFWorld_PLATFORMBOUNCE;
     platform.friction = PFWorld_PLATFORMFRICTION;
+    platform.color = PFWorld_platFORMCOLOR;
     platformGroup.add(platform);
     platFormsGenerated.push(platform);
   }
