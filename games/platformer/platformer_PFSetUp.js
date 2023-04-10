@@ -23,8 +23,10 @@ var PFSetUp_swordSwinging = false;
 var PFSetUp_swordDir = "right";
 const PFSetUp_SWORDSIZE = 70;
 const PFSetUp_SWORDXOFFSET = 70;
-const PFSetUp_SWORDXKNOCKBACK = 10;
+const PFSetUp_SWORDXKNOCKBACK = 20;
 const PFSetUp_SWORDYKNOCKBACK = -10;
+const PFSetUp_SWORDSTUNDUR = 300;
+const PFSetUp_SWORDROTATIONSPEED = 10;
 
 //Player variables
 const PFSetUp_SPAWNXDISPLACEMENT = 0.2;
@@ -47,7 +49,7 @@ const PFSetUp_RIGHTKEY = "KeyD";
 var PFSetUp_rKeyDown = false;
 var PFSetUp_lKeyDown = false;
 
-const PFSetUp_JUMPSTRENGTH = -16;
+const PFSetUp_JUMPSTRENGTH = -20;
 
 //Game variables
 var PFSetUp_gameStarted = false;
@@ -81,8 +83,13 @@ function preload() {
 /*************************************************************/
 function setup() {
   cnv = new Canvas(windowWidth, windowHeight);
+  //Setting the min max heights and y values for platform spawns after canvas is created
+  PFWorld_platFormMinY = 0.9 * height;
+  PFWorld_platFormMaxY = 0.79 * height;
+  PFWorld_platFormMaxHeight = 0.21 * height;
+  PFWorld_platFormMinHeight = 0.1 * height;
+  
   //Groups
-  allEntities = new Group();
   weakEnemies = new Group();
   platformGroup = new Group();
 
@@ -99,7 +106,7 @@ function setup() {
   //Spawning enemies
   PFEnemies_spawnEnemies();
   //Creating platforms
-  PFWorld_createPlatForms();
+  PFWorld_createPlatForms(PFSetUp_WALLTHICKNESS, width, 0, (height + PFSetUp_WALLTHICKNESS));
 }
 
 /*************************************************************/
@@ -123,6 +130,9 @@ function draw() {
   //overwrite the onSurface = false in gravity.
   PFWorld_checkFloorTime();
   PFEnemies_WEMove();
+
+  //Making camera follow player
+  PFCamera_checkLock();
 }
 
 /*************************************************************/
@@ -134,10 +144,10 @@ function PFSetUp_createSprites() {
   console.log("PFSetUp_createSprites();");
 
   //Creating bounderies
-  PFSetUp_wallBottom = new Sprite(width / 2, height, width, PFSetUp_WALLTHICKNESS, "k");
+  PFSetUp_wallBottom = new Sprite(width / 2, height, width * 1000, PFSetUp_WALLTHICKNESS, "k");
   PFSetUp_wallBottom.color = "black";
-  PFSetUp_wallBottom.friction = PFSetUp_PLATFORMFRICTION;
   PFSetUp_wallBottom.bounciness = PFSetUp_WALLBOUNCE;
+  PFSetUp_wallBottom.friction = 100;
 
   PFSetUp_wallTop = new Sprite(width / 2, 0, width, PFSetUp_WALLTHICKNESS, "k");
   PFSetUp_wallTop.addImage(hidden);
@@ -148,11 +158,6 @@ function PFSetUp_createSprites() {
   PFSetUp_wallLeft.addImage(hidden);
   hidden.resize(PFSetUp_WALLTHICKNESS, height);
   PFSetUp_wallLeft.bounciness = PFSetUp_WALLBOUNCE;
-
-  PFSetUp_wallRight = new Sprite(width, height / 2, PFSetUp_WALLTHICKNESS, height, "k");
-  PFSetUp_wallRight.addImage(hidden);
-  hidden.resize(PFSetUp_WALLTHICKNESS, height);
-  PFSetUp_wallRight.bounciness = PFSetUp_WALLBOUNCE;
 
   //Creating the sword
   PFSetUp_sword = new Sprite(PFSetUp_SPAWNXDISPLACEMENT * width, PFSetUp_SPAWNYDISPLACEMENT * height,
@@ -173,13 +178,6 @@ function PFSetUp_createSprites() {
   //Hit colddown
   PFSetUp_player.onColdDown = false;
   PFSetUp_player.stunned = false;
-  
-  //Adding to group of all sprites
-  allEntities.add(PFSetUp_player);
-  allEntities.add(PFSetUp_wallBottom);
-  allEntities.add(PFSetUp_wallTop);
-  allEntities.add(PFSetUp_wallLeft);
-  allEntities.add(PFSetUp_wallRight);
 
   //Adding platforms
   platformGroup.add(PFSetUp_wallBottom);
@@ -332,8 +330,8 @@ function PFSetUp_swingSword() {
   //setting the "annimation"
   PFSetUp_sword.rotation = 0;
   //if player is swinging to the right set rotation to clock wise, other wise is left and set to anticlock wise
-  if (PFSetUp_swordDir == "right") {PFSetUp_sword.rotationSpeed = 10;}
-  else {PFSetUp_sword.rotationSpeed = -10;}
+  if (PFSetUp_swordDir == "right") {PFSetUp_sword.rotationSpeed = PFSetUp_SWORDROTATIONSPEED;}
+  else {PFSetUp_sword.rotationSpeed = -PFSetUp_SWORDROTATIONSPEED;}
   
   PFSetUp_swordSwinging = true;
 

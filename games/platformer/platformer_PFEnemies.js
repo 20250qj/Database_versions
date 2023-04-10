@@ -21,13 +21,14 @@ const PFEnemies_proxmity = 200;
 
 //Weak enemy variables
 const PFEnemies_WEAKENEMYHEALTH = 2;
-const PFEnemies_TOTALWENEMIES = 1;
+const PFEnemies_TOTALWENEMIES = 5;
 const PFEnemies_ENEMIESARRAY = [];
 const PFEnemies_WEAKENEMYSPEED = 5;
-const PFEnemies_WEAKENEMYJUMPSTRENGTH = -16;
+const PFEnemies_WEAKENEMYJUMPSTRENGTH = -20;
 const PFEnemies_WEAKENEMYXKNOCKBACK = 5;
 const PFEnemies_WEAKENEMYYKNOCKBACK = -10;
 const PFEnemies_WEAKENEMYBOUNCE = 0;
+const PFEnemies_WEAKENEMYSTUNDUR = 500;
 
 //
 /**************************************************************************************************************/
@@ -75,16 +76,15 @@ function PFEnemies_hit(param1, enemy) {
   if (enemy.stunned === false) {
     //Timeout function that enables the enemy to move again after a cold down
     enemy.stunned = true;
+    setTimeout(function() {
+      enemy.stunned = false;
+    }, PFSetUp_SWORDSTUNDUR);
 
     //Determining which side the enemy was hit from, then sending the enemy in that direction
     let dx = enemy.x - PFSetUp_player.x;
     if (dx > 0) { enemy.vel.x = PFEnemies_WEAKENEMYXKNOCKBACK; }
-    else { enemy.vel.x = -PFEnemies_WEAKENEMYXKNOCKBACK; };
+    else { enemy.vel.x = -PFEnemies_WEAKENEMYXKNOCKBACK;};
     enemy.vel.y = PFSetUp_SWORDYKNOCKBACK;
-
-    setTimeout(function() {
-      enemy.stunned = false;
-    }, 1000);
   }
 
   if (enemy.onColdDown === false) {
@@ -160,7 +160,9 @@ function PFEnemies_WEHit(param1, enemy) {
     PFSetUp_player.stunned = true;
     setTimeout(function() {
       PFSetUp_player.stunned = false;
-    }, 1000);
+      //Stopping the player from being knocked back
+      PFSetUp_player.vel.x = 0;
+    }, PFEnemies_WEAKENEMYSTUNDUR);
   }
 
   if (PFSetUp_player.onColdDown === false) {
