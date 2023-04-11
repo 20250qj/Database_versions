@@ -25,8 +25,16 @@ console.log('%c' + MODULENAME + ': ', 'color: blue;');
 //called by: draw()
 /*************************************************************/
 function PFCamera_checkLock() {
-  if (PFSetUp_player.x > width/2) {
+  //camera cannot go any further back then 2 trigger points
+  //camera also will lock untill player leaves spawning area
+  if (PFSetUp_player.x > PFWorld_terrainTriggerPoint - (2 * width)
+    && PFSetUp_player.x > width / 2) {
     camera.x = PFSetUp_player.x;
+  }
+  else if
+    //If camera is locked, player cant go outside the visble camera region
+    (PFSetUp_player.x <= (PFWorld_terrainTriggerPoint - (2 * width)) - width / 2) {
+    PFSetUp_player.x = (PFWorld_terrainTriggerPoint - (2 * width)) - width / 2;
   }
 }
 

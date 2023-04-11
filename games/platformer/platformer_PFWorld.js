@@ -40,6 +40,9 @@ var PFWorld_platFormMinHeight;
 var PFWorld_platFormCheckTries = 0;
 var PFWorld_platFormReachAble;
 
+//Terrain generation variables
+var PFWorld_terrainTriggerPoint;
+
 //
 /**************************************************************************************************************/
 // V GRAVITY SECTION OF THE CODE V
@@ -106,20 +109,29 @@ function PFWorld_createPlatForms(x1, x2, y1, y2) {
   let platFormChecked;
   let platFormsGenerated = [];
 
+  //Clearing tries to 0 to see how many attemps it took to guess a valid coordinate.
+  PFWorld_platFormCheckTries = 0;
+
   for (i = 0; i < PFWorld_PLATFORMNUM; i++) {
     platFormChecked = false;
 
     while (platFormChecked === false) {
+      //Guess a random point and checking if its valid
       platformX = random(x1, x2);
       platformY = random(y1, y2);
       platFormChecked = PFWorld_checkPlatForms(platformX, platformY, platFormsGenerated);
     }
 
     platform = new Sprite(platformX, platformY, PFWorld_PLATFORMSIZE * 2, PFWorld_PLATFORMTHICKNESS, "k");
+    
+    //Properties of platform
     platform.bounciness = PFWorld_PLATFORMBOUNCE;
     platform.friction = PFWorld_PLATFORMFRICTION;
     platform.color = PFWorld_platFORMCOLOR;
+    
+    //Adding to groups
     platformGroup.add(platform);
+    gameSprites.add(platform);
     platFormsGenerated.push(platform);
   }
   console.log("Match found after " + PFWorld_platFormCheckTries + " tries.")
@@ -139,8 +151,8 @@ function PFWorld_checkPlatForms(x, y, platforms) {
   //For the first platform generated, it must be within jumpable height,
   //but also higher than the minimal height.
   if (platforms.length == 0) {
-    if (y <= PFWorld_platFormMaxY ||
-      y >= PFWorld_platFormMinY) {
+    if (y < PFWorld_platFormMaxY ||
+      y > PFWorld_platFormMinY) {
       return false;
     }
   }
@@ -159,10 +171,10 @@ function PFWorld_checkPlatForms(x, y, platforms) {
 
     //If difference in y or x is between max and min, then the platform can be reached from another platform
     if (PFWorld_platFormReachAble === false) {
-      if (abs(dy) < PFWorld_platFormMaxHeight
-        && abs(dy) > PFWorld_platFormMinHeight
-        && abs(dx) < PFWorld_platFormMaxDistance
-        && abs(dx) > PFWorld_platFormMinDistance) { PFWorld_platFormReachAble = true; }
+      if (abs(dy) <= PFWorld_platFormMaxHeight
+        && abs(dy) >= PFWorld_platFormMinHeight
+        && abs(dx) <= PFWorld_platFormMaxDistance
+        && abs(dx) >= PFWorld_platFormMinDistance) { PFWorld_platFormReachAble = true; }
     }
     //If too close to any single platform or to the floor, is invalid
     if (abs(dy) < PFWorld_platFormMinHeight
@@ -179,5 +191,67 @@ function PFWorld_checkPlatForms(x, y, platforms) {
 //
 /**************************************************************************************************************/
 // END OF PLATFORM SECTION OF THE CODE
+/**************************************************************************************************************/
+//
+
+//
+/**************************************************************************************************************/
+// V TERRAIN GENERATION SECTION OF THE CODE V
+/**************************************************************************************************************/
+//
+
+/*************************************************************/
+//PFWorld_terrainCheck()
+//checks if a new area of the map needs to be genereated
+//called by: draw()
+/*************************************************************/
+function PFWorld_terrainCheck() {
+  if (PFSetUp_player.x > PFWorld_terrainTriggerPoint) {
+    console.log("Generate terrain");
+
+    //Creating floor
+    PFWorld_generateGround(PFWorld_terrainTriggerPoint + width/2, PFWorld_terrainTriggerPoint + (1.5 * width));
+    
+    PFWorld_terrainTriggerPoint += width;
+
+    //Creating the platforms at the next trigger point/ahead the player
+    PFWorld_createPlatForms(PFWorld_terrainTriggerPoint
+                            , PFWorld_terrainTriggerPoint + width/2
+                            , PFWorld_platFormMinY
+                            , PFSetUp_WALLTHICKNESS);
+  }
+}
+
+/*************************************************************/
+//PFWorld_generateGround()
+//Generates the ground from a given area
+//called by: PFWorld_terrainCheck()
+//input: 2 x points that the floor is generated between
+/*************************************************************/
+function PFWorld_generateGround(x1, x2) {
+  let xPos = (x1 + x2)/2
+  
+  grass = new Sprite(xPos,
+    //Calculating where to place the grass layer
+    (height - (PFSetUp_GROUNDTHICKNESS * PFSetUp_DIRTRATIO / 2))
+    - (PFSetUp_GROUNDTHICKNESS * PFSetUp_DIRTRATIO / 2)
+    - (PFSetUp_GROUNDTHICKNESS / 2)
+    , width, PFSetUp_GROUNDTHICKNESS, "s");
+  //Properties of the grass
+  grass.bounciness = PFSetUp_WALLBOUNCE;
+  grass.friction = PFSetUp_PLATFORMFRICTION;
+  grass.color = PFSetUp_GRASSCOLOR;
+
+  dirt = new Sprite(xPos, (height - ((PFSetUp_GROUNDTHICKNESS * PFSetUp_DIRTRATIO) / 2)), width, (PFSetUp_GROUNDTHICKNESS * PFSetUp_DIRTRATIO), "s");
+  dirt.color = PFSetUp_DIRTCOLOR;
+
+  //Adding platforms
+  platformGroup.add(grass);
+  platformGroup.add(dirt);
+}
+
+//
+/**************************************************************************************************************/
+// END OF TERRAIN GENERATION SECTION OF THE CODE
 /**************************************************************************************************************/
 //

@@ -3,7 +3,7 @@
 html, body {
   overflow: hidden;
   color: black;
-  font-family: "verdana";
+  font-family: 'Brush Script MT', cursive;
   background-color: #62daff;
 }
 
@@ -12,18 +12,22 @@ html, body {
   border: none;
   padding: 9px 20px;
   text-decoration: none;
-  font-size: 16px;
-  background-color: #000f05; 
+  font-size: 18px;
+  background-color: #000711; 
   border-style: hidden;
   border-left-style: solid;
-  border-width: 2.5px;
-  border-color: #00c240;
-  color: #DFF6FF; 
-  box-shadow: 0px 0px 4px #3fff7f;
+  border-width: 3px;
+  border-color: #0069fb;
+  color: white; 
+  box-shadow: 0px 0px 4px #65a1ff;
+
+  /*Annimation*/
+  transition: transform .3s;
 }
 
 .button:hover {
-  color: #3fff7f;
+  color: #5f9eff;
+  transform: scale(1.2);
 }
 
 .button_exit {
@@ -31,12 +35,16 @@ html, body {
   border: none;
   padding: 9px 20px;
   text-decoration: none;
-  font-size: 20px;
+  font-size: 16px;
   color: white;
+  text-shadow: 0px 0px 10px #65a1ff;
+
+  /*Annimation*/
+  transition: transform .3s;
 }
 
 .button_exit:hover {
-  color: #3fff7f;
+  transform: scale(1.2);
 }
 
 /*centering****************************************************************/
@@ -68,10 +76,44 @@ html, body {
 .platformer_h {
   color: white;
   font-size: 70px;
-  text-shadow: 2px 2px 8px #00ff1e;
-  font-family: "helvetica";
+  font-family: 'Brush Script MT', cursive;
+  text-shadow: 0px 0px 10px #65a1ff;
   bottom: 65%;
 }
+
+/*Game ui css****************************************************************/
+.deathScreen {
+  margin-top: 20%;
+  text-align: center;
+  display: none;
+}
+
+.restartHead {
+  font-size: 75px;
+  font-family: 'Brush Script MT', cursive;
+  color: #ff2675;
+  text-shadow: 0px 0px 10px #ff96bc;
+  margin-bottom: 70px;
+}
+
+.button_restart {
+  background: transparent;
+  border: none;
+  text-decoration: none;
+  font-size: 30px;
+  color: white;
+  margin: 0 auto;
+  text-shadow: 0px 0px 10px #ff96bc;
+
+  /*Annimation*/
+  transition: transform .3s;
+}
+
+.button_restart:hover {
+  transform: scale(1.2);
+  color: #ff2675
+}
+
 
 /*text****************************************************************/
 .score {
@@ -80,7 +122,7 @@ html, body {
   bottom: 90%;
   color: white;
   font-size: 40px;
-  font-family: "helvetica";
+  font-family: 'Brush Script MT', cursive;
   margin: auto;
   width: 100%;
   display: none;
@@ -92,7 +134,7 @@ html, body {
   bottom: 10%;
   color: white;
   font-size: 65px;
-  font-family: "helvetica";
+  font-family: 'Brush Script MT', cursive;
   margin: auto;
   width: 100%;
   display: none;

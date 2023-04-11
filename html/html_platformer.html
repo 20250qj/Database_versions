@@ -6,7 +6,7 @@
   <meta charset="UTF-8">
   <meta name="description" content="12COMP P5.play">
   <meta name="keywords" content="12COMP, P5.play">
-  <meta name="author" content="???">
+  <meta name="author" content="Martin Jin">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- stylesheets *******************************************-->
@@ -26,13 +26,13 @@
   <!-- firebase start ****************************************-->
   <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
   <!-- Firebase App (core Firebase SDK) always required & must be listed 1st -->
-  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-app.js"></script>  
+  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-app.js"></script>
   <!-- Add Firebase products that you want to use -->
-  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-auth.js"></script>  
+  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-database.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-analytics.js"></script> 
+  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-analytics.js"></script>
   <!-- firebase end ******************************************-->
-  
+
   <!-- My modules ******************************************-->
   <script defer src="/firebase/firebase_fb.js"></script>
   <script defer src="/firebase/firebase_fbR.js"></script>
@@ -42,30 +42,38 @@
   <script defer src="/games/platformer/platformer_PFEnemies.js"></script>
   <script defer src="/games/platformer/platformer_PFWorld.js"></script>
   <script defer src="/games/platformer/platformer_PFCamera.js"></script>
+  <script defer src="/games/platformer/platformer_PFManager.js"></script>
 </head>
 <!--*************************************************************
   BODY
 **************************************************************-->
-
-<!--Getting data from session storage, and reading the score of the user-->
 <body onload="fbR_initialise(), manager_getValues(), manager_checkLogin([]);">
+
   <!--headers-->
   <header id="header" class="platformer_h center2">Platformer game test</header>
-  
+
   <!--button-->
   <div id="start_button" class="center">
-    <button class="button" onclick="PFSetUp_startGame();" style="text-decoration: none">
+    <button class="button" onclick="PFSetUp_startGame(), PFManager_click();" style="text-decoration: none">
       Play now!
     </button>
   </div>
 
   <!--exit button-->
   <div id="exit_button" class="center_exit">
-    <a href="/../index.html" style="text-decoration: none">
+    <a href="/../index.html" style="text-decoration: none" onclick="PFManager_click();">
       <button class="button_exit">
-        &larr; Back
+        &larr; Back to home
       </button>
     </a>
+  </div>
+
+  <div id="deathScreen" class="deathScreen center2">
+    <h1 class="restartHead">You have died!</h1>
+    <a href="/html/html_platformer.html" style="text-decoration: none" onclick="PFManager_click();">
+      <button id="restartButton" class="button_restart">Back to start screen</button>
+    </a>
+    <button id="restartButton" class="button_restart" onclick="PFManager_restart(), PFManager_click();">Restart</button>
   </div>
 </body>
 
