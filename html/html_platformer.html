@@ -47,21 +47,21 @@
 <!--*************************************************************
   BODY
 **************************************************************-->
-<body onload="fbR_initialise(), manager_getValues(), manager_checkLogin([]);">
+<body onload="fbR_initialise(), manager_getValues(), manager_checkLogin([]), PFManager_addHoverSound(), PFManager_addClickSound();">
 
   <!--headers-->
   <header id="header" class="platformer_h center2">Platformer game test</header>
 
   <!--button-->
-  <div id="start_button" class="center">
-    <button class="button" onclick="PFSetUp_startGame(), PFManager_click();" style="text-decoration: none">
+  <div id="startButton" class="center">
+    <button class="button" onclick="PFSetUp_startGame();" style="text-decoration: none">
       Play now!
     </button>
   </div>
 
   <!--exit button-->
-  <div id="exit_button" class="center_exit">
-    <a href="/../index.html" style="text-decoration: none" onclick="PFManager_click();">
+  <div class="center_exit">
+    <a href="/../index.html" style="text-decoration: none" id="exitButton">
       <button class="button_exit">
         &larr; Back to home
       </button>
@@ -70,10 +70,10 @@
 
   <div id="deathScreen" class="deathScreen center2">
     <h1 class="restartHead">You have died!</h1>
-    <a href="/html/html_platformer.html" style="text-decoration: none" onclick="PFManager_click();">
-      <button id="restartButton" class="button_restart">Back to start screen</button>
+    <a href="/html/html_platformer.html" style="text-decoration: none" id="backButton">
+      <button class="button_restart">Back to start screen</button>
     </a>
-    <button id="restartButton" class="button_restart" onclick="PFManager_restart(), PFManager_click();">Restart</button>
+    <button id="restartButton" class="button_restart" onclick="PFManager_restart();">Restart</button>
   </div>
 </body>
 

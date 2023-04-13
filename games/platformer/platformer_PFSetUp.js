@@ -12,6 +12,11 @@ console.log('%c' + MODULENAME + ': ', 'color: blue;');
 /*******************************************************/
 // Constants and variables
 /*******************************************************/
+//Sprites
+let PFSetUp_player, PFSetUp_wallTop, PFSetUp_wallLeft, PFSetUp_sword;
+
+//Groups
+let platformGroup, gameSprites;
 
 //Wall variables
 const PFSetUp_WALLBOUNCE = 0;
@@ -25,12 +30,14 @@ const PFSetUp_DIRTCOLOR = "#8f4300";
 //Sword variables
 var PFSetUp_swordSwinging = false;
 var PFSetUp_swordDir = "right";
-const PFSetUp_SWORDSIZE = 70;
-const PFSetUp_SWORDXOFFSET = 72;
+const PFSetUp_SWORDSIZE = 85;
+const PFSetUp_SWORDSWINGDISTANCE = 80;
 const PFSetUp_SWORDXKNOCKBACK = 20;
 const PFSetUp_SWORDYKNOCKBACK = -10;
 const PFSetUp_SWORDSTUNDUR = 300;
-const PFSetUp_SWORDROTATIONSPEED = 10;
+const PFSetUp_SWORDROTATIONSPEED = 12;
+const PFSetUp_SWORDLAYER = 3;
+const PFSetUp_SWORDANNIMATIONDUR = 300;
 
 //Player variables
 const PFSetUp_SPAWNXDISPLACEMENT = 0.2;
@@ -38,12 +45,13 @@ const PFSetUp_SPAWNYDISPLACEMENT = 0.5;
 const PFSetUp_PLAYERWIDTH = 50;
 const PFSetUp_PLAYERHEIGHT = 50;
 const PFSetUp_PLAYERXSPEED = 7;
-const PFSetUp_PLAYERSWINGSPEED = 220;
+const PFSetUp_PLAYERSWINGSPEED = 100;
 const PFSetUp_PLAYERFRICTION = 0;
 const PFSetUp_PLAYERHEALTH = 5;
 const PFSetUp_PLAYERBOUNCE = 0;
 const PFSetUp_PLAYERCOLOR = "#008aff";
 const PFSetUp_PLAYERHITCOLOR = "#8ccaff";
+const PFSetUp_PLAYERLAYER = 4;
 
 var PFSetUp_playerOnFloorTime = 0;
 var PFSetUp_playerDied = false;
@@ -104,21 +112,20 @@ function preload() {
 /*************************************************************/
 function setup() {
   cnv = new Canvas(windowWidth, windowHeight);
-  
+
   //Resetting camera to be at the start
   camera.x = width / 2;
 
   //Setting the min max heights and y values for platform spawns after canvas is created
   PFWorld_platFormMinY = 0.89 * height;
   PFWorld_platFormMaxY = 0.77 * height;
-  PFWorld_platFormMaxHeight = 0.23 * height;
+  PFWorld_platFormMaxHeight = 0.25 * height;
   PFWorld_platFormMinHeight = 0.12 * height;
 
   //Setting terrain trigger point after canvas was created
   PFWorld_terrainTriggerPoint = width / 2;
 
   //Groups
-  weakEnemies = new Group();
   platformGroup = new Group();
   gameSprites = new Group();
 
@@ -133,24 +140,15 @@ function setup() {
   backGroundMusic.pause();
   backGroundMusic.currentTime = 0
   backGroundMusic.play();
-  
+
   //Creating sprites
   PFSetUp_createSprites();
-  //Setting up call backs
-  PFSetUp_setColliders();
+  //Spawning enemies
+  PFEnemies_spawnEnemies(PFWorld_terrainTriggerPoint, width);
   //setting up movement for the sprites
   PFSetUp_movement();
-  //Spawning enemies
-  PFEnemies_spawnEnemies(width * PFSetUp_SPAWNXDISPLACEMENT, width);
   //Creating platforms
   PFWorld_createPlatForms(PFSetUp_WALLTHICKNESS, width, PFWorld_platFormMinY, PFSetUp_WALLTHICKNESS);
-
-  //Spawning enemies in intervals
-  PFSetUp_enemyInterval = setInterval(function() {
-    PFEnemies_spawnEnemies(PFWorld_terrainTriggerPoint,
-      PFWorld_terrainTriggerPoint + width)
-  },
-    PFEnemies_WEAKENEMIESSPAWNTIME)
 }
 
 /*************************************************************/
@@ -161,9 +159,6 @@ function draw() {
   //Only call draw when user clicks on start button;
   if (PFSetUp_gameStarted !== true) { return; }
   background("#62daff");
-
-  //Check if sword is swinging
-  PFSetUp_checkSwordSwing();
 
   //Calculating gravity on sprites first
   PFWorld_setGravity();
@@ -180,6 +175,9 @@ function draw() {
 
   //Making camera follow player
   PFCamera_checkLock();
+
+  //Check if sword is swinging
+  PFSetUp_swordEquipped();
 }
 
 /*************************************************************/
@@ -202,10 +200,16 @@ function PFSetUp_createSprites() {
   PFSetUp_wallLeft.bounciness = PFSetUp_WALLBOUNCE;
 
   //Creating the sword
-  PFSetUp_sword = new Sprite(PFSetUp_SPAWNXDISPLACEMENT * width, PFSetUp_SPAWNYDISPLACEMENT * height,
-    PFSetUp_SWORDSIZE / 2, PFSetUp_SWORDSIZE, "k");
+  PFSetUp_sword = new Sprite(width / 2, height / 2,
+    PFSetUp_SWORDSIZE / 2, PFSetUp_SWORDSIZE, "n");
+  PFSetUp_sword.layer = PFSetUp_SWORDLAYER;
   PFSetUp_sword.addImage(sword);
   sword.resize(PFSetUp_SWORDSIZE / 2, PFSetUp_SWORDSIZE);
+
+  //Creating the invisble sprite that the sword moves towards when you swing it
+  PFSetUp_swordSwingPoint = new Sprite(width / 2, height / 2, 1, 1, "n");
+  PFSetUp_swordSwingPoint.addImage(hidden);
+  hidden.resize(1, 1);
 
   //Creating the character
   PFSetUp_player = new Sprite(PFSetUp_SPAWNXDISPLACEMENT * width, PFSetUp_SPAWNYDISPLACEMENT * height,
@@ -221,6 +225,7 @@ function PFSetUp_createSprites() {
   //Hit colddown
   PFSetUp_player.onColdDown = false;
   PFSetUp_player.stunned = false;
+  PFSetUp_player.layer = PFSetUp_PLAYERLAYER;
 
   //Adding to gravity effected sprites
   PFWorld_GRAVITYEFFECTEDSPRITES.push(PFSetUp_player);
@@ -272,9 +277,6 @@ function PFSetUp_movement() {
       && PFSetUp_playerDied === false && PFSetUp_player.stunned === false) {
       PFSetUp_player.vel.x = -PFSetUp_PLAYERXSPEED;
       PFSetUp_lKeyDown = true;
-
-      //Sword swing direction to left
-      PFSetUp_swordDir = "left";
     }
     //Right code
     //can only go right if left key is not down
@@ -282,9 +284,6 @@ function PFSetUp_movement() {
       && PFSetUp_playerDied === false && PFSetUp_player.stunned === false) {
       PFSetUp_player.vel.x = PFSetUp_PLAYERXSPEED;
       PFSetUp_rKeyDown = true;
-
-      //Sword swing direction to right
-      PFSetUp_swordDir = "right";
     }
   });
 
@@ -317,20 +316,6 @@ function PFSetUp_movement() {
   });
 }
 
-/*************************************************************/
-//PFSetUp_setColliders()
-//sets callback for the collision of the sprites
-//called by: setup()
-/*************************************************************/
-function PFSetUp_setColliders() {
-  console.log("PFSetUp_setColliders()");
-
-  //When sword hits an enemy
-  PFSetUp_sword.collides(weakEnemies, PFEnemies_hit);
-  //When enemy hits player
-  PFSetUp_player.collides(weakEnemies, PFEnemies_WEHit);
-}
-
 //
 /**************************************************************************************************************/
 // END OF GAME SETUP SECTION OF THE CODE
@@ -352,24 +337,44 @@ function PFSetUp_setColliders() {
 function mouseClicked() {
   //cant click before game starts
   if (PFSetUp_gameStarted === false) { return; }
-  //console.log("mouseClicked();");
   PFSetUp_swingSword();
 }
 
 /*************************************************************/
-//PFSetUp_checkSwordSwing()
+//PFSetUp_swordEquipped()
 //moves sword to the player if they are swinging it
 //called by: draw()
 /*************************************************************/
-function PFSetUp_checkSwordSwing() {
-  //Sword gose to player as long as user is swinging it, else clear the sword
-  if (PFSetUp_swordSwinging === true) {
-    //Make sure that the sword is on top of all other sprites
-    PFSetUp_sword.layer = 9999;
-    if (PFSetUp_swordDir == "right") { PFSetUp_sword.pos = { x: PFSetUp_player.x + PFSetUp_SWORDXOFFSET, y: PFSetUp_player.y }; }
-    if (PFSetUp_swordDir == "left") { PFSetUp_sword.pos = { x: PFSetUp_player.x - PFSetUp_SWORDXOFFSET, y: PFSetUp_player.y }; }
+function PFSetUp_swordEquipped() {
+  //Mouse position is relative to the top left corner of the screen, 
+  //mouses real position realtive to the current canvas needs to be calculated.
+  let mouseRealX = mouseX + camera.x - width / 2
+
+  //If mouse is to the right of player then swinging to the right
+  if (PFSetUp_player.x < mouseRealX) { PFSetUp_swordDir = "right"; }
+  else { PFSetUp_swordDir = "left"; }
+
+
+  //Sword remains on players back if not swinging
+  if (PFSetUp_swordSwinging === false) {
+    PFSetUp_sword.moveTowards(PFSetUp_player, 0.4);
+    if (PFSetUp_sword.rotation >= -225) {
+      PFSetUp_sword.rotation = 225;
+      PFSetUp_sword.rotationSpeed = 0;
+    }
+    else {
+      PFSetUp_sword.rotationSpeed = -PFSetUp_SWORDROTATIONSPEED;
+    };
+    return;
   }
-  else { PFSetUp_sword.pos = { x: PFSetUp_player.x, y: -100 }; }
+
+  //If playing swinging sword move sword infront or behind the player
+  if (PFSetUp_swordSwinging === true) {
+    PFSetUp_calculateSwingPoint();
+
+    PFSetUp_sword.moveTowards(PFSetUp_swordSwingPoint, 0.3);
+    return;
+  }
 }
 
 
@@ -379,12 +384,12 @@ function PFSetUp_checkSwordSwing() {
 //called by: mouseClicked()
 /*************************************************************/
 function PFSetUp_swingSword() {
-  //console.log("PFSetUp_swingSword();");
-
   //If the sword is swinging then player can't swing the sword
   if (PFSetUp_swordSwinging === true) {
     return;
   }
+
+  PFSetUp_swordSwinging = true;
 
   //Sword audio
   swordSwoosh.pause();
@@ -392,15 +397,13 @@ function PFSetUp_swingSword() {
   swordSwoosh.play();
 
   //setting the "annimation"
-  PFSetUp_sword.rotation = 0;
-  //if player is swinging to the right set rotation to clock wise, other wise is left and set to anticlock wise
-  if (PFSetUp_swordDir == "right") { PFSetUp_sword.rotationSpeed = PFSetUp_SWORDROTATIONSPEED; }
+  PFSetUp_sword.rotation = -20;
+
+  if (PFSetUp_swordDir === "right") { PFSetUp_sword.rotationSpeed = PFSetUp_SWORDROTATIONSPEED; }
   else { PFSetUp_sword.rotationSpeed = -PFSetUp_SWORDROTATIONSPEED; }
 
-  PFSetUp_swordSwinging = true;
-
   //Clearing sword "annimation"
-  setTimeout(PFSetUp_swordClear, PFSetUp_PLAYERSWINGSPEED);
+  setTimeout(PFSetUp_swordClear, PFSetUp_SWORDANNIMATIONDUR);
 }
 
 /*************************************************************/
@@ -409,9 +412,49 @@ function PFSetUp_swingSword() {
 //called by: PFSetUp_swordClear()
 /*************************************************************/
 function PFSetUp_swordClear() {
-  //sword is finished swinging so set to false
+  //sword is finished swinging so start counting colddown
+  PFSetUp_sword.rotationSpeed = 0;
+  PFSetUp_sword.rotation = 0;
+  setTimeout(PFSetUp_swordClearColdDown, PFSetUp_PLAYERSWINGSPEED);
+}
+
+/*************************************************************/
+//PFSetUp_swordClearColdDown()
+//clears the sword swing colddown
+//called by: PFSetUp_swordClearColdDown()
+/*************************************************************/
+function PFSetUp_swordClearColdDown() {
   PFSetUp_swordSwinging = false;
 }
+
+
+
+/*************************************************************/
+//PFSetUp_calculateSwingPoint()
+//Calculates the position of the point the sword goes to spin
+//called by: PFSetUp_swordEquipped()
+/*************************************************************/
+function PFSetUp_calculateSwingPoint() {
+  //Mouse position is relative to the top left corner of the screen (0,0), 
+  //mouses real position realtive to the current canvas needs to be calculated.
+  let mouseRealX = mouseX + camera.x - width / 2
+  //Finding of angle from sprite to mouse
+  let a = abs(mouseRealX - PFSetUp_player.x);
+  let b = abs(mouseY - PFSetUp_player.y);
+  let theta = Math.atan(b / a);
+
+  let xValue = PFSetUp_SWORDSWINGDISTANCE * Math.cos(theta);
+  let yValue = PFSetUp_player.y - (PFSetUp_SWORDSWINGDISTANCE * Math.sin(theta));
+
+  //Depending on whether player is swinging to the left or right, shift the loucation of
+  //the swing point
+  if (PFSetUp_swordDir === "right") {xValue += PFSetUp_player.x}
+  else {xValue = PFSetUp_player.x - xValue};
+
+  //Moving swing point to calculated loucation
+  PFSetUp_swordSwingPoint.pos = { x: xValue, y: yValue };
+}
+
 //
 /**************************************************************************************************************/
 // END OF SWORD SETUP SECTION OF THE CODE

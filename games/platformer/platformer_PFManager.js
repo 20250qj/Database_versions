@@ -12,8 +12,9 @@ console.log('%c' + MODULENAME + ': ', 'color: blue;');
 /*******************************************************/
 // Constants and variables
 /*******************************************************/
-const PFManager_STARTSCREENELEMENTS = ["start_button", "header"]
+const PFManager_STARTSCREENELEMENTS = ["startButton", "header"]
 const PFManager_RESTARTELEMENTS = ["deathScreen", "restartButton"];
+const PFManager_BUTTONARRAY = ["startButton", "restartButton", "exitButton", "backButton"];
 
 //Click audio when user clicks on buttons
 var click = new Audio('/game_assets/game_sounds/click.mp3');
@@ -34,7 +35,8 @@ click.volume = 0.2;
 function PFManager_checkDeath() {
   if (PFSetUp_player.health === 0) {
     console.log("Player died");
-    
+    PFSetUp_playerDied = true;
+
     clearInterval(PFSetUp_enemyInterval);
 
     //Stopping draw and removing all the sprites
@@ -88,23 +90,55 @@ function PFManager_restart() {
   //Restarting the game
   PFManager_clear(PFManager_RESTARTELEMENTS);
 
-  //Restarting the game
+  //Restarting the game and resetting varibales
   PFSetUp_player.health = PFSetUp_PLAYERHEALTH;
   PFSetUp_gameStarted = true;
+  PFSetUp_playerDied = false;
+  PFEnemies_weakEnemyAlive = 0;
+  PFEnemies_weakEnemies = [];
   setup();
 }
 
 
 /*************************************************************/
-//PFManager_click()
+//PFManager_addClickSound()
 //Adds sound when user clicks on a button
 //called by: onload
 /*************************************************************/
-function PFManager_click() {
-  //Restarting the audio and playing it
-  click.pause();
-  click.currentTime = 0
-  click.play();
+function PFManager_addClickSound() {
+  console.log("PFManager_addClickSound();");
+  for (i = 0; i < PFManager_BUTTONARRAY.length; i++) {
+    //Creating a clone of the audio for each button
+    let clickClone = click.cloneNode(true);
+    clickClone.volume = 0.2;
+    let x = document.getElementById(PFManager_BUTTONARRAY[i]);
+    x.addEventListener("click", (event) => {
+      clickClone.pause();
+      clickClone.currentTime = 0
+      clickClone.play();
+    });
+  }
+}
+
+
+/*************************************************************/
+//PFManager_addHoverSound()
+//Adds sound when user hovers on a button
+//called by: onload
+/*************************************************************/
+function PFManager_addHoverSound() {
+  console.log("PFManager_addHoverSound();");
+  for (i = 0; i < PFManager_BUTTONARRAY.length; i++) {
+    //Creating a clone of the audio for each button
+    let clickClone = click.cloneNode(true);
+    clickClone.volume = 0.2;
+    let x = document.getElementById(PFManager_BUTTONARRAY[i]);
+    x.addEventListener("mouseover", (event) => {
+      clickClone.pause();
+      clickClone.currentTime = 0
+      clickClone.play();
+    });
+  }
 }
 
 

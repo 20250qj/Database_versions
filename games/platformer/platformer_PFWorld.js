@@ -26,13 +26,13 @@ const PFWorld_PLATFORMARRAY = [];
 const PFWorld_PLATFORMSIZE = 200;
 const PFWorld_PLATFORMTHICKNESS = 10;
 const PFWorld_PLATFORMBOUNCE = 0;
-const PFWorld_JUMPCOLDDOWN = 20;
+const PFWorld_JUMPCOLDDOWN = 15;
 const PFWorld_PLATFORMFRICTION = 0;
 const PFWorld_platFORMCOLOR = "#ff7a00";
 
 //platform check function varaibles
-const PFWorld_platFormMaxDistance = 600;
-const PFWorld_platFormMinDistance = 75;
+const PFWorld_platFormMaxDistance = 1000;
+const PFWorld_platFormMinDistance = 150;
 var PFWorld_platFormMaxY;
 var PFWorld_platFormMinY;
 var PFWorld_platFormMaxHeight;
@@ -103,7 +103,6 @@ function PFWorld_checkFloorTime() {
 //       y region where it can be generated - y1, y2
 /*************************************************************/
 function PFWorld_createPlatForms(x1, x2, y1, y2) {
-  console.log("PFWorld_createPlatForms();");
   //Creating a bool to see if platform was checked, and an array to store 
   //this wave of generated platforms
   let platFormChecked;
@@ -123,18 +122,17 @@ function PFWorld_createPlatForms(x1, x2, y1, y2) {
     }
 
     platform = new Sprite(platformX, platformY, PFWorld_PLATFORMSIZE * 2, PFWorld_PLATFORMTHICKNESS, "k");
-    
+
     //Properties of platform
     platform.bounciness = PFWorld_PLATFORMBOUNCE;
     platform.friction = PFWorld_PLATFORMFRICTION;
     platform.color = PFWorld_platFORMCOLOR;
-    
+
     //Adding to groups
     platformGroup.add(platform);
     gameSprites.add(platform);
     platFormsGenerated.push(platform);
   }
-  console.log("Match found after " + PFWorld_platFormCheckTries + " tries.")
 }
 
 /*************************************************************/
@@ -207,18 +205,26 @@ function PFWorld_checkPlatForms(x, y, platforms) {
 /*************************************************************/
 function PFWorld_terrainCheck() {
   if (PFSetUp_player.x > PFWorld_terrainTriggerPoint) {
-    console.log("Generate terrain");
 
     //Creating floor
-    PFWorld_generateGround(PFWorld_terrainTriggerPoint + width/2, PFWorld_terrainTriggerPoint + (1.5 * width));
-    
+    PFWorld_generateGround(PFWorld_terrainTriggerPoint + width / 2, PFWorld_terrainTriggerPoint + (1.5 * width));
+
+
+    setTimeout(function() {
+      PFEnemies_spawnEnemies(PFWorld_terrainTriggerPoint - width,
+        PFWorld_terrainTriggerPoint)
+    }, PFEnemies_WEAKENEMIESSPAWNTIME);
+
+
     PFWorld_terrainTriggerPoint += width;
 
     //Creating the platforms at the next trigger point/ahead the player
     PFWorld_createPlatForms(PFWorld_terrainTriggerPoint
-                            , PFWorld_terrainTriggerPoint + width/2
-                            , PFWorld_platFormMinY
-                            , PFSetUp_WALLTHICKNESS);
+      , PFWorld_terrainTriggerPoint + width / 2
+      , PFWorld_platFormMinY
+      , PFSetUp_WALLTHICKNESS);
+
+    PFEnemies_spawnEnemies(PFWorld_terrainTriggerPoint, PFWorld_terrainTriggerPoint + width);
   }
 }
 
@@ -229,8 +235,8 @@ function PFWorld_terrainCheck() {
 //input: 2 x points that the floor is generated between
 /*************************************************************/
 function PFWorld_generateGround(x1, x2) {
-  let xPos = (x1 + x2)/2
-  
+  let xPos = (x1 + x2) / 2
+
   grass = new Sprite(xPos,
     //Calculating where to place the grass layer
     (height - (PFSetUp_GROUNDTHICKNESS * PFSetUp_DIRTRATIO / 2))
