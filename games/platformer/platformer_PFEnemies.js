@@ -24,10 +24,13 @@ const PFEnemies_WEAKHITCOLDDOWN = 300;
 const PFEnemies_WEAKENEMYSIZE = 50;
 const PFEnemies_WEAKENEMIESSPAWNTIME = 5000;
 const PFEnemies_WEAKENEMYHEALTH = 2;
-const PFEnemies_WEAKSPAWNAMOUNT = 5;
-const PFEnemies_WEAKENEMYSPEED = 5;
-const PFEnemies_WEAKIDLESPEED = 2;
-const PFEnemies_WEAKIDLETIME = 1200;
+
+//change back later
+const PFEnemies_WEAKSPAWNAMOUNT = 0;
+
+const PFEnemies_WEAKENEMYSPEED = 8;
+const PFEnemies_WEAKIDLESPEED = 1;
+const PFEnemies_WEAKIDLETIME = 1500;
 const PFEnemies_WEAKENEMYJUMPSTRENGTH = -20;
 const PFEnemies_WEAKENEMYXKNOCKBACK = 5;
 const PFEnemies_WEAKENEMYYKNOCKBACK = -10;
@@ -35,7 +38,7 @@ const PFEnemies_WEAKENEMYBOUNCE = 0;
 const PFEnemies_WEAKENEMYSTUNDUR = 500;
 const PFEnemies_WEAKENEMYCOLOR = "#ff2675";
 const PFEnemies_WEAKENEMYHITCOLOR = "#ffb8d2";
-const PFEnemies_WEAKENEMYMINSPAWNHEIGHT = (PFSetUp_GROUNDTHICKNESS * (1 + PFSetUp_DIRTRATIO)) + PFEnemies_WEAKENEMYSIZE;
+const PFEnemies_WEAKENEMYIDLECOLOR = "#ff7900";
 var PFEnemies_weakEnemies = [];
 
 //
@@ -64,7 +67,7 @@ function PFEnemies_spawnEnemies(x1, x2) {
   //Spawning weak enemies
   for (i = 0; i < PFEnemies_WEAKSPAWNAMOUNT; i++) {
     let enemy;
-    enemy = new Sprite(random(x1, x2), random(PFSetUp_GROUNDTHICKNESS * (1 + PFSetUp_DIRTRATIO), height),
+    enemy = new Sprite(random(x1, x2), random(height + PFEnemies_WEAKENEMYSIZE * 2, PFEnemies_WEAKENEMYSIZE * 2),
       PFEnemies_WEAKENEMYSIZE, PFEnemies_WEAKENEMYSIZE, "d");
     //setting properties of enemies
     enemy.friction = PFEnemies_FRICTION;
@@ -89,6 +92,7 @@ function PFEnemies_spawnEnemies(x1, x2) {
   //Resetting the collider for the new enemies
   PFSetUp_sword.overlapping(enemyWave, PFEnemies_hit);
   PFSetUp_player.colliding(enemyWave, PFEnemies_WEHit);
+  PFSetUp_player.collides(enemyWave, PFEnemies_WEHit);
 }
 
 /*************************************************************/
@@ -125,7 +129,7 @@ function PFEnemies_hit(sword, enemy) {
 
   if (enemy.onColdDown === false) {
     enemy.onSurface = false;
-    enemy.health -= 1;
+    enemy.health -= PFSetUp_SWORDDAMAGE;
 
     console.log("PFEnemies_hit();");
 
@@ -137,8 +141,8 @@ function PFEnemies_hit(sword, enemy) {
     enemy.onColdDown = false;
   }, PFEnemies_WEAKHITCOLDDOWN);
 
-  //Remove enemy if is dead or too far away
-  if (enemy.health === 0 || (abs(enemy.x - PFSetUp_player.x) > 2 * PFWorld_terrainTriggerPoint)) {
+  //Remove enemy if is dead
+  if (enemy.health <= 0) {
     //Removing from the array
     PFEnemies_weakEnemies.splice(PFEnemies_weakEnemies.indexOf(enemy), 1);
     enemy.remove();
@@ -170,10 +174,17 @@ function PFEnemies_WEMove() {
     let dx = weakEnemy.x - PFSetUp_player.x;
     let dy = weakEnemy.y - PFSetUp_player.y;
 
+    //Kill enemy if they are too far away
+    if(abs(dx) > 2.5 * PFWorld_terrainTriggerPoint) {
+      //removing from array
+      PFEnemies_weakEnemies.splice(PFEnemies_weakEnemies.indexOf(weakEnemy), 1);
+      weakEnemy.remove();
+    }
+
     //Move around or idle if player is too far away.
     if (abs(dx) > width / 3 && weakEnemy.idling === false) {
       //Determining random behaviour based off a random number
-      let ranNum = Math.round(random(1, 5));
+      let ranNum = Math.round(random(1, 4));
       if (ranNum === 2) {
         weakEnemy.vel.x = PFEnemies_WEAKIDLESPEED;
       }
@@ -192,8 +203,9 @@ function PFEnemies_WEMove() {
       weakEnemy.idling = false
     };
 
-    //dont move towards player if idle
-    if (weakEnemy.idling === true) { continue };
+    //dont move towards player if idle, and make their colour orange
+    if (weakEnemy.idling === true) {weakEnemy.color = PFEnemies_WEAKENEMYIDLECOLOR; continue }
+    else if (weakEnemy.stunned === false) {weakEnemy.color = PFEnemies_WEAKENEMYCOLOR};
 
     //If difference is positive (below the player), jump when it can.
     //Using one because of very small decimal differences causing the enemy to jump
@@ -256,25 +268,6 @@ function PFEnemies_WEHit(player, enemy) {
     }, PFEnemies_WEAKHITCOLDDOWN);
   }
 }
-
-/*************************************************************/
-//PFEnemies_checkDespawn()
-//WE stands for weak enemies
-//Despawns the enemy when is too far away from the player
-//called by: draw()
-/*************************************************************/
-/*function PFEnemies_checkDespawn() {
-  for (i = 0; i < PFEnemies_weakEnemies.length; i++) {
-    let weakEnemy = PFEnemies_weakEnemies[i];
-    //Finding the differences in x, and if the enemy is too far despawn them.
-    let dx = abs(weakEnemy.x - camera.x);
-    if (dx > 1.5 * width) {
-      //Removing from the array
-      weakEnemy.remove();
-      PFEnemies_weakEnemies.splice(PFEnemies_weakEnemies.indexOf(weakEnemy), 1);
-    }
-  }
-}*/
 
 //
 /**************************************************************************************************************/

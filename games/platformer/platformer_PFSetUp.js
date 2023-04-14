@@ -22,29 +22,26 @@ let platformGroup, gameSprites;
 const PFSetUp_WALLBOUNCE = 0;
 const PFSetUp_WALLTHICKNESS = 8;
 const PFSetUp_PLATFORMFRICTION = 0;
-const PFSetUp_GRASSCOLOR = "#4eff70";
-const PFSetUp_GROUNDTHICKNESS = 10;
-const PFSetUp_DIRTRATIO = 1.8;
-const PFSetUp_DIRTCOLOR = "#8f4300";
 
 //Sword variables
 var PFSetUp_swordSwinging = false;
 var PFSetUp_swordDir = "right";
 const PFSetUp_SWORDSIZE = 85;
-const PFSetUp_SWORDSWINGDISTANCE = 80;
+const PFSetUp_SWORDSWINGDISTANCE = 65;
 const PFSetUp_SWORDXKNOCKBACK = 20;
 const PFSetUp_SWORDYKNOCKBACK = -10;
 const PFSetUp_SWORDSTUNDUR = 300;
 const PFSetUp_SWORDROTATIONSPEED = 12;
 const PFSetUp_SWORDLAYER = 3;
 const PFSetUp_SWORDANNIMATIONDUR = 300;
+const PFSetUp_SWORDDAMAGE = 1;
 
 //Player variables
 const PFSetUp_SPAWNXDISPLACEMENT = 0.2;
 const PFSetUp_SPAWNYDISPLACEMENT = 0.5;
 const PFSetUp_PLAYERWIDTH = 50;
 const PFSetUp_PLAYERHEIGHT = 50;
-const PFSetUp_PLAYERXSPEED = 7;
+const PFSetUp_PLAYERXSPEED = 8;
 const PFSetUp_PLAYERSWINGSPEED = 100;
 const PFSetUp_PLAYERFRICTION = 0;
 const PFSetUp_PLAYERHEALTH = 5;
@@ -86,6 +83,9 @@ var hit = new Audio('/game_assets/game_sounds/hit.mp3');
 var oof = new Audio('/game_assets/game_sounds/oof.mp3');
 oof.volume = 0.1;
 
+//Images
+let hidden, sword, platformImg, groundImage;
+
 //
 /**************************************************************************************************************/
 // V GAME SETUP SECTION OF THE CODE V
@@ -102,7 +102,12 @@ function preload() {
 
   //Transparent image
   hidden = loadImage('/game_assets/transparent.png');
+  
   sword = loadImage('/game_assets/sword.png');
+
+  //Platform images
+  platformImg = loadImage('/game_assets/game_platforms/platform.png');
+  groundImage = loadImage('/game_assets/game_platforms/ground.png');
 }
 
 /*************************************************************/
@@ -115,26 +120,21 @@ function setup() {
 
   //Resetting camera to be at the start
   camera.x = width / 2;
-
-  //Setting the min max heights and y values for platform spawns after canvas is created
-  PFWorld_platFormMinY = 0.89 * height;
-  PFWorld_platFormMaxY = 0.77 * height;
-  PFWorld_platFormMaxHeight = 0.25 * height;
-  PFWorld_platFormMinHeight = 0.12 * height;
-
-  //Setting terrain trigger point after canvas was created
-  PFWorld_terrainTriggerPoint = width / 2;
+  PFWorld_terrainTriggerPoint = PFWorld_TRIGGERDISTANCE / 2;
 
   //Groups
   platformGroup = new Group();
   gameSprites = new Group();
 
   //Creating the starting screen floor
-  PFWorld_generateGround(0, width);
+  PFWorld_generateGround(0, width, false);
 
   //Only call functions when user clicks on start button;
   if (PFSetUp_gameStarted !== true) { return; }
   console.log("setup();");
+
+  //Overlapping starting screen floor because the width for the actual floor sections are larger
+  PFWorld_generateGround(0, PFWorld_TRIGGERDISTANCE, false);
 
   //Playing music
   backGroundMusic.pause();
@@ -148,7 +148,7 @@ function setup() {
   //setting up movement for the sprites
   PFSetUp_movement();
   //Creating platforms
-  PFWorld_createPlatForms(PFSetUp_WALLTHICKNESS, width, PFWorld_platFormMinY, PFSetUp_WALLTHICKNESS);
+  PFWorld_createPlatForms((PFWorld_PLATFORMSIZE / 2), PFWorld_TRIGGERDISTANCE - PFWorld_PLATFORMSIZE / 2, PFWorld_PLATFORMMINY, 0);
 }
 
 /*************************************************************/
@@ -444,7 +444,14 @@ function PFSetUp_calculateSwingPoint() {
   let theta = Math.atan(b / a);
 
   let xValue = PFSetUp_SWORDSWINGDISTANCE * Math.cos(theta);
-  let yValue = PFSetUp_player.y - (PFSetUp_SWORDSWINGDISTANCE * Math.sin(theta));
+  let yValue;
+
+  let dy = mouseY - PFSetUp_player.y;
+  //If mouse is above the player swing up, other wise swing below.
+  if (dy < 1) {
+    yValue = PFSetUp_player.y - (PFSetUp_SWORDSWINGDISTANCE * Math.sin(theta));
+  } else {yValue = PFSetUp_player.y + (PFSetUp_SWORDSWINGDISTANCE * Math.sin(theta));}
+  
 
   //Depending on whether player is swinging to the left or right, shift the loucation of
   //the swing point
