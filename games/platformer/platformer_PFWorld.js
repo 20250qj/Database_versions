@@ -24,7 +24,10 @@ const PFWorld_GRAVITYEFFECTEDSPRITES = [];
 const PFWorld_GRASSCOLOR = "#4eff70";
 const PFWorld_DIRTCOLOR = "#8f4300";
 const PFWorld_GROUNDTHICKNESS = 30;
-const PFWorld_HOLESIZE = 200;
+const PFWorld_SPIKESIZE = 210;
+const PFWorld_SPIKESTUNDUR = 300;
+const PFWorld_SPIKEXKNOCKBACK = 20;
+const PFWorld_SPIKEYKNOCKBACK = -20;
 
 //Platform variables
 const PFWorld_PLATFORMNUM = 3;
@@ -241,44 +244,44 @@ function PFWorld_terrainCheck() {
 //Generates the ground from a given area
 //called by: PFWorld_terrainCheck()
 //input: 2 x points that the floor is generated between, and a boolean
-//to generate a hole or not
+//to generate a spike or not
 /*************************************************************/
-function PFWorld_generateGround(x1, x2, hole) {
-  //determining whether to generate a ground with no holes or a hole
+function PFWorld_generateGround(x1, x2, spike) {
+  //determining whether to generate a ground with no spike or a spike
   let x = Math.round(random(1, 2));
 
-  if (x === 1 || hole === false) {
+  if (x === 1 || spike === false) {
     let xPos = (x1 + x2) / 2
 
     ground = new Sprite(xPos, height - PFWorld_GROUNDTHICKNESS / 2, PFWorld_TRIGGERDISTANCE, PFWorld_GROUNDTHICKNESS, "s");
     ground.bounciness = PFWorld_PLATFORMBOUNCE;
-    ground.addImage(groundImage);
-    groundImage.resize(PFWorld_TRIGGERDISTANCE, PFWorld_GROUNDTHICKNESS);
+    ground.addImage(groundImg);
+    groundImg.resize(PFWorld_TRIGGERDISTANCE, PFWorld_GROUNDTHICKNESS);
 
     //Adding platforms
     platformGroup.add(ground);
-  } else if (hole === true) { PFWorld_generateHole(x1, x2) };
+  } else if (spike === true) { PFWorld_generateSpike(x1, x2) };
 }
 
 
 /*************************************************************/
-//PFWorld_generateHole()
-//Generates a randomly place hole between the x coodinates given
+//PFWorld_generateSpike()
+//Generates a randomly placed spike between the x coodinates given
 //called by: PFWorld_generateGround()
-//input: 2 x points that the hole can be generated between
+//input: 2 x points that the spike can be generated between
 /*************************************************************/
-function PFWorld_generateHole(x1, x2) {
-  console.log("flappy_createPipes();")
+function PFWorld_generateSpike(x1, x2) {
+  console.log("PFWorld_generateSpike();")
 
   //The height of the pipe below is calculated so that there is always enough height for
   //pipe gap, and so the ground will never get negative height.
-  var groundLeftWidth = PFWorld_TRIGGERDISTANCE - random(PFWorld_HOLESIZE, PFWorld_TRIGGERDISTANCE - PFWorld_HOLESIZE); 
+  var groundLeftWidth = PFWorld_TRIGGERDISTANCE - random(PFWorld_SPIKESIZE, PFWorld_TRIGGERDISTANCE - PFWorld_SPIKESIZE); 
   //Taking out a random amount out of the left side ^^^^
   //such that at the longest and shortest possible width it will still leave a gap.
   var groundRightWidth = PFWorld_TRIGGERDISTANCE - groundLeftWidth; //The right side will be the remaining width
 
-  groundLeftWidth -= PFWorld_HOLESIZE; //Making a gap in the floor on both sides
-  groundRightWidth -= PFWorld_HOLESIZE;
+  groundLeftWidth -= PFWorld_SPIKESIZE; //Making a gap in the floor on both sides
+  groundRightWidth -= PFWorld_SPIKESIZE;
 
   //Coordinates of the ground being calculated.
   var groundLeftXPos = x1 + groundLeftWidth / 2;
@@ -287,21 +290,83 @@ function PFWorld_generateHole(x1, x2) {
   //Creating the ground on either side with the previous values.
   groundLeft = new Sprite(groundLeftXPos, height - PFWorld_GROUNDTHICKNESS / 2, groundLeftWidth, PFWorld_GROUNDTHICKNESS, "s");
   groundLeft.bounciness = PFWorld_PLATFORMBOUNCE;
+  //Creating a copy of the image to apply
+  let groundLeftImage = createImage(groundLeftWidth, PFWorld_GROUNDTHICKNESS);
+  groundLeftImage.copy(groundImg, 0, 0, groundLeftWidth, PFWorld_GROUNDTHICKNESS, 0, 0, groundLeftWidth, PFWorld_GROUNDTHICKNESS);
+  groundLeft.addImage(groundLeftImage);
 
   groundRight = new Sprite(groundRightXPos, height - PFWorld_GROUNDTHICKNESS / 2, groundRightWidth, PFWorld_GROUNDTHICKNESS, "s");
   groundRight.bounciness = PFWorld_PLATFORMBOUNCE;
+  //Creating a copy of the image to apply
+  let groundRightImage = createImage(groundRightWidth, PFWorld_GROUNDTHICKNESS);
+  groundRightImage.copy(groundImg, 0, 0, groundRightWidth, PFWorld_GROUNDTHICKNESS, 0, 0, groundRightWidth, PFWorld_GROUNDTHICKNESS);
+  groundRight.addImage(groundRightImage);
 
-  //Calculating the x position of the hole
-  var holeXPos = ((groundLeftXPos + groundLeftWidth / 2) + (groundRightXPos - groundRightWidth / 2)) / 2;
+  //Calculating the x position of the spike
+  var spikeXPos = ((groundLeftXPos + groundLeftWidth / 2) + (groundRightXPos - groundRightWidth / 2)) / 2;
 
-  //Creating the hole with the previous values.
-  hole = new Sprite(holeXPos, height, PFWorld_HOLESIZE * 2, PFWorld_GROUNDTHICKNESS, "s");
-  hole.bounciness = PFWorld_PLATFORMBOUNCE;
+  //Creating the spike with the previous values.
+  spike = new Sprite(spikeXPos, height - PFWorld_GROUNDTHICKNESS / 4, PFWorld_SPIKESIZE * 2, PFWorld_GROUNDTHICKNESS / 2, "s");
+  spike.bounciness = PFWorld_PLATFORMBOUNCE;
+  spike.addImage(spikes);
 
+  //Adding to group
   platformGroup.add(groundRight);
   platformGroup.add(groundLeft);
+  platformGroup.add(spike);
+  spikeGroup.add(spike);
+
+  //collision
+  PFSetUp_player.colliding(spikeGroup, PFWorld_spikeHit);
+  PFSetUp_player.collides(spikeGroup, PFWorld_spikeHit);
 }
 
+
+/*************************************************************/
+//PFWorld_spikeHit()
+//Determines what happens when a spike hits the player
+//called as a callback when player collides with spike
+//input: player, and the spike that collides
+/*************************************************************/
+function PFWorld_spikeHit(player, spike) {
+  if (PFSetUp_player.stunned === false && PFSetUp_player.onColdDown === false) {
+    //Timeout function that enables the player to move again after a cold down
+    PFSetUp_player.stunned = true;
+    setTimeout(function() {
+      PFSetUp_player.stunned = false;
+      //Stopping the player from being knocked back
+      PFSetUp_player.vel.x = 0;
+    }, PFWorld_SPIKESTUNDUR);
+  }
+  //Player on hit cold down, cant be hit again in this duration.
+  if (PFSetUp_player.onColdDown === false) {
+    PFSetUp_player.onSurface = false;
+    PFSetUp_player.color = PFSetUp_PLAYERHITCOLOR;
+    PFSetUp_player.health -= 1;
+    console.log("Player has " + PFSetUp_player.health + " hp left.");
+
+    //player hit audio
+    oof.pause();
+    oof.currentTime = 0
+    oof.play();
+
+    //Determining which side the player was hit from, then sending the player in that direction
+    let dx = spike.x - PFSetUp_player.x;
+    if (dx > 0) { PFSetUp_player.vel.x = -PFWorld_SPIKEXKNOCKBACK; }
+    else { PFSetUp_player.vel.x = PFWorld_SPIKEXKNOCKBACK; };
+    PFSetUp_player.vel.y = PFWorld_SPIKEYKNOCKBACK;
+    console.log("PFWorld_spikeHit();");
+
+    //Putting player on hit cold down
+    PFSetUp_player.onColdDown = true;
+
+    //Timeout function that enables the player to be hit again after a cold down
+    setTimeout(function() {
+      PFSetUp_player.onColdDown = false;
+      PFSetUp_player.color = PFSetUp_PLAYERCOLOR;
+    }, PFSetUp_PLAYERIMMUNEDUR);
+  }
+}
 //
 /**************************************************************************************************************/
 // END OF TERRAIN GENERATION SECTION OF THE CODE

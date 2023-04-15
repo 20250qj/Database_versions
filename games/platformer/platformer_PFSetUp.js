@@ -16,7 +16,7 @@ console.log('%c' + MODULENAME + ': ', 'color: blue;');
 let PFSetUp_player, PFSetUp_wallTop, PFSetUp_wallLeft, PFSetUp_sword;
 
 //Groups
-let platformGroup, gameSprites;
+let platformGroup, gameSprites, spikeGroup;
 
 //Wall variables
 const PFSetUp_WALLBOUNCE = 0;
@@ -49,6 +49,7 @@ const PFSetUp_PLAYERBOUNCE = 0;
 const PFSetUp_PLAYERCOLOR = "#008aff";
 const PFSetUp_PLAYERHITCOLOR = "#8ccaff";
 const PFSetUp_PLAYERLAYER = 4;
+const PFSetUp_PLAYERIMMUNEDUR = 600;
 
 var PFSetUp_playerOnFloorTime = 0;
 var PFSetUp_playerDied = false;
@@ -84,7 +85,7 @@ var oof = new Audio('/game_assets/game_sounds/oof.mp3');
 oof.volume = 0.1;
 
 //Images
-let hidden, sword, platformImg, groundImage;
+let hidden, sword, platformImg, groundImg, spikes;
 
 //
 /**************************************************************************************************************/
@@ -107,7 +108,8 @@ function preload() {
 
   //Platform images
   platformImg = loadImage('/game_assets/game_platforms/platform.png');
-  groundImage = loadImage('/game_assets/game_platforms/ground.png');
+  groundImg = loadImage('/game_assets/game_platforms/ground.png');
+  spikes = loadImage('/game_assets/game_platforms/spikes.png');
 }
 
 /*************************************************************/
@@ -125,6 +127,7 @@ function setup() {
   //Groups
   platformGroup = new Group();
   gameSprites = new Group();
+  spikeGroup = new Group();
 
   //Creating the starting screen floor
   PFWorld_generateGround(0, width, false);

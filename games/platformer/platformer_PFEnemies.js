@@ -20,13 +20,13 @@ const PFEnemies_PROXIMITY = 10;
 //Weak enemy variables
 const PFEnemies_WEAKENEMYMAX = 50;
 const PFEnemies_WEAKENEMYLAYER = 2;
-const PFEnemies_WEAKHITCOLDDOWN = 300;
 const PFEnemies_WEAKENEMYSIZE = 50;
 const PFEnemies_WEAKENEMIESSPAWNTIME = 5000;
+const PFEnemies_WEAKENEMYIMMUNETIME = 400;
 const PFEnemies_WEAKENEMYHEALTH = 2;
 
 //change back later
-const PFEnemies_WEAKSPAWNAMOUNT = 0;
+const PFEnemies_WEAKSPAWNAMOUNT = 5;
 
 const PFEnemies_WEAKENEMYSPEED = 8;
 const PFEnemies_WEAKIDLESPEED = 1;
@@ -105,19 +105,13 @@ function PFEnemies_hit(sword, enemy) {
   //Only deals damage if player is actually swinging the sword
   if (PFSetUp_swordSwinging === false) { return; };
 
-  if (enemy.stunned === false) {
+  //Can only stun enemy when they can be hit again (not in immune period)
+  if (enemy.stunned === false && enemy.onColdDown === false) {
     //Timeout function that enables the enemy to move again after a cold down
     enemy.stunned = true;
-    enemy.color = PFEnemies_WEAKENEMYHITCOLOR;
-
-    //hit audio, is cloned to allow mutiple of the same audio to be played at the same time
-    let hitClone = hit.cloneNode(true);
-    hitClone.volume = 0.3;
-    hitClone.play();
 
     setTimeout(function() {
       enemy.stunned = false;
-      enemy.color = PFEnemies_WEAKENEMYCOLOR;
     }, PFSetUp_SWORDSTUNDUR);
 
     //Determining which side the enemy was hit from, then sending the enemy in that direction
@@ -130,6 +124,12 @@ function PFEnemies_hit(sword, enemy) {
   if (enemy.onColdDown === false) {
     enemy.onSurface = false;
     enemy.health -= PFSetUp_SWORDDAMAGE;
+    enemy.color = PFEnemies_WEAKENEMYHITCOLOR;
+
+    //hit audio, is cloned to allow mutiple of the same audio to be played at the same time
+    let hitClone = hit.cloneNode(true);
+    hitClone.volume = 0.3;
+    hitClone.play();
 
     console.log("PFEnemies_hit();");
 
@@ -139,7 +139,8 @@ function PFEnemies_hit(sword, enemy) {
   //Timeout function that enables the enemy to be hit again after a cold down
   setTimeout(function() {
     enemy.onColdDown = false;
-  }, PFEnemies_WEAKHITCOLDDOWN);
+    enemy.color = PFEnemies_WEAKENEMYCOLOR;
+  }, PFEnemies_WEAKENEMYIMMUNETIME);
 
   //Remove enemy if is dead
   if (enemy.health <= 0) {
@@ -175,14 +176,14 @@ function PFEnemies_WEMove() {
     let dy = weakEnemy.y - PFSetUp_player.y;
 
     //Kill enemy if they are too far away
-    if(abs(dx) > 2.5 * PFWorld_terrainTriggerPoint) {
+    if (abs(dx) > 2.5 * PFWorld_terrainTriggerPoint) {
       //removing from array
       PFEnemies_weakEnemies.splice(PFEnemies_weakEnemies.indexOf(weakEnemy), 1);
       weakEnemy.remove();
     }
 
     //Move around or idle if player is too far away.
-    if (abs(dx) > width / 3 && weakEnemy.idling === false) {
+    if (abs(dx) > width / 2 && weakEnemy.idling === false) {
       //Determining random behaviour based off a random number
       let ranNum = Math.round(random(1, 4));
       if (ranNum === 2) {
@@ -199,13 +200,13 @@ function PFEnemies_WEMove() {
     };
 
     //If within detection range and idling, stop idling
-    if (abs(dx) < width / 3) {
+    if (abs(dx) < width / 2) {
       weakEnemy.idling = false
     };
 
     //dont move towards player if idle, and make their colour orange
-    if (weakEnemy.idling === true) {weakEnemy.color = PFEnemies_WEAKENEMYIDLECOLOR; continue }
-    else if (weakEnemy.stunned === false) {weakEnemy.color = PFEnemies_WEAKENEMYCOLOR};
+    if (weakEnemy.idling === true) { weakEnemy.color = PFEnemies_WEAKENEMYIDLECOLOR; continue }
+    else if (weakEnemy.onColdDown === false) { weakEnemy.color = PFEnemies_WEAKENEMYCOLOR };
 
     //If difference is positive (below the player), jump when it can.
     //Using one because of very small decimal differences causing the enemy to jump
@@ -227,23 +228,23 @@ function PFEnemies_WEMove() {
 //WE stands for weak enemies
 //Determines what happens when a weak enemy hits the player
 //called as a callback when enemy collide with player;
-//input: player, and the player that collides
+//input: player, and the enemy that collides
 /*************************************************************/
 function PFEnemies_WEHit(player, enemy) {
-  if (PFSetUp_player.stunned === false) {
+  //Can only stun the player if they are not in immune period
+  if (PFSetUp_player.stunned === false && PFSetUp_player.onColdDown === false) {
     //Timeout function that enables the player to move again after a cold down
     PFSetUp_player.stunned = true;
-    PFSetUp_player.color = PFSetUp_PLAYERHITCOLOR;
     setTimeout(function() {
       PFSetUp_player.stunned = false;
       //Stopping the player from being knocked back
       PFSetUp_player.vel.x = 0;
-      PFSetUp_player.color = PFSetUp_PLAYERCOLOR;
     }, PFEnemies_WEAKENEMYSTUNDUR);
   }
 
   if (PFSetUp_player.onColdDown === false) {
     PFSetUp_player.onSurface = false;
+    PFSetUp_player.color = PFSetUp_PLAYERHITCOLOR;
     PFSetUp_player.health -= 1;
     console.log("Player has " + PFSetUp_player.health + " hp left.")
 
@@ -265,7 +266,8 @@ function PFEnemies_WEHit(player, enemy) {
     //Timeout function that enables the player to be hit again after a cold down
     setTimeout(function() {
       PFSetUp_player.onColdDown = false;
-    }, PFEnemies_WEAKHITCOLDDOWN);
+      PFSetUp_player.color = PFSetUp_PLAYERCOLOR;
+    }, PFSetUp_PLAYERIMMUNEDUR);
   }
 }
 
