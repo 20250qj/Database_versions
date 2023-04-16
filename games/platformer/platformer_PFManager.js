@@ -16,7 +16,7 @@ const PFManager_STARTSCREENELEMENTS = ["startButton", "header"]
 const PFManager_RESTARTELEMENTS = ["deathScreen", "restartButton"];
 const PFManager_BUTTONARRAY = ["startButton", "restartButton", "exitButton", "backButton"];
 
-//Click audio when user clicks on buttons
+//Click audio when user clicks or hovers on buttons
 var click = new Audio('/game_assets/game_sounds/click.mp3');
 click.volume = 0.2;
 
@@ -36,8 +36,6 @@ function PFManager_checkDeath() {
   if (PFSetUp_player.health === 0) {
     console.log("Player died");
     PFSetUp_playerDied = true;
-
-    clearInterval(PFSetUp_enemyInterval);
 
     //Stopping draw and removing all the sprites
     PFSetUp_gameStarted = false;
@@ -89,6 +87,7 @@ function PFManager_restart() {
 
   //Restarting the game
   PFManager_clear(PFManager_RESTARTELEMENTS);
+  platformGroup.remove();
 
   //Restarting the game and resetting varibales
   PFSetUp_player.health = PFSetUp_PLAYERHEALTH;
@@ -96,6 +95,7 @@ function PFManager_restart() {
   PFSetUp_playerDied = false;
   PFEnemies_weakEnemyAlive = 0;
   PFEnemies_weakEnemies = [];
+  PFEnemies_rangedEnemies = [];
   setup();
 }
 
@@ -113,8 +113,7 @@ function PFManager_addClickSound() {
     clickClone.volume = 0.2;
     let x = document.getElementById(PFManager_BUTTONARRAY[i]);
     x.addEventListener("click", (event) => {
-      clickClone.pause();
-      clickClone.currentTime = 0
+      clickClone.currentTime = 0;
       clickClone.play();
     });
   }
@@ -134,8 +133,7 @@ function PFManager_addHoverSound() {
     clickClone.volume = 0.2;
     let x = document.getElementById(PFManager_BUTTONARRAY[i]);
     x.addEventListener("mouseover", (event) => {
-      clickClone.pause();
-      clickClone.currentTime = 0
+      clickClone.currentTime = 0;
       clickClone.play();
     });
   }

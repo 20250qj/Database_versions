@@ -53,16 +53,16 @@
   <header id="header" class="platformer_h center2">Platformer game test</header>
 
   <!--button-->
-  <div id="startButton" class="center">
-    <button class="button" onclick="PFSetUp_startGame();" style="text-decoration: none">
+  <div class="center">
+    <button class="button" onclick="PFSetUp_startGame();" id="startButton" style="text-decoration: none">
       Play now!
     </button>
   </div>
 
   <!--exit button-->
   <div class="center_exit">
-    <a href="/../index.html" style="text-decoration: none" id="exitButton">
-      <button class="button_exit">
+    <a href="/../index.html" style="text-decoration: none">
+      <button class="button_exit" id="exitButton">
         &larr; Back to home
       </button>
     </a>
@@ -70,8 +70,8 @@
 
   <div id="deathScreen" class="deathScreen center2">
     <h1 class="restartHead">You have died!</h1>
-    <a href="/html/html_platformer.html" style="text-decoration: none" id="backButton">
-      <button class="button_restart">Back to start screen</button>
+    <a href="/html/html_platformer.html" style="text-decoration: none">
+      <button class="button_restart" id="backButton">Back to start screen</button>
     </a>
     <button id="restartButton" class="button_restart" onclick="PFManager_restart();">Restart</button>
   </div>

@@ -235,7 +235,16 @@ function PFWorld_terrainCheck() {
       , 0);
 
     //Spawning enemies infront of the player everytime they go a certain distance
-    PFEnemies_spawnEnemies(PFWorld_terrainTriggerPoint, PFWorld_terrainTriggerPoint + PFWorld_TRIGGERDISTANCE);
+    PFEnemies_spawnEnemies(PFWorld_terrainTriggerPoint, PFWorld_terrainTriggerPoint + PFWorld_TRIGGERDISTANCE,
+                          PFEnemies_weakEnemies, PFEnemies_WEAKENEMYMAX, 
+                           PFEnemies_WEAKSPAWNAMOUNT, PFEnemies_WEAKENEMYSIZE, 
+                           PFEnemies_WEAKENEMYHEALTH, PFEnemies_WEAKENEMYLAYER, 
+                           "weak");
+    PFEnemies_spawnEnemies(PFWorld_terrainTriggerPoint, PFWorld_terrainTriggerPoint + PFWorld_TRIGGERDISTANCE,
+                          PFEnemies_rangedEnemies, PFEnemies_RANGEDENEMYMAX, 
+                           PFEnemies_RANGEDSPAWNAMOUNT, PFEnemies_RANGEDENEMYSIZE, 
+                           PFEnemies_RANGEDENEMYHEALTH, PFEnemies_RANGEDENEMYLAYER, 
+                           "ranged");
   }
 }
 
@@ -250,7 +259,7 @@ function PFWorld_generateGround(x1, x2, spike) {
   //determining whether to generate a ground with no spike or a spike
   let x = Math.round(random(1, 2));
 
-  if (x === 1 || spike === false) {
+  if (spike === false) {
     let xPos = (x1 + x2) / 2
 
     ground = new Sprite(xPos, height - PFWorld_GROUNDTHICKNESS / 2, PFWorld_TRIGGERDISTANCE, PFWorld_GROUNDTHICKNESS, "s");
@@ -309,6 +318,7 @@ function PFWorld_generateSpike(x1, x2) {
   spike = new Sprite(spikeXPos, height - PFWorld_GROUNDTHICKNESS / 4, PFWorld_SPIKESIZE * 2, PFWorld_GROUNDTHICKNESS / 2, "s");
   spike.bounciness = PFWorld_PLATFORMBOUNCE;
   spike.addImage(spikes);
+  spikes.resize(PFWorld_SPIKESIZE * 2,  PFWorld_GROUNDTHICKNESS / 2);
 
   //Adding to group
   platformGroup.add(groundRight);
@@ -329,7 +339,7 @@ function PFWorld_generateSpike(x1, x2) {
 //input: player, and the spike that collides
 /*************************************************************/
 function PFWorld_spikeHit(player, spike) {
-  if (PFSetUp_player.stunned === false && PFSetUp_player.onColdDown === false) {
+  if (PFSetUp_player.stunned === false && PFSetUp_player.immune === false) {
     //Timeout function that enables the player to move again after a cold down
     PFSetUp_player.stunned = true;
     setTimeout(function() {
@@ -339,15 +349,14 @@ function PFWorld_spikeHit(player, spike) {
     }, PFWorld_SPIKESTUNDUR);
   }
   //Player on hit cold down, cant be hit again in this duration.
-  if (PFSetUp_player.onColdDown === false) {
+  if (PFSetUp_player.immune === false) {
     PFSetUp_player.onSurface = false;
     PFSetUp_player.color = PFSetUp_PLAYERHITCOLOR;
     PFSetUp_player.health -= 1;
     console.log("Player has " + PFSetUp_player.health + " hp left.");
 
     //player hit audio
-    oof.pause();
-    oof.currentTime = 0
+    oof.currentTime = 0;
     oof.play();
 
     //Determining which side the player was hit from, then sending the player in that direction
@@ -358,11 +367,11 @@ function PFWorld_spikeHit(player, spike) {
     console.log("PFWorld_spikeHit();");
 
     //Putting player on hit cold down
-    PFSetUp_player.onColdDown = true;
+    PFSetUp_player.immune = true;
 
     //Timeout function that enables the player to be hit again after a cold down
     setTimeout(function() {
-      PFSetUp_player.onColdDown = false;
+      PFSetUp_player.immune = false;
       PFSetUp_player.color = PFSetUp_PLAYERCOLOR;
     }, PFSetUp_PLAYERIMMUNEDUR);
   }

@@ -16,7 +16,7 @@ console.log('%c' + MODULENAME + ': ', 'color: blue;');
 let PFSetUp_player, PFSetUp_wallTop, PFSetUp_wallLeft, PFSetUp_sword;
 
 //Groups
-let platformGroup, gameSprites, spikeGroup;
+let platformGroup, gameSprites, spikeGroup, projectTileGroup;
 
 //Wall variables
 const PFSetUp_WALLBOUNCE = 0;
@@ -49,7 +49,7 @@ const PFSetUp_PLAYERBOUNCE = 0;
 const PFSetUp_PLAYERCOLOR = "#008aff";
 const PFSetUp_PLAYERHITCOLOR = "#8ccaff";
 const PFSetUp_PLAYERLAYER = 4;
-const PFSetUp_PLAYERIMMUNEDUR = 600;
+const PFSetUp_PLAYERIMMUNEDUR = 500;
 
 var PFSetUp_playerOnFloorTime = 0;
 var PFSetUp_playerDied = false;
@@ -103,7 +103,7 @@ function preload() {
 
   //Transparent image
   hidden = loadImage('/game_assets/transparent.png');
-  
+
   sword = loadImage('/game_assets/sword.png');
 
   //Platform images
@@ -119,6 +119,8 @@ function preload() {
 /*************************************************************/
 function setup() {
   cnv = new Canvas(windowWidth, windowHeight);
+  PFEnemies_rangedEnemyRange = width * 0.7;
+  PFEnemies_weakEnemyRange = width / 2;
 
   //Resetting camera to be at the start
   camera.x = width / 2;
@@ -128,6 +130,7 @@ function setup() {
   platformGroup = new Group();
   gameSprites = new Group();
   spikeGroup = new Group();
+  projectTileGroup = new Group();
 
   //Creating the starting screen floor
   PFWorld_generateGround(0, width, false);
@@ -147,7 +150,16 @@ function setup() {
   //Creating sprites
   PFSetUp_createSprites();
   //Spawning enemies
-  PFEnemies_spawnEnemies(PFWorld_terrainTriggerPoint, width);
+  PFEnemies_spawnEnemies(PFWorld_terrainTriggerPoint, width,
+    PFEnemies_weakEnemies, PFEnemies_WEAKENEMYMAX,
+    PFEnemies_WEAKSPAWNAMOUNT, PFEnemies_WEAKENEMYSIZE,
+    PFEnemies_WEAKENEMYHEALTH, PFEnemies_WEAKENEMYLAYER,
+    "weak");
+  PFEnemies_spawnEnemies(PFWorld_terrainTriggerPoint, width,
+    PFEnemies_rangedEnemies, PFEnemies_RANGEDENEMYMAX,
+    PFEnemies_RANGEDSPAWNAMOUNT, PFEnemies_RANGEDENEMYSIZE,
+    PFEnemies_RANGEDENEMYHEALTH, PFEnemies_RANGEDENEMYLAYER,
+    "ranged");
   //setting up movement for the sprites
   PFSetUp_movement();
   //Creating platforms
@@ -165,10 +177,19 @@ function draw() {
 
   //Calculating gravity on sprites first
   PFWorld_setGravity();
-  //Seeing if sprite is on a surface second, if its on a surface, because is called after gravity it will
-  //overwrite the onSurface = false in gravity.
+  //Seeing if sprite is on a surface. 
   PFWorld_checkFloorTime();
-  PFEnemies_WEMove();
+
+  //Enemy movement for ranged enemies
+  PFEnemies_move(PFEnemies_rangedEnemies, PFEnemies_rangedEnemyRange,
+    PFEnemies_RANGEDENEMYIDLESPEED, PFEnemies_RANGEDIDLETIME,
+    PFEnemies_RANGEDSPEED, PFEnemies_RANGEDJUMPSTRENGTH,
+    PFEnemies_RANGEDPROXIMITY);
+  //Enemy movement for weak enemies
+  PFEnemies_move(PFEnemies_weakEnemies, PFEnemies_weakEnemyRange,
+    PFEnemies_WEAKIDLESPEED, PFEnemies_WEAKIDLETIME,
+    PFEnemies_WEAKENEMYSPEED, PFEnemies_WEAKENEMYJUMPSTRENGTH,
+    PFEnemies_WEAKPROXIMITY);
 
   //Checking if player is dead
   PFManager_checkDeath();
@@ -226,7 +247,7 @@ function PFSetUp_createSprites() {
   PFSetUp_player.collidingFrames = 0;
   PFSetUp_player.color = PFSetUp_PLAYERCOLOR;
   //Hit colddown
-  PFSetUp_player.onColdDown = false;
+  PFSetUp_player.immune = false;
   PFSetUp_player.stunned = false;
   PFSetUp_player.layer = PFSetUp_PLAYERLAYER;
 
@@ -453,13 +474,13 @@ function PFSetUp_calculateSwingPoint() {
   //If mouse is above the player swing up, other wise swing below.
   if (dy < 1) {
     yValue = PFSetUp_player.y - (PFSetUp_SWORDSWINGDISTANCE * Math.sin(theta));
-  } else {yValue = PFSetUp_player.y + (PFSetUp_SWORDSWINGDISTANCE * Math.sin(theta));}
-  
+  } else { yValue = PFSetUp_player.y + (PFSetUp_SWORDSWINGDISTANCE * Math.sin(theta)); }
+
 
   //Depending on whether player is swinging to the left or right, shift the loucation of
   //the swing point
-  if (PFSetUp_swordDir === "right") {xValue += PFSetUp_player.x}
-  else {xValue = PFSetUp_player.x - xValue};
+  if (PFSetUp_swordDir === "right") { xValue += PFSetUp_player.x }
+  else { xValue = PFSetUp_player.x - xValue };
 
   //Moving swing point to calculated loucation
   PFSetUp_swordSwingPoint.pos = { x: xValue, y: yValue };
