@@ -18,7 +18,7 @@ const PFWorld_GRAVITYACCELERATION = 0.75;
 const PFWorld_GRAVITYMAX = 14;
 
 //Array of gravity effected sprites
-const PFWorld_GRAVITYEFFECTEDSPRITES = [];
+var PFWorld_gravityEffectedSprites = [];
 
 //Ground variables
 const PFWorld_GRASSCOLOR = "#4eff70";
@@ -68,8 +68,8 @@ var PFWorld_terrainTriggerPoint = PFWorld_TRIGGERDISTANCE / 2;
 //called by: draw()
 /*************************************************************/
 function PFWorld_setGravity() {
-  for (i = 0; i < PFWorld_GRAVITYEFFECTEDSPRITES.length; i++) {
-    let sprite = PFWorld_GRAVITYEFFECTEDSPRITES[i];
+  for (i = 0; i < PFWorld_gravityEffectedSprites.length; i++) {
+    let sprite = PFWorld_gravityEffectedSprites[i];
 
     //Accelerating the sprite into the floor
     if (sprite.vel.y < PFWorld_GRAVITYMAX) {
@@ -85,8 +85,8 @@ function PFWorld_setGravity() {
 //called by: draw()
 /*************************************************************/
 function PFWorld_checkFloorTime() {
-  for (i = 0; i < PFWorld_GRAVITYEFFECTEDSPRITES.length; i++) {
-    let sprite = PFWorld_GRAVITYEFFECTEDSPRITES[i];
+  for (i = 0; i < PFWorld_gravityEffectedSprites.length; i++) {
+    let sprite = PFWorld_gravityEffectedSprites[i];
 
     sprite.collidingFrames = platformGroup.colliding(sprite);
 

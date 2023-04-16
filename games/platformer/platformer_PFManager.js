@@ -96,6 +96,7 @@ function PFManager_restart() {
   PFEnemies_weakEnemyAlive = 0;
   PFEnemies_weakEnemies = [];
   PFEnemies_rangedEnemies = [];
+  PFWorld_gravityEffectedSprites = [];
   setup();
 }
 

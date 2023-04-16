@@ -252,7 +252,7 @@ function PFSetUp_createSprites() {
   PFSetUp_player.layer = PFSetUp_PLAYERLAYER;
 
   //Adding to gravity effected sprites
-  PFWorld_GRAVITYEFFECTEDSPRITES.push(PFSetUp_player);
+  PFWorld_gravityEffectedSprites.push(PFSetUp_player);
 
   //Adding to group of sprites that needs to be cleared when player dies
   gameSprites.add(PFSetUp_player);

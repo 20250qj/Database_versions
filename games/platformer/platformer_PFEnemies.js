@@ -32,7 +32,7 @@ const PFEnemies_ENEMYIDLECOLOR = "#ff7900";
 const PFEnemies_ENEMYCOLOR = "#ff2675";
 var PFEnemies_weakEnemyRange;
 
-const PFEnemies_WEAKSPAWNAMOUNT = 4;
+const PFEnemies_WEAKSPAWNAMOUNT = 0;
 const PFEnemies_WEAKENEMYSPEED = 8;
 const PFEnemies_WEAKIDLESPEED = 1;
 const PFEnemies_WEAKIDLETIME = 1500;
@@ -61,12 +61,14 @@ var PFEnemies_rangedEnemyRange;
 const PFEnemies_PROJECTILESIZE = 12;
 const PFEnemies_PROJECTILECOLOR = "#ff2675";
 const PFEnemies_PROJECTILEOFFSET = 25;
-const PFEnemies_PROJECTILESPEED = 15;
+const PFEnemies_PROJECTILESPEED = 40;
 const PFEnemies_PROJECTILEDESPAWNTIME = 1000;
 const PFEnemies_PROJECTTILEKNOCKBACKX = 5;
 const PFEnemies_PROJECTTILEKNOCKBACKY = -5;
 const PFEnemies_PROJECTILEDAMAGE = 1;
 const PFEnemies_PROJECTTILESTUNDUR = 300;
+const PFEnemies_PROJECTILEROTATIONSPEED = 200;
+const PFEnemies_PROJECTILEMINIMALSPEED = 7;
 
 
 //
@@ -123,7 +125,7 @@ function PFEnemies_spawnEnemies(x, y, enemies, max, spawnAmount, size, hp, layer
     //Adding to groups
     enemyWave.add(enemy);
     gameSprites.add(enemy);
-    PFWorld_GRAVITYEFFECTEDSPRITES.push(enemy)
+    PFWorld_gravityEffectedSprites.push(enemy)
   }
   //Resetting the collider for the new enemies
   PFSetUp_sword.overlapping(enemyWave, PFEnemies_swordHit);
@@ -207,9 +209,10 @@ function PFEnemies_swordHit(sword, enemy) {
 
   //Remove enemy if is dead
   if (enemy.health <= 0) {
-    //Removing from the array
+    //Removing from the arrays
     if (enemy.type === "ranged") { PFEnemies_rangedEnemies.splice(PFEnemies_rangedEnemies.indexOf(enemy), 1); }
     else { PFEnemies_weakEnemies.splice(PFEnemies_weakEnemies.indexOf(enemy), 1); }
+    PFWorld_gravityEffectedSprites.splice(PFWorld_gravityEffectedSprites.indexOf(enemy), 1);
     enemy.remove();
   }
 }
@@ -240,8 +243,9 @@ function PFEnemies_move(enemies, range, idleSpeed, idleTime, speed, jumpStrength
 
     //Kill enemy if they are too far away
     if (abs(dx) > 2.5 * PFWorld_terrainTriggerPoint) {
-      //removing from array
+      //removing from arrays
       enemies.splice(enemies.indexOf(enemy), 1);
+      PFWorld_gravityEffectedSprites.splice(PFWorld_gravityEffectedSprites.indexOf(enemy), 1);
       enemy.remove();
     }
 
@@ -299,6 +303,9 @@ function PFEnemies_move(enemies, range, idleSpeed, idleTime, speed, jumpStrength
 //and the variables associsated with that source of damage.
 /*************************************************************/
 function PFEnemies_hit(player, source, damage, knockBackX, knockBackY, stunDur, type) {
+//If projectile is too slow then don't do damage
+ if (type === "ranged" && Math.abs(source.vel.x) < PFEnemies_PROJECTILEMINIMALSPEED) {return;}
+  
   //Can only stun the player if they are not in immune period
   if (player.stunned === false && player.immune === false) {
     //Timeout function that enables the player to move again after a cold down
@@ -322,6 +329,8 @@ function PFEnemies_hit(player, source, damage, knockBackX, knockBackY, stunDur, 
 
     if (type === "ranged") {
       source.hit = true;
+      //Removing source from arrays
+      PFWorld_gravityEffectedSprites.splice(PFWorld_gravityEffectedSprites.indexOf(source), 1);
       source.remove();
     }
 
@@ -376,6 +385,7 @@ function PFEnemies_rangedAttack(enemy, dx, dy) {
   projectile.vel.y = yVel;
   projectile.color = PFEnemies_PROJECTILECOLOR;
   projectile.hit = false;
+  projectile.rotationSpeed = PFEnemies_PROJECTILEROTATIONSPEED;
 
   enemy.rangedColdDown = true;
   //Put enemy on range colddown
@@ -392,6 +402,7 @@ function PFEnemies_rangedAttack(enemy, dx, dy) {
   //Adding to projectile group
   projectTileGroup.add(projectile);
   gameSprites.add(projectile);
+  PFWorld_gravityEffectedSprites.push(projectile);
 }
 //
 /**************************************************************************************************************/
