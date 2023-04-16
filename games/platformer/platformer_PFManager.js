@@ -33,7 +33,7 @@ click.volume = 0.2;
 //called by: multiple functions in the enemies module
 /*************************************************************/
 function PFManager_checkDeath() {
-  if (PFSetUp_player.health === 0) {
+  if (PFSetUp_player.health <= 0) {
     console.log("Player died");
     PFSetUp_playerDied = true;
 

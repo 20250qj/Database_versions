@@ -32,7 +32,7 @@ const PFEnemies_ENEMYIDLECOLOR = "#ff7900";
 const PFEnemies_ENEMYCOLOR = "#ff2675";
 var PFEnemies_weakEnemyRange;
 
-const PFEnemies_WEAKSPAWNAMOUNT = 0;
+const PFEnemies_WEAKSPAWNAMOUNT = 2;
 const PFEnemies_WEAKENEMYSPEED = 8;
 const PFEnemies_WEAKIDLESPEED = 1;
 const PFEnemies_WEAKIDLETIME = 1500;
@@ -53,22 +53,24 @@ const PFEnemies_RANGEDENEMYIDLESPEED = 2;
 const PFEnemies_RANGEDIDLETIME = 2000;
 const PFEnemies_RANGEDSPEED = 4;
 const PFEnemies_RANGEDJUMPSTRENGTH = -15;
-const PFEnemies_RANGEDPROXIMITY = 400;
-const PFEnemies_RANGEDATTACKINTERVAL = 700;
+const PFEnemies_RANGEDPROXIMITY = 700;
+const PFEnemies_RANGEDATTACKINTERVAL = 350;
 var PFEnemies_rangedEnemyRange;
 
 //Ranged enemy projectile variables
-const PFEnemies_PROJECTILESIZE = 12;
+const PFEnemies_PROJECTILESIZE = 15;
 const PFEnemies_PROJECTILECOLOR = "#ff2675";
 const PFEnemies_PROJECTILEOFFSET = 25;
 const PFEnemies_PROJECTILESPEED = 40;
-const PFEnemies_PROJECTILEDESPAWNTIME = 1000;
+const PFEnemies_PROJECTILEDESPAWNTIME = 600;
 const PFEnemies_PROJECTTILEKNOCKBACKX = 5;
 const PFEnemies_PROJECTTILEKNOCKBACKY = -5;
-const PFEnemies_PROJECTILEDAMAGE = 1;
+const PFEnemies_PROJECTILEDAMAGE = 0.2;
 const PFEnemies_PROJECTTILESTUNDUR = 300;
-const PFEnemies_PROJECTILEROTATIONSPEED = 200;
-const PFEnemies_PROJECTILEMINIMALSPEED = 7;
+const PFEnemies_PROJECTILEROTATIONSPEED = 10;
+const PFEnemies_PROJECTILEDRAG = 0;
+const PFEnemies_PROJECTILEBOUNCINESS = 0;
+const PFEnemies_PROJECTILEYVELCORRECTION = -6;
 
 
 //
@@ -303,9 +305,6 @@ function PFEnemies_move(enemies, range, idleSpeed, idleTime, speed, jumpStrength
 //and the variables associsated with that source of damage.
 /*************************************************************/
 function PFEnemies_hit(player, source, damage, knockBackX, knockBackY, stunDur, type) {
-//If projectile is too slow then don't do damage
- if (type === "ranged" && Math.abs(source.vel.x) < PFEnemies_PROJECTILEMINIMALSPEED) {return;}
-  
   //Can only stun the player if they are not in immune period
   if (player.stunned === false && player.immune === false) {
     //Timeout function that enables the player to move again after a cold down
@@ -379,6 +378,8 @@ function PFEnemies_rangedAttack(enemy, dx, dy) {
 
   //if player is above the enemy then projectile needs to go up
   if (dy > 0) { yVel = -yVel };
+  //Makes the projectile fire up sligthly if there is a small difference to counteract gravity
+  if (dy < PFSetUp_PLAYERWIDTH / 2 && dy > -PFSetUp_PLAYERWIDTH / 2) {yVel = PFEnemies_PROJECTILEYVELCORRECTION};
 
   projectile = new Sprite(x, enemy.y, PFEnemies_PROJECTILESIZE, PFEnemies_PROJECTILESIZE, "d");
   projectile.vel.x = xVel;
@@ -386,6 +387,8 @@ function PFEnemies_rangedAttack(enemy, dx, dy) {
   projectile.color = PFEnemies_PROJECTILECOLOR;
   projectile.hit = false;
   projectile.rotationSpeed = PFEnemies_PROJECTILEROTATIONSPEED;
+  projectile.drag = PFEnemies_PROJECTILEDRAG;
+  projectile.bounciness = PFEnemies_PROJECTILEBOUNCINESS;
 
   enemy.rangedColdDown = true;
   //Put enemy on range colddown
@@ -395,7 +398,7 @@ function PFEnemies_rangedAttack(enemy, dx, dy) {
   //Removing the projectile after a set time
   setTimeout(_ => {
     //Making sure that it dosent clear the projectile when it has already been cleared
-    if (projectile.hit === true || PFSetUp_gameStarted === false) {return;}
+    if (projectile.hit !== false || PFSetUp_gameStarted === false) { return; }
     projectile.remove();
   }, PFEnemies_PROJECTILEDESPAWNTIME);
 
