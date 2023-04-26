@@ -15,14 +15,14 @@ console.log('%c' + MODULENAME + ': ', 'color: blue;');
 
 //Enemy variables
 const PFEnemies_FRICTION = 0;
-const PFEnemies_MAXENEMYAMOUNT = 30;
 const PFEnemies_BOUNCINESS = 0;
 const PFEnemies_ENEMYIMMUNETIME = 400;
+const PFEnemies_SPAWNHEIGHT = 100;
 var PFEnemies_weakEnemies = [];
 var PFEnemies_rangedEnemies = [];
 
 //Weak enemy variables
-const PFEnemies_WEAKENEMYMAX = 50;
+const PFEnemies_WEAKENEMYMAX = 1000;
 const PFEnemies_WEAKENEMYLAYER = 2;
 const PFEnemies_WEAKENEMYSIZE = 50;
 const PFEnemies_WEAKENEMIESSPAWNTIME = 5000;
@@ -32,10 +32,10 @@ const PFEnemies_ENEMYIDLECOLOR = "#ff7900";
 const PFEnemies_ENEMYCOLOR = "#ff2675";
 var PFEnemies_weakEnemyRange;
 
-const PFEnemies_WEAKSPAWNAMOUNT = 2;
+const PFEnemies_WEAKSPAWNAMOUNT = 4;
 const PFEnemies_WEAKENEMYSPEED = 8;
 const PFEnemies_WEAKIDLESPEED = 1;
-const PFEnemies_WEAKIDLETIME = 1500;
+const PFEnemies_WEAKIDLETIME = 3000;
 const PFEnemies_WEAKENEMYJUMPSTRENGTH = -20;
 const PFEnemies_WEAKENEMYXKNOCKBACK = 5;
 const PFEnemies_WEAKENEMYYKNOCKBACK = -10;
@@ -45,32 +45,33 @@ const PFEnemies_WEAKDAMAGE = 1;
 
 //Ranged enemy variables
 const PFEnemies_RANGEDSPAWNAMOUNT = 2;
-const PFEnemies_RANGEDENEMYMAX = 10;
+const PFEnemies_RANGEDENEMYMAX = 1000;
 const PFEnemies_RANGEDENEMYSIZE = 50;
 const PFEnemies_RANGEDENEMYHEALTH = 2;
 const PFEnemies_RANGEDENEMYLAYER = 2;
 const PFEnemies_RANGEDENEMYIDLESPEED = 2;
-const PFEnemies_RANGEDIDLETIME = 2000;
+const PFEnemies_RANGEDIDLETIME = 3000;
 const PFEnemies_RANGEDSPEED = 4;
 const PFEnemies_RANGEDJUMPSTRENGTH = -15;
-const PFEnemies_RANGEDPROXIMITY = 700;
-const PFEnemies_RANGEDATTACKINTERVAL = 350;
+const PFEnemies_RANGEDPROXIMITY = 500;
+const PFEnemies_RANGEDATTACKINTERVAL = 100;
 var PFEnemies_rangedEnemyRange;
 
 //Ranged enemy projectile variables
-const PFEnemies_PROJECTILESIZE = 15;
+const PFEnemies_PROJECTILESIZE = 13;
 const PFEnemies_PROJECTILECOLOR = "#ff2675";
 const PFEnemies_PROJECTILEOFFSET = 25;
-const PFEnemies_PROJECTILESPEED = 40;
-const PFEnemies_PROJECTILEDESPAWNTIME = 600;
-const PFEnemies_PROJECTTILEKNOCKBACKX = 5;
-const PFEnemies_PROJECTTILEKNOCKBACKY = -5;
-const PFEnemies_PROJECTILEDAMAGE = 0.2;
-const PFEnemies_PROJECTTILESTUNDUR = 300;
-const PFEnemies_PROJECTILEROTATIONSPEED = 10;
+const PFEnemies_PROJECTILESPEED = 35;
+const PFEnemies_PROJECTILEDESPAWNTIME = 700;
+const PFEnemies_PROJECTTILEKNOCKBACKX = 2.5;
+const PFEnemies_PROJECTTILEKNOCKBACKY = -2.5;
+const PFEnemies_PROJECTILEDAMAGE = 0.1;
+const PFEnemies_PROJECTTILESTUNDUR = 100;
+const PFEnemies_PROJECTILEROTATIONSPEED = 200;
 const PFEnemies_PROJECTILEDRAG = 0;
 const PFEnemies_PROJECTILEBOUNCINESS = 0;
-const PFEnemies_PROJECTILEYVELCORRECTION = -6;
+const PFEnemies_PROJECTILEYVELCORRECTION = -5;
+const PFEnemies_PROJECTILEMINXVEL = 2;
 
 
 //
@@ -100,10 +101,10 @@ function PFEnemies_spawnEnemies(x, y, enemies, max, spawnAmount, size, hp, layer
   for (i = 0; i < spawnAmount; i++) {
     let enemy;
     if (type === "weak") {
-      enemy = new Sprite(random(x, y), random(height + size * 2, size * 2),
+      enemy = new Sprite(random(x, y), PFEnemies_SPAWNHEIGHT,
         size, size, "d");
     } else if (type === "ranged") {
-      enemy = new Sprite(random(x, y), random(height + size * 2, size * 2), size, size, "d");
+      enemy = new Sprite(random(x, y), PFEnemies_SPAWNHEIGHT, size, size, "d");
       //Drawing the triangle ontop of the enemy otherwise it dosent count as a sprite
       enemy.draw = function() { triangle(-size / 2, size / 2, 0, -size / 2, size / 2, size / 2); };
     }
@@ -130,92 +131,63 @@ function PFEnemies_spawnEnemies(x, y, enemies, max, spawnAmount, size, hp, layer
     PFWorld_gravityEffectedSprites.push(enemy)
   }
   //Resetting the collider for the new enemies
-  PFSetUp_sword.overlapping(enemyWave, PFEnemies_swordHit);
+  PFSetUp_sword.overlapping(enemyWave, (sword, enemy) => { PFEnemies_hit(enemy, sword, PFSetUp_SWORDDAMAGE, PFSetUp_SWORDXKNOCKBACK, PFSetUp_SWORDYKNOCKBACK, PFSetUp_SWORDSTUNDUR); });
 
   //Colliders
   if (type === "ranged") {
-    PFSetUp_player.colliding(projectTileGroup, (player, enemy) => {
+    PFSetUp_player.colliding(projectileGroup, (player, enemy) => {
       PFEnemies_hit(player, enemy,
         PFEnemies_PROJECTILEDAMAGE, PFEnemies_PROJECTTILEKNOCKBACKX,
-        PFEnemies_PROJECTTILEKNOCKBACKY, PFEnemies_PROJECTTILESTUNDUR,
-        type)
+        PFEnemies_PROJECTTILEKNOCKBACKY, PFEnemies_PROJECTTILESTUNDUR);
     });
-    PFSetUp_player.collides(projectTileGroup, (player, enemy) => {
+    PFSetUp_player.collides(projectileGroup, (player, enemy) => {
       PFEnemies_hit(player, enemy,
         PFEnemies_PROJECTILEDAMAGE, PFEnemies_PROJECTTILEKNOCKBACKX,
-        PFEnemies_PROJECTTILEKNOCKBACKY, PFEnemies_PROJECTTILESTUNDUR,
-        type)
+        PFEnemies_PROJECTTILEKNOCKBACKY, PFEnemies_PROJECTTILESTUNDUR);
     });
   } else if (type === "weak") {
     PFSetUp_player.colliding(enemyWave, (player, enemy) => {
       PFEnemies_hit(player, enemy,
         PFEnemies_WEAKDAMAGE, PFEnemies_WEAKENEMYXKNOCKBACK,
-        PFEnemies_WEAKENEMYYKNOCKBACK, PFEnemies_WEAKENEMYSTUNDUR,
-        type)
+        PFEnemies_WEAKENEMYYKNOCKBACK, PFEnemies_WEAKENEMYSTUNDUR);
     });
     PFSetUp_player.collides(enemyWave, (player, enemy) => {
       PFEnemies_hit(player, enemy,
         PFEnemies_WEAKDAMAGE, PFEnemies_WEAKENEMYXKNOCKBACK,
-        PFEnemies_WEAKENEMYYKNOCKBACK, PFEnemies_WEAKENEMYSTUNDUR,
-        type)
+        PFEnemies_WEAKENEMYYKNOCKBACK, PFEnemies_WEAKENEMYSTUNDUR);
     });
   }
+  //Spike collision
+  enemyWave.collides(spikeGroup, (enemy, spike) => {
+    PFEnemies_hit(enemy, spike,
+      PFWorld_SPIKEDAMAGE, PFWorld_SPIKEXKNOCKBACK,
+      PFWorld_SPIKEYKNOCKBACK, PFWorld_SPIKESTUNDUR);
+  });
+  enemyWave.colliding(spikeGroup, (enemy, spike) => {
+    PFEnemies_hit(enemy, spike,
+      PFWorld_SPIKEDAMAGE, PFWorld_SPIKEXKNOCKBACK,
+      PFWorld_SPIKEYKNOCKBACK, PFWorld_SPIKESTUNDUR);
+  });
 }
 
 /*************************************************************/
-//PFEnemies_swordHit()
-//knocks back enemy when is hit
-//called as call back by collides function
-//input: sword, the specific enemy that was hit
+//PFEnemies_setImmune()
+//Sets a specific target back to the false immune state after being hit, and remove them if they are dead.
+//called by PFEnemies_hit function after a target has been hit and a timeout.
+//input: the target that was hit, its original colour and any array that it was in.
 /*************************************************************/
-function PFEnemies_swordHit(sword, enemy) {
-  //Only deals damage if player is actually swinging the sword
-  if (PFSetUp_swordSwinging === false) { return; };
+function PFEnemies_setImmune(target, color, array) {
+  target.immune = false;
+  target.color = color;
 
-  //Can only stun enemy when they can be hit again (not in immune period)
-  if (enemy.stunned === false && enemy.immune === false) {
-    //Timeout function that enables the enemy to move again after a cold down
-    enemy.stunned = true;
-
-    setTimeout(function() {
-      enemy.stunned = false;
-    }, PFSetUp_SWORDSTUNDUR);
-
-    //Determining which side the enemy was hit from, then sending the enemy in that direction
-    let dx = enemy.x - PFSetUp_player.x;
-    if (dx > 0) { enemy.vel.x = PFEnemies_WEAKENEMYXKNOCKBACK; }
-    else { enemy.vel.x = -PFEnemies_WEAKENEMYXKNOCKBACK; };
-    enemy.vel.y = PFSetUp_SWORDYKNOCKBACK;
-  }
-
-  if (enemy.immune === false) {
-    enemy.onSurface = false;
-    enemy.health -= PFSetUp_SWORDDAMAGE;
-    enemy.color = PFEnemies_ENEMYHITCOLOR;
-
-    //hit audio, is cloned to allow mutiple of the same audio to be played at the same time
-    let hitClone = hit.cloneNode(true);
-    hitClone.volume = 0.3;
-    hitClone.play();
-
-    console.log("PFEnemies_swordHit();");
-
-    //Putting enemy on hit cold down
-    enemy.immune = true;
-  } else { return; };
-  //Timeout function that enables the enemy to be hit again after a cold down
-  setTimeout(function() {
-    enemy.immune = false;
-    enemy.color = PFEnemies_ENEMYCOLOR;
-  }, PFEnemies_ENEMYIMMUNETIME);
-
-  //Remove enemy if is dead
-  if (enemy.health <= 0) {
+  //Remove target if is dead
+  if (target.health <= 0 && PFSetUp_gameStarted === true) {
     //Removing from the arrays
-    if (enemy.type === "ranged") { PFEnemies_rangedEnemies.splice(PFEnemies_rangedEnemies.indexOf(enemy), 1); }
-    else { PFEnemies_weakEnemies.splice(PFEnemies_weakEnemies.indexOf(enemy), 1); }
-    PFWorld_gravityEffectedSprites.splice(PFWorld_gravityEffectedSprites.indexOf(enemy), 1);
-    enemy.remove();
+    if (array !== undefined) { console.log("yes"); array.splice(array.indexOf(target), 1); }
+    //Removing from gravity effected sprites
+    PFWorld_gravityEffectedSprites.splice(PFWorld_gravityEffectedSprites.indexOf(target), 1);
+    //Removing the sprite
+    target.remove();
   }
 }
 
@@ -243,8 +215,8 @@ function PFEnemies_move(enemies, range, idleSpeed, idleTime, speed, jumpStrength
     let dx = enemy.x - PFSetUp_player.x;
     let dy = enemy.y - PFSetUp_player.y;
 
-    //Kill enemy if they are too far away
-    if (abs(dx) > 2.5 * PFWorld_terrainTriggerPoint) {
+    //Kill enemy if they are too far away or if they are dead
+    if (abs(dx) > 1.3 * PFWorld_TRIGGERDISTANCE) {
       //removing from arrays
       enemies.splice(enemies.indexOf(enemy), 1);
       PFWorld_gravityEffectedSprites.splice(PFWorld_gravityEffectedSprites.indexOf(enemy), 1);
@@ -253,6 +225,7 @@ function PFEnemies_move(enemies, range, idleSpeed, idleTime, speed, jumpStrength
 
     //Move around or idle if player is too far away.
     if (abs(dx) > range && enemy.idling === false) {
+      enemy.vel.x = 0;
       //Determining random behaviour based off a random number
       let ranNum = Math.round(random(1, 4));
       if (ranNum === 2) {
@@ -273,8 +246,8 @@ function PFEnemies_move(enemies, range, idleSpeed, idleTime, speed, jumpStrength
       enemy.idling = false
     };
 
-    //dont move towards player if idle, and make their colour orange
-    if (enemy.idling === true) { enemy.color = PFEnemies_ENEMYIDLECOLOR; continue }
+    //move around randomly if idle, and make their colour orange
+    if (enemy.idling === true) { enemy.color = PFEnemies_ENEMYIDLECOLOR; continue; }
     else if (enemy.immune === false) { enemy.color = PFEnemies_ENEMYCOLOR };
 
     //If difference is positive (below the player), jump when it can.
@@ -284,69 +257,100 @@ function PFEnemies_move(enemies, range, idleSpeed, idleTime, speed, jumpStrength
       enemy.onSurface = false
     };
 
+    //move towards the player if in range
+    if (dx < 0 && enemy.stunned === false) { enemy.vel.x = speed }
+    else if (enemy.stunned === false) { enemy.vel.x = -speed };
+
     //If the enemy is within proximity stop moving towards player, other wise keep moving towards player
     if (abs(dx) <= proximity && enemy.stunned === false) {
       enemy.vel.x = 0;
       //If enemy is ranged then use ranged attack when in proximity
-      if (enemy.type === "ranged") { PFEnemies_rangedAttack(enemy, dx, dy); };
+      if (enemy.type === "ranged" && PFEnemies_rangedEnemies.includes(enemy) === true) { PFEnemies_rangedAttack(enemy, dx, dy); };
       continue;
     };
-    //If difference is negative, player must be to the right. Else is to the left
-    if (dx < 0 && enemy.stunned === false) { enemy.vel.x = speed }
-    else if (enemy.stunned === false) { enemy.vel.x = -speed };
   }
 }
 
 /*************************************************************/
 //PFEnemies_hit()
-//Determines what happens when a srouce of damage hits the player
+//Determines what happens when a source of damage hits a target, either player or enemy
 //called as a callback with weakEnemies and projectiles
-//input: player, the source of damage that hits the player
+//input: target, the source of damage that hits the target
 //and the variables associsated with that source of damage.
 /*************************************************************/
-function PFEnemies_hit(player, source, damage, knockBackX, knockBackY, stunDur, type) {
-  //Can only stun the player if they are not in immune period
-  if (player.stunned === false && player.immune === false) {
-    //Timeout function that enables the player to move again after a cold down
-    player.stunned = true;
+function PFEnemies_hit(target, source, damage, knockBackX, knockBackY, stunDur) {
+
+  //Special exception if the source is a sword
+  if (source.type === "sword") {
+    //If sword is not swinging then cant deal damage
+    if (PFSetUp_swordSwinging === false) { return; }
+    //If sword is used to hit a projectile then remove the projectile
+    else if (target.type === "projectile") { target.hit = true; target.remove(); return; }
+  }
+
+  //Can only stun the target if they are not in immune period
+  if (target.stunned === false && target.immune === false) {
+
+    //Ranged attack cant do damage if too slow
+    if (source.type === "projectile" && Math.abs(source.vel.x) < PFEnemies_PROJECTILEMINXVEL) { return; }
+
+    //Timeout function that enables the target to move again after a cold down
+    target.stunned = true;
     setTimeout(function() {
-      player.stunned = false;
-      //Stopping the player from being knocked back after a colddown
-      player.vel.x = 0;
+      target.stunned = false;
+      //Stopping the target from being knocked back after a colddown
+      target.vel.x = 0;
     }, stunDur);
   }
 
-  if (player.immune === false) {
-    player.onSurface = false;
-    player.color = PFSetUp_PLAYERHITCOLOR;
-    player.health -= damage;
-    console.log("Player has " + player.health + " hp left.")
+  if (target.immune === false) {
+    target.onSurface = false;
+    //Depending on the type of target change their color differently
+    if (target.type !== PFSetUp_player.type) {
+      target.color = PFEnemies_ENEMYHITCOLOR;
+    } else { target.color = PFSetUp_PLAYERHITCOLOR; console.log("Player has " + target.health + " hp left.") }
 
-    //player hit audio
-    oof.currentTime = 0
-    oof.play();
+    //Taking away whatever amount of damage that source deals
+    target.health -= damage;
 
-    if (type === "ranged") {
+    //target hit audio
+    if (target.type !== PFSetUp_player.type) {
+      //hit audio is cloned to allow mutiple of the same audio to be played at the same time
+      let hitClone = hit.cloneNode(true);
+      hitClone.volume = 0.3;
+      hitClone.play();
+    } else {
+      oof.currentTime = 0
+      oof.play();
+    }
+
+    if (source.type === "projectile") {
       source.hit = true;
       //Removing source from arrays
       PFWorld_gravityEffectedSprites.splice(PFWorld_gravityEffectedSprites.indexOf(source), 1);
       source.remove();
     }
 
-    //Determining which side the player was hit from, then sending the player in that direction
+    //Determining which side the target was hit from, then sending the target in that direction
     let dx = source.x - PFSetUp_player.x;
-    if (dx > 0) { player.vel.x = -knockBackX; }
-    else { player.vel.x = knockBackX; };
-    player.vel.y = knockBackY;
+    if (dx > 0) { target.vel.x = -knockBackX; }
+    else { target.vel.x = knockBackX; };
+    target.vel.y = knockBackY;
     console.log("PFEnemies_hit();");
 
-    //Putting player on hit cold down
-    player.immune = true;
+    //Putting target on hit cold down
+    target.immune = true;
 
-    //Timeout function that enables the player to be hit again after a cold down
+    //Timeout function that enables the target to be hit again after a cold down
     setTimeout(function() {
-      player.immune = false;
-      player.color = PFSetUp_PLAYERCOLOR;
+      //Depending on the type of target change their color differently
+      if (target.type === "ranged") {
+        PFEnemies_setImmune(target, PFEnemies_ENEMYCOLOR, PFEnemies_rangedEnemies);
+      }
+      else if (target.type === "weak") { PFEnemies_setImmune(target, PFEnemies_ENEMYCOLOR, PFEnemies_weakEnemies); }
+      else {
+        PFEnemies_setImmune(target, PFSetUp_PLAYERCOLOR);
+      }
     }, PFSetUp_PLAYERIMMUNEDUR);
   }
 }
@@ -358,9 +362,10 @@ function PFEnemies_hit(player, source, damage, knockBackX, knockBackY, stunDur, 
 //input: the ranged enemy, and the difference in distance between player and that enemy.
 /*************************************************************/
 function PFEnemies_rangedAttack(enemy, dx, dy) {
-  //Can't use ranged attack if on colddown
-  if (enemy.rangedColdDown === true) { return; };
+  //Can't use ranged attack if on colddown or enemy is dead/cleared
+  if (enemy.rangedColdDown === true || PFEnemies_rangedEnemies.includes(enemy) !== true) { return; };
   let projectile;
+  let projectileWave = new Group();
   let x;
 
   //Calculating what the y and x velocities will be
@@ -379,7 +384,7 @@ function PFEnemies_rangedAttack(enemy, dx, dy) {
   //if player is above the enemy then projectile needs to go up
   if (dy > 0) { yVel = -yVel };
   //Makes the projectile fire up sligthly if there is a small difference to counteract gravity
-  if (dy < PFSetUp_PLAYERWIDTH / 2 && dy > -PFSetUp_PLAYERWIDTH / 2) {yVel = PFEnemies_PROJECTILEYVELCORRECTION};
+  if (dy < PFSetUp_PLAYERWIDTH / 2 && dy > -PFSetUp_PLAYERWIDTH / 2) { yVel = PFEnemies_PROJECTILEYVELCORRECTION };
 
   projectile = new Sprite(x, enemy.y, PFEnemies_PROJECTILESIZE, PFEnemies_PROJECTILESIZE, "d");
   projectile.vel.x = xVel;
@@ -389,6 +394,7 @@ function PFEnemies_rangedAttack(enemy, dx, dy) {
   projectile.rotationSpeed = PFEnemies_PROJECTILEROTATIONSPEED;
   projectile.drag = PFEnemies_PROJECTILEDRAG;
   projectile.bounciness = PFEnemies_PROJECTILEBOUNCINESS;
+  projectile.type = "projectile";
 
   enemy.rangedColdDown = true;
   //Put enemy on range colddown
@@ -403,9 +409,14 @@ function PFEnemies_rangedAttack(enemy, dx, dy) {
   }, PFEnemies_PROJECTILEDESPAWNTIME);
 
   //Adding to projectile group
-  projectTileGroup.add(projectile);
+  projectileGroup.add(projectile);
   gameSprites.add(projectile);
   PFWorld_gravityEffectedSprites.push(projectile);
+  projectileWave.add(projectile);
+
+  //Setting colliders
+  PFSetUp_sword.overlapping(projectileWave, _ => { PFEnemies_hit(projectile, PFSetUp_sword, PFSetUp_SWORDDAMAGE, PFSetUp_SWORDXKNOCKBACK, PFSetUp_SWORDYKNOCKBACK, PFSetUp_SWORDSTUNDUR); })
+  PFSetUp_sword.overlaps(projectileWave, _ => { PFEnemies_hit(projectile, PFSetUp_sword, PFSetUp_SWORDDAMAGE, PFSetUp_SWORDXKNOCKBACK, PFSetUp_SWORDYKNOCKBACK, PFSetUp_SWORDSTUNDUR); })
 }
 //
 /**************************************************************************************************************/

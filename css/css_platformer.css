@@ -3,7 +3,7 @@
 html, body {
   overflow: hidden;
   color: black;
-  font-family: 'Brush Script MT', cursive;
+  font-family: "Comic Sans MS", "Comic Sans", cursive;
   background-color: #62daff;
 }
 
@@ -76,7 +76,6 @@ html, body {
 .platformer_h {
   color: white;
   font-size: 70px;
-  font-family: 'Brush Script MT', cursive;
   text-shadow: 0px 0px 10px #65a1ff;
   bottom: 65%;
 }
@@ -90,7 +89,6 @@ html, body {
 
 .restartHead {
   font-size: 75px;
-  font-family: 'Brush Script MT', cursive;
   color: #ff2675;
   text-shadow: 0px 0px 10px #ff96bc;
   margin-bottom: 70px;
@@ -122,7 +120,6 @@ html, body {
   bottom: 90%;
   color: white;
   font-size: 40px;
-  font-family: 'Brush Script MT', cursive;
   margin: auto;
   width: 100%;
   display: none;
@@ -134,7 +131,6 @@ html, body {
   bottom: 10%;
   color: white;
   font-size: 65px;
-  font-family: 'Brush Script MT', cursive;
   margin: auto;
   width: 100%;
   display: none;

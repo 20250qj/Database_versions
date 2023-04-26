@@ -16,7 +16,7 @@ console.log('%c' + MODULENAME + ': ', 'color: blue;');
 let PFSetUp_player, PFSetUp_wallTop, PFSetUp_wallLeft, PFSetUp_sword;
 
 //Groups
-let platformGroup, gameSprites, spikeGroup, projectTileGroup;
+let platformGroup, gameSprites, spikeGroup, projectileGroup;
 
 //Wall variables
 const PFSetUp_WALLBOUNCE = 0;
@@ -28,7 +28,7 @@ var PFSetUp_swordSwinging = false;
 var PFSetUp_swordDir = "right";
 const PFSetUp_SWORDSIZE = 85;
 const PFSetUp_SWORDSWINGDISTANCE = 65;
-const PFSetUp_SWORDXKNOCKBACK = 20;
+const PFSetUp_SWORDXKNOCKBACK = -20;
 const PFSetUp_SWORDYKNOCKBACK = -10;
 const PFSetUp_SWORDSTUNDUR = 300;
 const PFSetUp_SWORDROTATIONSPEED = 12;
@@ -119,8 +119,11 @@ function preload() {
 /*************************************************************/
 function setup() {
   cnv = new Canvas(windowWidth, windowHeight);
-  PFEnemies_rangedEnemyRange = width * 0.7;
+  PFEnemies_rangedEnemyRange = width / 2;
   PFEnemies_weakEnemyRange = width / 2;
+
+  PFWorld_PLATFORMMINY = 0.825 * height;
+  PFWorld_PLATFORMMAXY = PFWorld_PLATFORMMINY - PFWorld_PLATFORMMINHEIGHT;
 
   //Resetting camera to be at the start
   camera.x = width / 2;
@@ -130,7 +133,7 @@ function setup() {
   platformGroup = new Group();
   gameSprites = new Group();
   spikeGroup = new Group();
-  projectTileGroup = new Group();
+  projectileGroup = new Group();
 
   //Creating the starting screen floor
   PFWorld_generateGround(0, width, false);
@@ -227,6 +230,7 @@ function PFSetUp_createSprites() {
   PFSetUp_sword = new Sprite(width / 2, height / 2,
     PFSetUp_SWORDSIZE / 2, PFSetUp_SWORDSIZE, "n");
   PFSetUp_sword.layer = PFSetUp_SWORDLAYER;
+  PFSetUp_sword.type = "sword";
   PFSetUp_sword.addImage(sword);
   sword.resize(PFSetUp_SWORDSIZE / 2, PFSetUp_SWORDSIZE);
 
@@ -246,6 +250,7 @@ function PFSetUp_createSprites() {
   PFSetUp_player.bounciness = PFSetUp_PLAYERBOUNCE;
   PFSetUp_player.collidingFrames = 0;
   PFSetUp_player.color = PFSetUp_PLAYERCOLOR;
+  PFSetUp_player.type = "player";
   //Hit colddown
   PFSetUp_player.immune = false;
   PFSetUp_player.stunned = false;

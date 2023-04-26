@@ -28,6 +28,7 @@ const PFWorld_SPIKESIZE = 210;
 const PFWorld_SPIKESTUNDUR = 300;
 const PFWorld_SPIKEXKNOCKBACK = 20;
 const PFWorld_SPIKEYKNOCKBACK = -20;
+const PFWorld_SPIKEDAMAGE = 1;
 
 //Platform variables
 const PFWorld_PLATFORMNUM = 3;
@@ -44,9 +45,9 @@ const PFWorld_PLATFORMMAXDISTANCE = 600;
 const PFWorld_PLATFORMMINDISTANCE = PFWorld_PLATFORMSIZE;
 
 //Max jumpable height, not y limit
-const PFWorld_PLATFORMMAXY = 650;
+var PFWorld_PLATFORMMAXY;
+var PFWorld_PLATFORMMINY;
 
-const PFWorld_PLATFORMMINY = 750;
 const PFWorld_PLATFORMMAXHEIGHT = 250;
 const PFWorld_PLATFORMMINHEIGHT = 150;
 var PFWorld_platFormCheckTries = 0;
@@ -235,16 +236,16 @@ function PFWorld_terrainCheck() {
       , 0);
 
     //Spawning enemies infront of the player everytime they go a certain distance
-    PFEnemies_spawnEnemies(PFWorld_terrainTriggerPoint, PFWorld_terrainTriggerPoint + PFWorld_TRIGGERDISTANCE,
-                          PFEnemies_weakEnemies, PFEnemies_WEAKENEMYMAX, 
-                           PFEnemies_WEAKSPAWNAMOUNT, PFEnemies_WEAKENEMYSIZE, 
-                           PFEnemies_WEAKENEMYHEALTH, PFEnemies_WEAKENEMYLAYER, 
-                           "weak");
-    PFEnemies_spawnEnemies(PFWorld_terrainTriggerPoint, PFWorld_terrainTriggerPoint + PFWorld_TRIGGERDISTANCE,
-                          PFEnemies_rangedEnemies, PFEnemies_RANGEDENEMYMAX, 
-                           PFEnemies_RANGEDSPAWNAMOUNT, PFEnemies_RANGEDENEMYSIZE, 
-                           PFEnemies_RANGEDENEMYHEALTH, PFEnemies_RANGEDENEMYLAYER, 
-                           "ranged");
+    PFEnemies_spawnEnemies(PFWorld_terrainTriggerPoint, PFWorld_terrainTriggerPoint + PFWorld_TRIGGERDISTANCE / 3,
+      PFEnemies_weakEnemies, PFEnemies_WEAKENEMYMAX,
+      PFEnemies_WEAKSPAWNAMOUNT, PFEnemies_WEAKENEMYSIZE,
+      PFEnemies_WEAKENEMYHEALTH, PFEnemies_WEAKENEMYLAYER,
+      "weak");
+    PFEnemies_spawnEnemies(PFWorld_terrainTriggerPoint, PFWorld_terrainTriggerPoint + PFWorld_TRIGGERDISTANCE / 3,
+      PFEnemies_rangedEnemies, PFEnemies_RANGEDENEMYMAX,
+      PFEnemies_RANGEDSPAWNAMOUNT, PFEnemies_RANGEDENEMYSIZE,
+      PFEnemies_RANGEDENEMYHEALTH, PFEnemies_RANGEDENEMYLAYER,
+      "ranged");
   }
 }
 
@@ -284,7 +285,7 @@ function PFWorld_generateSpike(x1, x2) {
 
   //The height of the pipe below is calculated so that there is always enough height for
   //pipe gap, and so the ground will never get negative height.
-  var groundLeftWidth = PFWorld_TRIGGERDISTANCE - random(PFWorld_SPIKESIZE, PFWorld_TRIGGERDISTANCE - PFWorld_SPIKESIZE); 
+  var groundLeftWidth = PFWorld_TRIGGERDISTANCE - random(PFWorld_SPIKESIZE, PFWorld_TRIGGERDISTANCE - PFWorld_SPIKESIZE);
   //Taking out a random amount out of the left side ^^^^
   //such that at the longest and shortest possible width it will still leave a gap.
   var groundRightWidth = PFWorld_TRIGGERDISTANCE - groundLeftWidth; //The right side will be the remaining width
@@ -318,7 +319,7 @@ function PFWorld_generateSpike(x1, x2) {
   spike = new Sprite(spikeXPos, height - PFWorld_GROUNDTHICKNESS / 4, PFWorld_SPIKESIZE * 2, PFWorld_GROUNDTHICKNESS / 2, "s");
   spike.bounciness = PFWorld_PLATFORMBOUNCE;
   spike.addImage(spikes);
-  spikes.resize(PFWorld_SPIKESIZE * 2,  PFWorld_GROUNDTHICKNESS / 2);
+  spikes.resize(PFWorld_SPIKESIZE * 2, PFWorld_GROUNDTHICKNESS / 2);
 
   //Adding to group
   platformGroup.add(groundRight);
@@ -327,55 +328,14 @@ function PFWorld_generateSpike(x1, x2) {
   spikeGroup.add(spike);
 
   //collision
-  PFSetUp_player.colliding(spikeGroup, PFWorld_spikeHit);
-  PFSetUp_player.collides(spikeGroup, PFWorld_spikeHit);
+  PFSetUp_player.colliding(spikeGroup, (target, spike) => {
+    PFEnemies_hit(target, spike, PFWorld_SPIKEDAMAGE, PFWorld_SPIKEXKNOCKBACK, PFWorld_SPIKEYKNOCKBACK, PFWorld_SPIKESTUNDUR, "spike");
+  });
+  PFSetUp_player.collides(spikeGroup, (target, spike) => {
+    PFEnemies_hit(target, spike, PFWorld_SPIKEDAMAGE, PFWorld_SPIKEXKNOCKBACK, PFWorld_SPIKEYKNOCKBACK, PFWorld_SPIKESTUNDUR, "spike");
+  });
 }
 
-
-/*************************************************************/
-//PFWorld_spikeHit()
-//Determines what happens when a spike hits the player
-//called as a callback when player collides with spike
-//input: player, and the spike that collides
-/*************************************************************/
-function PFWorld_spikeHit(player, spike) {
-  if (PFSetUp_player.stunned === false && PFSetUp_player.immune === false) {
-    //Timeout function that enables the player to move again after a cold down
-    PFSetUp_player.stunned = true;
-    setTimeout(function() {
-      PFSetUp_player.stunned = false;
-      //Stopping the player from being knocked back
-      PFSetUp_player.vel.x = 0;
-    }, PFWorld_SPIKESTUNDUR);
-  }
-  //Player on hit cold down, cant be hit again in this duration.
-  if (PFSetUp_player.immune === false) {
-    PFSetUp_player.onSurface = false;
-    PFSetUp_player.color = PFSetUp_PLAYERHITCOLOR;
-    PFSetUp_player.health -= 1;
-    console.log("Player has " + PFSetUp_player.health + " hp left.");
-
-    //player hit audio
-    oof.currentTime = 0;
-    oof.play();
-
-    //Determining which side the player was hit from, then sending the player in that direction
-    let dx = spike.x - PFSetUp_player.x;
-    if (dx > 0) { PFSetUp_player.vel.x = -PFWorld_SPIKEXKNOCKBACK; }
-    else { PFSetUp_player.vel.x = PFWorld_SPIKEXKNOCKBACK; };
-    PFSetUp_player.vel.y = PFWorld_SPIKEYKNOCKBACK;
-    console.log("PFWorld_spikeHit();");
-
-    //Putting player on hit cold down
-    PFSetUp_player.immune = true;
-
-    //Timeout function that enables the player to be hit again after a cold down
-    setTimeout(function() {
-      PFSetUp_player.immune = false;
-      PFSetUp_player.color = PFSetUp_PLAYERCOLOR;
-    }, PFSetUp_PLAYERIMMUNEDUR);
-  }
-}
 //
 /**************************************************************************************************************/
 // END OF TERRAIN GENERATION SECTION OF THE CODE
