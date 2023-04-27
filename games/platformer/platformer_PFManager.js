@@ -20,6 +20,13 @@ const PFManager_BUTTONARRAY = ["startButton", "restartButton", "exitButton", "ba
 var click = new Audio('/game_assets/game_sounds/click.mp3');
 click.volume = 0.2;
 
+//Health bar vars
+var PFManager_healthBar;
+const PFManager_HEALTHBARWIDTH = 90;
+const PFManager_HEALTHBARHEIGHT = 15;
+const PFManager_HEALTHBAROFFSET = 45;
+const PFManager_HEALTHBARCOLOR = "#1cfe6a";
+
 //
 /**************************************************************************************************************/
 // V HTML MANAGER SECTION OF THE CODE V
@@ -139,6 +146,43 @@ function PFManager_addHoverSound() {
     });
   }
 }
+
+/*************************************************************/
+//PFManager_setHealthBar()
+//Draws the health bar for all the sprites
+//called by: draw();
+/*************************************************************/
+function PFManager_setHealthBar() {
+  for (i = 0; i < PFWorld_gravityEffectedSprites.length; i++) {
+    let sprite = PFWorld_gravityEffectedSprites[i];
+    //Creating a heatlh bar if the sprite dosen't have one
+    if (sprite.healthBar === false) {
+      let healthBar;
+      healthBar = new Sprite(sprite.x, sprite.y - PFManager_HEALTHBAROFFSET,
+        PFManager_HEALTHBARWIDTH, PFManager_HEALTHBARHEIGHT, "n");
+      
+      healthBar.color = PFManager_HEALTHBARCOLOR;
+      sprite.bar = healthBar;
+
+      //Adding to group
+      gameSprites.add(healthBar);
+
+      //Health bar created so set to true
+      sprite.healthBar = true;
+      
+      //If the sprite already has a health bar then just move it to the sprite
+    } else if (sprite.healthBar === true) {
+      let barWidth = (sprite.health / sprite.maxHealth) * PFManager_HEALTHBARWIDTH;
+      let healthBar = sprite.bar;
+      healthBar.width = barWidth;
+
+      let barX = sprite.x - PFManager_HEALTHBARWIDTH / 2 + barWidth / 2;
+      //Moving the bar to above the sprite
+      healthBar.pos = { x: barX, y: sprite.y - PFManager_HEALTHBAROFFSET };
+    }
+  }
+}
+
 
 
 //

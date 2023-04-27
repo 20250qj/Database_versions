@@ -111,6 +111,7 @@ function PFEnemies_spawnEnemies(x, y, enemies, max, spawnAmount, size, hp, layer
     //setting properties of enemies
     enemy.friction = PFEnemies_FRICTION;
     enemy.health = hp;
+    enemy.maxHealth = hp;
     enemy.rotationLock = true;
     enemy.onSurface = false;
     enemy.immune = false;
@@ -121,6 +122,8 @@ function PFEnemies_spawnEnemies(x, y, enemies, max, spawnAmount, size, hp, layer
     enemy.layer = layer;
     enemy.rangedColdDown = false;
     enemy.type = type;
+    enemy.healthBar = false;
+    enemy.bar;
 
     //Adding to array of enemies
     enemies.push(enemy);
@@ -186,8 +189,9 @@ function PFEnemies_setImmune(target, color, array) {
     if (array !== undefined) { console.log("yes"); array.splice(array.indexOf(target), 1); }
     //Removing from gravity effected sprites
     PFWorld_gravityEffectedSprites.splice(PFWorld_gravityEffectedSprites.indexOf(target), 1);
-    //Removing the sprite
+    //Removing the sprite and its health bar
     target.remove();
+    (target.bar).remove();
   }
 }
 

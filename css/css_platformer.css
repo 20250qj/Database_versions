@@ -82,7 +82,7 @@ html, body {
 
 /*Game ui css****************************************************************/
 .deathScreen {
-  margin-top: 20%;
+  margin-top: 10%;
   text-align: center;
   display: none;
 }

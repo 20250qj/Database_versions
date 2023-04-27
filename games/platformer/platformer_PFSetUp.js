@@ -14,6 +14,7 @@ console.log('%c' + MODULENAME + ': ', 'color: blue;');
 /*******************************************************/
 //Sprites
 let PFSetUp_player, PFSetUp_wallTop, PFSetUp_wallLeft, PFSetUp_sword;
+const PFSetUp_SETUPSPRITES = [PFSetUp_player, PFSetUp_sword, PFSetUp_wallTop, PFSetUp_wallLeft, PFManager_healthBar];
 
 //Groups
 let platformGroup, gameSprites, spikeGroup, projectileGroup;
@@ -205,6 +206,9 @@ function draw() {
 
   //Check if sword is swinging
   PFSetUp_swordEquipped();
+
+  //Setting the health bar
+  PFManager_setHealthBar();
 }
 
 /*************************************************************/
@@ -255,14 +259,17 @@ function PFSetUp_createSprites() {
   PFSetUp_player.immune = false;
   PFSetUp_player.stunned = false;
   PFSetUp_player.layer = PFSetUp_PLAYERLAYER;
+  PFSetUp_player.healthBar = false;
+  PFSetUp_player.bar;
+  PFSetUp_player.maxHealth = PFSetUp_PLAYERHEALTH;
 
   //Adding to gravity effected sprites
   PFWorld_gravityEffectedSprites.push(PFSetUp_player);
 
   //Adding to group of sprites that needs to be cleared when player dies
-  gameSprites.add(PFSetUp_player);
   gameSprites.add(PFSetUp_wallLeft);
   gameSprites.add(PFSetUp_sword);
+  gameSprites.add(PFSetUp_player);
   gameSprites.add(PFSetUp_wallTop);
 }
 
