@@ -22,10 +22,16 @@ click.volume = 0.2;
 
 //Health bar vars
 var PFManager_healthBar;
-const PFManager_HEALTHBARWIDTH = 90;
-const PFManager_HEALTHBARHEIGHT = 15;
-const PFManager_HEALTHBAROFFSET = 45;
+const PFManager_HEALTHBARWIDTH = 60;
+const PFManager_HEALTHBARHEIGHT = 10;
+const PFManager_HEALTHBARBACKWIDTH = PFManager_HEALTHBARWIDTH + 2;
+const PFManager_HEALTHBARBACKHEIGHT = PFManager_HEALTHBARHEIGHT + 2;
+const PFManager_HEALTHBAROFFSET = 40;
 const PFManager_HEALTHBARCOLOR = "#1cfe6a";
+const PFManager_LOWHEALTHCOLOR = "red";
+const PFManager_MIDHEALTHCOLOR = "orange";
+const PFManager_BARBACKCOLOR = "black";
+const PFManager_HEALTHBARLAYER = 1;
 
 //
 /**************************************************************************************************************/
@@ -34,19 +40,19 @@ const PFManager_HEALTHBARCOLOR = "#1cfe6a";
 //
 
 /*************************************************************/
-//PFManager_checkDeath()
-//Checks whether player is dead and to bring up a death screen
-//or not.
-//called by: multiple functions in the enemies module
+//PFManager_playerDied()
+//function that is called when player is dead
+//called by: PFEnemies_setImmune();
 /*************************************************************/
-function PFManager_checkDeath() {
+function PFManager_playerDied() {
   if (PFSetUp_player.health <= 0) {
     console.log("Player died");
+    console.log("Total points: " + PFSetUp_playerScore);
     PFSetUp_playerDied = true;
 
     //Stopping draw and removing all the sprites
-    PFSetUp_gameStarted = false;
     gameSprites.remove();
+    PFSetUp_gameStarted = false;
 
     //Stopping the music
     backGroundMusic.pause();
@@ -101,6 +107,7 @@ function PFManager_restart() {
   PFSetUp_gameStarted = true;
   PFSetUp_playerDied = false;
   PFEnemies_weakEnemyAlive = 0;
+  PFSetUp_playerScore = 0;
   PFEnemies_weakEnemies = [];
   PFEnemies_rangedEnemies = [];
   PFWorld_gravityEffectedSprites = [];
@@ -158,14 +165,28 @@ function PFManager_setHealthBar() {
     //Creating a heatlh bar if the sprite dosen't have one
     if (sprite.healthBar === false) {
       let healthBar;
+      let healthBarBack;
+      //heatlhBar
       healthBar = new Sprite(sprite.x, sprite.y - PFManager_HEALTHBAROFFSET,
         PFManager_HEALTHBARWIDTH, PFManager_HEALTHBARHEIGHT, "n");
+
+      //the background for the healthbar
+      healthBarBack = new Sprite(sprite.x, sprite.y - PFManager_HEALTHBAROFFSET,
+        PFManager_HEALTHBARBACKWIDTH, PFManager_HEALTHBARBACKHEIGHT, "n"); 
       
       healthBar.color = PFManager_HEALTHBARCOLOR;
+      healthBarBack.color = PFManager_BARBACKCOLOR;
+      
+      //Setting the healthBar a layer ahead.
+      healthBar.layer = PFManager_HEALTHBARLAYER;
+      healthBarBack.layer = PFManager_HEALTHBARLAYER - 1;
+      
       sprite.bar = healthBar;
-
+      sprite.barBack = healthBarBack;
+      
       //Adding to group
       gameSprites.add(healthBar);
+      gameSprites.add(healthBarBack);
 
       //Health bar created so set to true
       sprite.healthBar = true;
@@ -173,17 +194,21 @@ function PFManager_setHealthBar() {
       //If the sprite already has a health bar then just move it to the sprite
     } else if (sprite.healthBar === true) {
       let barWidth = (sprite.health / sprite.maxHealth) * PFManager_HEALTHBARWIDTH;
+      let healthBarBack = sprite.barBack;
       let healthBar = sprite.bar;
+      
       healthBar.width = barWidth;
+      if (sprite.health / sprite.maxHealth <= 0.3) {healthBar.color = PFManager_LOWHEALTHCOLOR}
+      else if ((sprite.health / sprite.maxHealth) <= 0.6) {healthBar.color = PFManager_MIDHEALTHCOLOR};
 
       let barX = sprite.x - PFManager_HEALTHBARWIDTH / 2 + barWidth / 2;
+      
       //Moving the bar to above the sprite
       healthBar.pos = { x: barX, y: sprite.y - PFManager_HEALTHBAROFFSET };
+      healthBarBack.pos = { x: sprite.x, y: sprite.y - PFManager_HEALTHBAROFFSET };
     }
   }
 }
-
-
 
 //
 /**************************************************************************************************************/

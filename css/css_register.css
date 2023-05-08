@@ -2,7 +2,7 @@
 /*Written in term 1 2023****************************************************************/
 body {
   color: black;
-  font-family: 'verdana';
+  font-family: 'Verdana';
 }
 
 /*nav bar****************************************************************/
@@ -61,7 +61,6 @@ body {
   font-size: 75px;
   text-align: center;
   text-shadow: 2px 2px 8px #BFACE2;
-  font-family: "helvetica";
   bottom: 70%;
   position: absolute;
 }

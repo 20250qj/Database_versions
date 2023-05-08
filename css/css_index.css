@@ -2,7 +2,7 @@
 /*Written in term 1 2023****************************************************************/
 body {
   color: black;
-  font-family: "verdana";
+  font-family: 'Verdana';
 }
 
 /*nav bar****************************************************************/
@@ -39,7 +39,6 @@ body {
   font-size: 40px;
   text-align: center;
   text-shadow: 2px 2px 8px #e2daf2;
-  font-family: "helvetica";
   position: absolute;
   bottom: 60%;
   z-index: 1;
@@ -60,7 +59,6 @@ h1 {
   font-size: 70px;
   text-align: center;
   text-shadow: 2px 2px 8px #e2daf2;
-  font-family: "helvetica";
   position: absolute;
   bottom: 65%;
   z-index: 1;

@@ -2,7 +2,7 @@
 /*Written in term 1 2023****************************************************************/
 html, body {
   color: black;
-  font-family: "verdana";
+  font-family: 'Verdana';
   background-color: #62daff;
   overflow: hidden;
 }
@@ -69,7 +69,6 @@ html, body {
   color: white;
   font-size: 70px;
   text-shadow: 2px 2px 8px #00ff1e;
-  font-family: "helvetica";
   bottom: 65%;
 }
 
@@ -80,7 +79,6 @@ html, body {
   bottom: 90%;
   color: white;
   font-size: 40px;
-  font-family: "helvetica";
   margin: auto;
   width: 100%;
   display: none;
@@ -92,7 +90,6 @@ html, body {
   bottom: 10%;
   color: white;
   font-size: 65px;
-  font-family: "helvetica";
   margin: auto;
   width: 100%;
   display: none;

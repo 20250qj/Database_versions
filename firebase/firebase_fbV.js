@@ -6,12 +6,11 @@ console.log('%c' + MODULENAME + ': ', 'color: blue;');
 
 /*dbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdb*/
 // database variables
-const fbV_DETAILS = "userDetails";      //<=============== Firebase paths
 const fbV_ROLES = "userRoles";      //<=============== Firebase paths
-const fbV_FLAPPYSCOREPATH = "userFlappyHighScores";      //<=============== Firebase paths
-const fbV_REGISTRATIONDIR = "registrationDetails";      //<=============== Firebase paths
-const fbV_LOGINDETAILSDIR = "loginDetails";      //<=============== Firebase paths
-const fbV_PLATFORMERSCOREPATH = "userPlatformerHihgScores";
+const fbV_FLAPPYSCOREPATH = "userScores/flappyBird";      //<=============== Firebase paths   
+const fbV_PFSCOREPATH = "userScores/platformer";      //<=============== Firebase paths
+const fbV_REGISTRATIONPATH = "userDetails/registrationDetails";      //<=============== Firebase paths
+const fbV_LOGINDETAILSPATH = "userDetails/loginDetails";      //<=============== Firebase paths
 
 var fbV_loginStatus = 'logged out';
 var fbV_registerStatus = "not registered";
@@ -33,10 +32,24 @@ var fbV_flappyHighScore = {  //<=============== Object to store the scores of th
   photoURL: ''
 }
 
-var fbV_userRoles = {  //<=============== Object to store the role of the current user
-  role: '',
-  name: ''
+var fbV_PFHighScore = {  //<=============== Object to store the scores of the current user
+  highScore: '',
+  score: '',
+  uid: '',
+  name: '',
+  photoURL: ''
 }
+
+let fbV_registerDetails = {  //<=============== Object to store the scores of the current user
+  userName: '',
+  userAge: '',
+  userPN: '',
+  userAddress: '',
+  userCountry: '',
+  userGender: '',
+}
+
+const fbV_USERHIGHSCORES = [fbV_PFHighScore, fbV_flappyHighScore];
 
 var fbV_flappyHighScoreArray = [];   //<=============== Object to store the leaderBoard
 

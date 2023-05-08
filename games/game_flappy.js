@@ -19,7 +19,7 @@ console.log('%c' + MODULENAME + ': ', 'color: blue;');
 const flappy_PIPEWIDTH = 30;
 const flappy_PIPEGAP = 150;
 const flappy_PIPEINTERVAL = 3000;
-const flappy_PIPESPEED = -4;
+const flappy_PIPESPEED = -8;
 const flappy_PIPEDISTANCE = 200;
 const flappy_PIPEBOUNCINESS = 4;
 
@@ -228,12 +228,12 @@ function flappy_createPipes() {
   //Creating the pipes with the previous values.
   pipe_below = new Sprite(width + flappy_PIPEDISTANCE, pipeBelowYPos, flappy_PIPEWIDTH, pipe_below_height, "k");
   pipe_below.vel.x = flappy_PIPESPEED;
-  pipe_below.shapeColor = color("#29ff00");
+  pipe_below.color = "#29ff00";
   pipe_below.bounciness = flappy_PIPEBOUNCINESS;
 
   pipe_above = new Sprite(width + flappy_PIPEDISTANCE, pipeAboveYPos, flappy_PIPEWIDTH, pipe_above_height, "k");
   pipe_above.vel.x = flappy_PIPESPEED;
-  pipe_above.shapeColor = color("#29ff00");
+  pipe_above.color = "#29ff00";
   pipe_above.bounciness = flappy_PIPEBOUNCINESS;
 
   //Calculating the y position of the collider (middle of the space between the pipes).
@@ -323,7 +323,7 @@ function flappy_restart() {
 
   //Writing to data base
   fbV_flappyHighScore.score = flappy_score;
-  fb_writeRec(fbV_DETAILS, fbV_userDetails.uid, fbV_userDetails, fbR_procWriteError);
+  fb_writeRec(fbV_FLAPPYSCOREPATH, fbV_flappyHighScore.uid, fbV_flappyHighScore, fbR_procWriteError);
 
   //Saving values to session storage
   manager_saveValues();

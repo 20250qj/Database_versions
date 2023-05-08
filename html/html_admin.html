@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>admin</title>
+  <meta charset="UTF-8">
+  <meta name="description" content="12COMP admin">
+  <meta name="author" content="???">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- stylesheets *******************************************-->
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="/css/css_admin.css">
+
+  <!-- P5.js & P5.play ***************************************-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.5.0/p5.min.js"></script> 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.10.2/addons/p5.sound.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.dom.min.js"></script>
+  <script src="https://p5play.org/v3/planck.min.js"></script>
+  <script src="https://p5play.org/v3/p5play.js"></script>
+  
+  <!-- firebase start ****************************************-->
+  <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
+  <!-- Firebase App (core Firebase SDK) always required & must be listed 1st -->
+  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-app.js"></script>  
+  <!-- Add Firebase products that you want to use -->
+  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-auth.js"></script>  
+  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-analytics.js"></script> 
+  <!-- firebase end ******************************************-->
+  
+  <!-- JQUERY ************************************************-->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  
+  <!-- Your modules ******************************************-->
+  <script defer src="/firebase/firebase_fb.js"></script>
+  <script defer src="/firebase/firebase_fbR.js"></script>
+  <script defer src="/firebase/firebase_fbV.js"></script>
+  <script defer src="/html/html_js/html_manager.js"></script>
+  <script defer src="/html/html_js/html_admin.js"></script>
+</head>
+
+<body onload="ad_load();" class="w3-grey">
+  <!--***********************************************************
+			ADMIN PAGE 
+  ************************************************************-->
+  <header class="w3-row">
+    <div class="w3-display-container w3-col m12">
+      <img id='img_photoURL' src='/assets/images/dtec_favicon.PNG' 
+        alt="user's profile image" width="60" height="50"
+        style='margin: 8px 8px 8px 8px'>
+  
+      <button id="b_back" class="w3-button w3-border w3-text-white 
+              w3-margin-right" onclick="history.back()">BACK</button>
+    </div>
+  </header>
+  
+  <main class="w3-container">
+    <h1 class="w3-wide">mr Bob's admin page</h1>
+       
+    <nav id="n_admin" class="w3-bar stickyNav">
+      <button id="b_adUser" class="ad_btn w3-button w3-block w3-col m2 
+                                   w3-medium w3-ripple w3-small w3-border"
+              onclick="ad_user()" value="Submit">users
+      </button>
+      <button id="b_adFB" class="ad_btn w3-button w3-block w3-col m2 
+                                 w3-medium w3-ripple w3-small w3-border" 
+              onclick="ad_FB()" value="Submit">FB
+      </button>
+      <button id="b_adPF" class="ad_btn w3-button w3-block w3-col m2 
+                                 w3-medium w3-ripple w3-small w3-border" 
+              onclick="ad_PF()" value="Submit">PF
+      </button>
+    </nav>
+    
+    <div>
+      <div id="d_admin" class="w3-table-all w3-small w3-light-grey 
+                               w3-hoverable w3-border w3-bordered content">
+	    <table id="t_userData"></table>
+	  </div>
+    </div>
+  </main>
+
+    <!--***********************************************************
+	  FIREBASE STATUS
+  ************************************************************-->
+  <section id="s_fbStatus" class="w3-grey">
+    <div class="w3-row w3-padding">
+      <p class="w3-display-container w3-grey w3-col m2">login: <span id="p_fbLogin">n/a  </span></p>
+      <p class="w3-display-container w3-grey w3-col m2">read:  <span id="p_fbReadRec">n/a  </span></p>
+      <p class="w3-display-container w3-grey w3-col m2">read all: <span id="p_fbReadAll">n/a  </span></p>
+      <p class="w3-display-container w3-grey w3-col m2">write: <span id="p_fbWriteRec">n/a</span></p>
+      <p class="w3-display-container w3-grey w3-col m2">debug: <span id="p_debug">n/a</span></p>
+    </div>
+  </section>
+  
+</body>
+</html>
+
+<!--*************************************************************
+//  END OF ADMIN.HTML
+**************************************************************-->

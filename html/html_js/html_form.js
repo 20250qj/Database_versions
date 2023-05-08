@@ -20,10 +20,10 @@ const form_PHONENUMLIMIT = 10;
 const form_PHONENUMMAX = 14;
 
 const form_USERNAMELIMIT = 1;
-const form_USERNAMEMAX = 10;
+const form_USERNAMEMAX = 20;
 
 const form_STRINGLIMIT = 1;
-const form_STRINGMAX = 99;
+const form_STRINGMAX = 20;
 
 //Validation
 let form_validateBool = true;
@@ -36,15 +36,6 @@ let form_userPN;
 let form_userCountry;
 let form_userAddress;
 let form_userGender;
-
-let form_registerDetails = {
-  userName: '',
-  userAge: '',
-  userPN: '',
-  userAddress: '',
-  userCountry: '',
-  userGender: '',
-}
 /*************************************************************/
 //form_validate()
 //validates user input
@@ -70,7 +61,7 @@ function form_validate(value, type, msgId, id, limit, max, comparison) {
     value = value.replace(form_SPACE, "");
 
     if (comparison == "Size") {
-      if (value < limit || value > max || value <= 0 ) {
+      if (value < limit || value > max || value <= 0) {
         form_validateBool = false;
         document.getElementById(msgId).innerHTML = "Value too large or too small.";
         return;
@@ -78,7 +69,7 @@ function form_validate(value, type, msgId, id, limit, max, comparison) {
     }
 
     if (comparison == "Length") {
-      if (value.length < limit || value.length > max || value <= 0 ) {
+      if (value.length < limit || value.length > max || value <= 0) {
         form_validateBool = false;
         document.getElementById(msgId).innerHTML = "Length too long or too short.";
         return;
@@ -170,8 +161,20 @@ function form_write() {
   fbV_registerStatus = "registered";
   sessionStorage.setItem("registerStatus", fbV_registerStatus);
 
-  //Writing details to database
-  fb_writeRec(fbV_DETAILS, fbV_userDetails.uid, form_registerDetails, fbR_procWriteError, fbV_REGISTRATIONDIR, form_registerSuccess);
+  //Writing registration detials to database, and creating the highscores for the user for the first time.
+  for (i = 0; i < fbV_USERHIGHSCORES.length; i++) {
+    let highScores = fbV_USERHIGHSCORES[i];
+    highScores.name = fbV_registerDetails.userName;
+    highScores.score = 0;
+    highScores.highScore = 0;
+    highScores.uid = fbV_userDetails.uid;
+    highScores.photoURL = fbV_userDetails.photoURL;
+  }
+  //Save after writing newly registered data (in callback);
+  fb_writeRec(fbV_FLAPPYSCOREPATH, fbV_flappyHighScore.uid, fbV_flappyHighScore, fbR_procWriteError, manager_saveValues);
+  fb_writeRec(fbV_PFSCOREPATH, fbV_PFHighScore.uid, fbV_PFHighScore, fbR_procWriteError, manager_saveValues);
+
+  fb_writeRec(fbV_REGISTRATIONPATH, fbV_userDetails.uid, fbV_registerDetails, fbR_procWriteError, form_registerSuccess);
 }
 
 /*************************************************************/
@@ -182,12 +185,12 @@ function form_write() {
 function form_validateData() {
   console.log("form_validateData();");
   //Validating data
-  form_registerDetails.userName = form_validate(form_userName, "String", "nameMsg", "userName", form_USERNAMELIMIT, form_USERNAMEMAX);
-  form_registerDetails.userAge = form_validate(form_userAge, "Number", "ageMsg", "userAge", form_AGELIMIT, form_AGEMAX, "Size");
-  form_registerDetails.userPN = form_validate(form_userPN, "Number", "phoneMsg", "userPN", form_PHONENUMLIMIT, form_PHONENUMMAX, "Length");
-  form_registerDetails.userAddress = form_validate(form_userAddress, "String", "addressMsg", "userAddress", form_STRINGLIMIT, form_STRINGMAX);
-  form_registerDetails.userCountry = form_validate(form_userCountry, "String", "countryMsg", "userCountry", form_STRINGLIMIT, form_STRINGMAX);
-  form_registerDetails.userGender = form_userGender;
+  fbV_registerDetails.userName = form_validate(form_userName, "String", "nameMsg", "userName", form_USERNAMELIMIT, form_USERNAMEMAX);
+  fbV_registerDetails.userAge = form_validate(form_userAge, "Number", "ageMsg", "userAge", form_AGELIMIT, form_AGEMAX, "Size");
+  fbV_registerDetails.userPN = form_validate(form_userPN, "Number", "phoneMsg", "userPN", form_PHONENUMLIMIT, form_PHONENUMMAX, "Length");
+  fbV_registerDetails.userAddress = form_validate(form_userAddress, "String", "addressMsg", "userAddress", form_STRINGLIMIT, form_STRINGMAX);
+  fbV_registerDetails.userCountry = form_validate(form_userCountry, "String", "countryMsg", "userCountry", form_STRINGLIMIT, form_STRINGMAX);
+  fbV_registerDetails.userGender = form_userGender;
 }
 
 
@@ -195,12 +198,13 @@ function form_validateData() {
 //form_checkReg()
 //If user is registered already kick them out
 //called on load.
+//input: ids of buttons that needs to be disabled if user is not registered
 /*************************************************************/
 function form_checkReg(ids) {
   console.log("form_checkReg();");
-  
+
   //Get register status from session storage if is not null
-  if (sessionStorage.getItem("registerStatus") !== null) {fbV_registerStatus = sessionStorage.getItem("registerStatus")};
+  if (sessionStorage.getItem("registerStatus") !== null) { fbV_registerStatus = sessionStorage.getItem("registerStatus") };
   console.log("User is " + fbV_registerStatus);
 
 
@@ -214,9 +218,9 @@ function form_checkReg(ids) {
   }
 
   //If user tries to acess register page when they are reigstered, kick them out.
-  if (fbV_registerStatus == "registered" && window.location.href == 
-      "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/html/html_register.html"
-     ) {
+  if (fbV_registerStatus == "registered" && window.location.href ==
+    "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/html/html_register.html"
+  ) {
     alert("You are already registered");
     window.location = "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/index.html";
   }

@@ -4,9 +4,11 @@
 MODULENAME = "html_manager.js";
 console.log('%c' + MODULENAME + ': ', 'color: blue;');
 
-//varaible to store the contents of the leader board
+//array to store the contents of the leader board
 var leaderBoardContents = []
 
+//array to store the names of all the objects that would be saved
+const manager_SAVEOBJECTS = [fbV_userDetails, fbV_flappyHighScore, fbV_registerDetails, fbV_PFHighScore];
 /*************************************************************/
 //manager_checkLeaderBoard(_data)
 //Checks the user high scores, gets data from firebase
@@ -21,13 +23,13 @@ function manager_checkLeaderBoard(_data) {
 
   //Sorts high score from high to low
   _data.sort((a, b) => (a.highScore < b.highScore) ? 1 : -1);
-  
+
   for (i = 0; i < _data.length; i++) {
     //Creating a string that will display the score
     row = _data[i].name + ": " + _data[i].highScore;
     console.log(_data[i].name + ": " + _data[i].highScore);
 
-    leaderBoardContents.push({display: row, photoURL: _data[i].photoURL, highScore: _data[i].highScore});
+    leaderBoardContents.push({ display: row, photoURL: _data[i].photoURL, highScore: _data[i].highScore });
   }
   manager_displayLeaderBoard(leaderBoardContents);
 }
@@ -44,9 +46,9 @@ function manager_displayLeaderBoard(_data) {
 
   //Setting the title now that leader board is loaded
   document.getElementById("leaderBoard_title").innerHTML = "Flappy bird high scores:";
-  
+
   let leaderBoard = document.getElementById("leaderBoard");
-  
+
   for (i = 0; i < _data.length; i++) {
     let display = _data[i].display
 
@@ -65,7 +67,7 @@ function manager_displayLeaderBoard(_data) {
     //Adding user photo on leader board
     let img = document.createElement("img");
     img.src = _data[i].photoURL;
-    
+
     let div2 = document.getElementById('row' + Number(i + 1));
     div2.appendChild(img);
 
@@ -89,8 +91,10 @@ function manager_login() {
   console.log("manager_login();")
   alert("You have logged in!");
 
+  fbV_loginStatus = "logged in";
+
   //Check registraiton if user has logged in
-  fb_readRec(fbV_DETAILS, fbV_userDetails.uid, form_registerDetails, fbR_procRegistration, manager_checkReg, fbV_REGISTRATIONDIR);
+  fb_readRec(fbV_REGISTRATIONPATH, fbV_userDetails.uid, fbV_registerDetails, fbR_procRegistration, manager_checkReg);
 
   //Clearing buttons and saving values
   manager_clearButtons();
@@ -131,11 +135,11 @@ function manager_clearButtons() {
 /*************************************************************/
 function manager_checkLogin(ids) {
   console.log("manager_checkLogin();");
-  
+
   //Get login status from session storage if is not null
-  if (sessionStorage.getItem("loginStatus") !== null) { fbV_loginStatus = sessionStorage.getItem("loginStatus")};
+  if (sessionStorage.getItem("loginStatus") !== null) { fbV_loginStatus = sessionStorage.getItem("loginStatus") };
   console.log("User is " + fbV_loginStatus);
-  
+
   //If not logged in then disable buttons
   if (fbV_loginStatus !== 'logged in' && ids !== null) {
     for (i = 0; i < ids.length; i++) {
@@ -144,20 +148,20 @@ function manager_checkLogin(ids) {
       x.addEventListener("click", manager_disableButton);
     }
   }
-  
+
   //If at home page and logged in, remove login button
-  if (fbV_loginStatus === 'logged in') { 
-    if (window.location.href === 
+  if (fbV_loginStatus === 'logged in') {
+    if (window.location.href ===
       "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/index.html"
-     ){
+    ) {
       manager_clearButtons();
     }
   }
-  
+
   //If at game page somehow without logging in, kick user back to home page
-  if (fbV_loginStatus !== 'logged in' && window.location.href === 
-      "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/html/html_flappy.html"
-     ) {
+  if (fbV_loginStatus !== 'logged in' && window.location.href ===
+    "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/html/html_flappy.html"
+  ) {
     alert("How did you get here without logging in?");
     alert("Not that it matters, go login.");
     window.location = "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/index.html";
@@ -196,22 +200,18 @@ function manager_saveValues() {
 
   //Setting the login status.
   sessionStorage.setItem("loginStatus", fbV_loginStatus);
-  
-  //Creating an array of key value pairs to save to session storage
-  let userDetailsKeys = Object.keys(fbV_userDetails);
-  let userDetailsValues = Object.values(fbV_userDetails);
 
-  let userFlappyHighScoreKeys = Object.keys(fbV_flappyHighScore);
-  let userFlappyHighScoreValues = Object.values(fbV_flappyHighScore);
-  
-  //Saving user details data to session storage
-  for (i = 0; i < userDetailsKeys.length; i++) {
-    sessionStorage.setItem(userDetailsKeys[i], userDetailsValues[i]);
-  }
+  for (i = 0; i < manager_SAVEOBJECTS.length; i++) {
+    let object = manager_SAVEOBJECTS[i];
 
-  //Saving score data to session storage
-  for (i = 0; i < userFlappyHighScoreKeys.length; i++) {
-    sessionStorage.setItem(userFlappyHighScoreKeys[i], userFlappyHighScoreValues[i]);
+    //Creating arrays of key value pairs to save to session storage
+    let objecKeys = Object.keys(object);
+    let objectValues = Object.values(object);
+
+    //Saving values to sesion storage
+    for (i = 0; i < objecKeys.length; i++) {
+      sessionStorage.setItem(objecKeys[i], objectValues[i]);
+    }
   }
 }
 
@@ -223,20 +223,20 @@ function manager_getValues() {
   console.log("manager_getValues();");
 
   //Getting the keys of the objects to iterate through and get the values from session storage
-  let userDetailsKeys = Object.keys(fbV_userDetails);
-  let userFlappyHighScoreKeys = Object.keys(fbV_flappyHighScore)
+  for (i = 0; i < manager_SAVEOBJECTS.length; i++) {
+    let object = manager_SAVEOBJECTS[i];
 
-  for (i = 0; i < userDetailsKeys.length; i++) {
-    fbV_userDetails[userDetailsKeys[i]] = sessionStorage.getItem(userDetailsKeys[i]);
+    //Creating arrays of keys to get from session storage
+    let objecKeys = Object.keys(object);
+
+    //Getting values from session storage
+    for (x = 0; x < objecKeys.length; x++) {
+      object[objecKeys[x]] = sessionStorage.getItem(objecKeys[x]);
+    }
   }
-
-  for (i = 0; i < userFlappyHighScoreKeys.length; i++) {
-    fbV_flappyHighScore[userFlappyHighScoreKeys[i]] = sessionStorage.getItem(userFlappyHighScoreKeys[i]);
-  }
-
-  //Converting to a number
+  
+  //Converting numeric values back to a number
   fbV_flappyHighScore.highScore = Number(fbV_flappyHighScore.highScore);
-  //Converting to a number before writing
   fbV_flappyHighScore.score = Number(fbV_flappyHighScore.score);
 }
 
@@ -247,18 +247,18 @@ function manager_getValues() {
 /*************************************************************/
 function manager_checkReg() {
   console.log("manager_checkReg();");
-  
+
   //Checking if there is registration data
-  if (form_registerDetails.userName === "" || form_registerDetails.userName === null) {
+  if (fbV_registerDetails.userName === "" || fbV_registerDetails.userName === null) {
     fbV_registerStatus = "not registered";
 
     //Going to register page if user is not registered
     alert("Please register to play my games.");
     window.location = "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/html/html_register.html";
   }
-  else {fbV_registerStatus = "registered";}
+  else { fbV_registerStatus = "registered"; }
   console.log("User is " + fbV_registerStatus);
-  
+
   //Saving registerStatus to session storage
   sessionStorage.setItem("registerStatus", fbV_registerStatus);
 }

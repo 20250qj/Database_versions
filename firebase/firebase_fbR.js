@@ -18,20 +18,14 @@ function fbR_procUserLogin(user, _save, loginStatus, _callBack) {
   _save.email = user.email;
   _save.name = user.displayName;
   _save.photoURL = user.photoURL;
-  fb_writeRec(fbV_DETAILS, _save.uid, _save, fbR_procWriteError, fbV_LOGINDETAILSDIR);
 
-  //Creating the user highscore data for the first login, or saving them
-  //if the user has already logged in.
-  fbV_flappyHighScore.uid = _save.uid;
-  fbV_flappyHighScore.name = _save.name;
-  fbV_flappyHighScore.photoURL = _save.photoURL;
+  //Reading the user high scores path and saving it when it is done.
+  fb_readRec(fbV_FLAPPYSCOREPATH, _save.uid, fbV_flappyHighScore, fbR_procUserHighScore, manager_saveValues);
+  fb_readRec(fbV_PFSCOREPATH, _save.uid, fbV_PFHighScore, fbR_procUserHighScore, manager_saveValues);
+  
+  fb_writeRec(fbV_LOGINDETAILSPATH, _save.uid, _save, fbR_procWriteError, _callBack);
 
   console.log('fbR_login: status = ' + loginStatus);
-
-  //Checking if user has a high score or not.
-  if (_callBack !== null) {
-    fb_readRec(fbV_FLAPPYSCOREPATH, fbV_flappyHighScore.uid, fbV_flappyHighScore, fbR_procUserHighScore, _callBack);
-  }
 }
 
 /**************************************************************/
@@ -169,12 +163,7 @@ function fbR_procUserRolesAll(snapshot, _save, readStatus) {
 function fbR_procUserHighScore(snapshot, _save, readStatus, _callBack) {
   console.log("fbR_procUserHighScore();");
   if (snapshot.val() == null) {
-    //If user dosen't have an entry, create one
     readStatus = "Not found";
-    _save.highScore = 0;
-    _save.score = 0;
-    console.log("No existing highScore and score data.")
-    fb_writeRec(fbV_FLAPPYSCOREPATH, _save.uid, fbV_flappyHighScore, fbR_procWriteError);
   }
   else {
     readStatus = "OK";

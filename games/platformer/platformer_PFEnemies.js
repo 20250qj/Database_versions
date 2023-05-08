@@ -43,6 +43,8 @@ const PFEnemies_WEAKENEMYSTUNDUR = 400;
 const PFEnemies_WEAKPROXIMITY = 10;
 const PFEnemies_WEAKDAMAGE = 1;
 
+const PFEnemies_WEAKPOINTS = 100;
+
 //Ranged enemy variables
 const PFEnemies_RANGEDSPAWNAMOUNT = 2;
 const PFEnemies_RANGEDENEMYMAX = 1000;
@@ -56,6 +58,8 @@ const PFEnemies_RANGEDJUMPSTRENGTH = -15;
 const PFEnemies_RANGEDPROXIMITY = 500;
 const PFEnemies_RANGEDATTACKINTERVAL = 100;
 var PFEnemies_rangedEnemyRange;
+
+const PFEnemies_RANGEDPOINTS = 200;
 
 //Ranged enemy projectile variables
 const PFEnemies_PROJECTILESIZE = 13;
@@ -103,10 +107,14 @@ function PFEnemies_spawnEnemies(x, y, enemies, max, spawnAmount, size, hp, layer
     if (type === "weak") {
       enemy = new Sprite(random(x, y), PFEnemies_SPAWNHEIGHT,
         size, size, "d");
+      //Setting the amount of points weak enemies are worth
+      enemy.points = PFEnemies_WEAKPOINTS;
     } else if (type === "ranged") {
       enemy = new Sprite(random(x, y), PFEnemies_SPAWNHEIGHT, size, size, "d");
       //Drawing the triangle ontop of the enemy otherwise it dosent count as a sprite
       enemy.draw = function() { triangle(-size / 2, size / 2, 0, -size / 2, size / 2, size / 2); };
+      //Setting the amount of points ranged enemies are worth
+      enemy.points = PFEnemies_RANGEDPOINTS;
     }
     //setting properties of enemies
     enemy.friction = PFEnemies_FRICTION;
@@ -123,7 +131,10 @@ function PFEnemies_spawnEnemies(x, y, enemies, max, spawnAmount, size, hp, layer
     enemy.rangedColdDown = false;
     enemy.type = type;
     enemy.healthBar = false;
+
+    //Storing the sprites for the front and back of the health bar
     enemy.bar;
+    enemy.barBack;
 
     //Adding to array of enemies
     enemies.push(enemy);
@@ -185,13 +196,23 @@ function PFEnemies_setImmune(target, color, array) {
 
   //Remove target if is dead
   if (target.health <= 0 && PFSetUp_gameStarted === true) {
-    //Removing from the arrays
-    if (array !== undefined) { console.log("yes"); array.splice(array.indexOf(target), 1); }
+    //Removing from the arrays if in one
+    if (array !== undefined) {
+      array.splice(array.indexOf(target), 1);
+      //If array provided then is an enemy that has died, so give score.
+      PFSetUp_playerScore += target.points;
+    }
     //Removing from gravity effected sprites
     PFWorld_gravityEffectedSprites.splice(PFWorld_gravityEffectedSprites.indexOf(target), 1);
     //Removing the sprite and its health bar
     target.remove();
     (target.bar).remove();
+    (target.barBack).remove();
+
+    //Player is died so end game
+    if (target.type === "player") {
+      PFManager_playerDied();
+    }
   }
 }
 
@@ -225,6 +246,8 @@ function PFEnemies_move(enemies, range, idleSpeed, idleTime, speed, jumpStrength
       enemies.splice(enemies.indexOf(enemy), 1);
       PFWorld_gravityEffectedSprites.splice(PFWorld_gravityEffectedSprites.indexOf(enemy), 1);
       enemy.remove();
+      (enemy.bar).remove();
+      (enemy.barBack).remove();
     }
 
     //Move around or idle if player is too far away.
@@ -316,6 +339,8 @@ function PFEnemies_hit(target, source, damage, knockBackX, knockBackY, stunDur) 
 
     //Taking away whatever amount of damage that source deals
     target.health -= damage;
+    //rounding to second decimal place
+    target.health = target.health.toFixed(2);
 
     //target hit audio
     if (target.type !== PFSetUp_player.type) {

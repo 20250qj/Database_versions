@@ -38,7 +38,8 @@ const PFWorld_PLATFORMTHICKNESS = 15;
 const PFWorld_PLATFORMBOUNCE = 0;
 const PFWorld_JUMPCOLDDOWN = 15;
 const PFWorld_PLATFORMFRICTION = 0;
-const PFWorld_platFORMCOLOR = "#ff7a00";
+const PFWorld_PLATFORMCOLOR = "#ff7a00";
+const PFWorld_PLATFORMLAYER = 2;
 
 //platform check function varaibles
 const PFWorld_PLATFORMMAXDISTANCE = 600;
@@ -141,7 +142,8 @@ function PFWorld_createPlatForms(x1, x2, y1, y2) {
     //Properties of platform
     platform.bounciness = PFWorld_PLATFORMBOUNCE;
     platform.friction = PFWorld_PLATFORMFRICTION;
-    platform.color = PFWorld_platFORMCOLOR;
+    platform.color = PFWorld_PLATFORMCOLOR;
+    platform.layer = PFWorld_PLATFORMLAYER;
     platform.addImage(platformImg);
     platformImg.resize(PFWorld_PLATFORMSIZE, PFWorld_PLATFORMTHICKNESS);
 

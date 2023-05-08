@@ -51,6 +51,7 @@ const PFSetUp_PLAYERCOLOR = "#008aff";
 const PFSetUp_PLAYERHITCOLOR = "#8ccaff";
 const PFSetUp_PLAYERLAYER = 4;
 const PFSetUp_PLAYERIMMUNEDUR = 500;
+var PFSetUp_playerScore = 0;
 
 var PFSetUp_playerOnFloorTime = 0;
 var PFSetUp_playerDied = false;
@@ -195,9 +196,6 @@ function draw() {
     PFEnemies_WEAKENEMYSPEED, PFEnemies_WEAKENEMYJUMPSTRENGTH,
     PFEnemies_WEAKPROXIMITY);
 
-  //Checking if player is dead
-  PFManager_checkDeath();
-
   //Checking if terrain should be generated
   PFWorld_terrainCheck();
 
@@ -260,7 +258,11 @@ function PFSetUp_createSprites() {
   PFSetUp_player.stunned = false;
   PFSetUp_player.layer = PFSetUp_PLAYERLAYER;
   PFSetUp_player.healthBar = false;
+  
+  //Storing the sprites for the front and back of the health bar
   PFSetUp_player.bar;
+  PFSetUp_player.barBack;
+  
   PFSetUp_player.maxHealth = PFSetUp_PLAYERHEALTH;
 
   //Adding to gravity effected sprites

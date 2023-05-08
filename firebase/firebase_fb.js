@@ -12,39 +12,35 @@ console.log('%c' + MODULENAME + ': ', 'color: blue;');
 /**************************************************************/
 function fb_login(_save, _procFunc, _callBack, _procError) {
   console.log('%cfb_login: ', 'color: brown;');
-  
+
   //Disabling login button
   document.getElementById("loginButton").disabled = true;
-  
-  firebase.auth().onAuthStateChanged(newLogin);
-  
-  /*-----------------------------------------*/
-  // newLogin(user)
-  /*-----------------------------------------*/
-  function newLogin(user) {
-    if (user) {
+
+  firebase.auth().onAuthStateChanged((user) => {
+    if (user && fbV_loginStatus !== 'logged in via popup') {
       fbV_loginStatus = 'logged in';
+      console.log(fbV_loginStatus);
       _procFunc(user, _save, fbV_loginStatus, _callBack);
     }
 
     else {
       // user NOT logged in, so redirect to Google login
-      fbV_loginStatus = 'logged out';
+      fbV_loginStatus = 'logged in via popup';
       var provider = new firebase.auth.GoogleAuthProvider();
       firebase.auth().signInWithPopup(provider).then(function(result) {
-        fbV_loginStatus = 'logged in via popup';
+        console.log(fbV_loginStatus);
         _procFunc(result.user, _save, fbV_loginStatus, _callBack);
       })
-      // Catch errors
-      .catch(function(error) {
-        if (error) {
-          loginStatus = 'failed';
-          console.log('%cfb_login: ' + error.code + ', ' +
-            error.message, 'color: red;');
-        }
-      });
+        // Catch errors
+        .catch(function(error) {
+          if (error) {
+            loginStatus = 'failed';
+            console.log('%cfb_login: ' + error.code + ', ' +
+              error.message, 'color: red;');
+          }
+        });
     }
-  }
+  });
 }
 
 /**************************************************************/
@@ -55,39 +51,30 @@ function fb_login(_save, _procFunc, _callBack, _procError) {
 function fb_logout() {
   console.log('%cfb_logout: ', 'color: brown;');
   firebase.auth().signOut();
-  
+
   //Setting login and registration status to logged out in session storage
   fbV_loginStatus = 'logged out';
   fbV_registrationStatus = 'not registered';
-  
+
   sessionStorage.setItem("loginStatus", fbV_loginStatus);
   sessionStorage.setItem("registerStatus", fbV_registrationStatus);
   window.location.reload();
 }
 
 /**************************************************************/
-// fb_writeRec(_path, _key, _data, _procFunc, _dir, _callBack)
+// fb_writeRec(_path, _key, _data, _procFunc, _callBack)
 // Write a specific record & key to the DB
 // Input:  path to write to, the key and the data to write
-//         procFunc to process the errors, optional dir and callBack
+//         procFunc to process the errors, and optional callBack
 /**************************************************************/
-function fb_writeRec(_path, _key, _data, _procFunc, _dir, _callBack) {
+function fb_writeRec(_path, _key, _data, _procFunc, _callBack) {
   fbV_writeStatus = "waiting...";
-  //If writing to a directory in side the _key
-  if (_dir != null) {
-    console.log('%cfb_WriteRec: path= ' + _path + '  key= ' + _key + ' dir= ' + _dir,
-      'color: brown;');
-  
-    firebase.database().ref(_path + '/' + _key + '/' + _dir).set(_data,
+
+  console.log('%cfb_WriteRec: path= ' + _path + '  key= ' + _key,
+    'color: brown;');
+
+  firebase.database().ref(_path + '/' + _key).set(_data,
     gotError);
-  } else {
-    //If writing just to the key
-    console.log('%cfb_WriteRec: path= ' + _path + '  key= ' + _key,
-      'color: brown;');
-  
-    firebase.database().ref(_path + '/' + _key).set(_data,
-    gotError);
-  }
 
   //Recieves the error from write rec, then call procFunc to process it
   function gotError(error) {
@@ -117,25 +104,16 @@ function fb_readAll(_path, _data, _procFunc, _callBack) {
 }
 
 /**************************************************************/
-// fb_readRec(_path, _key, _data, _procFunc, _callBack, _dir)
+// fb_readRec(_path, _key, _data, _procFunc, _callBack)
 // Read a specific DB record
 // Input:  path & key of record to read and where to save the data
-//         optional call back function, optional dir
+//         optional call back function
 /**************************************************************/
-function fb_readRec(_path, _key, _save, _procFunc, _callBack, _dir) {
-  
+function fb_readRec(_path, _key, _save, _procFunc, _callBack) {
   fbV_readStatus = "waiting...";
-  //If there is a dir inside the key read the dir
-  if (_dir != null) {
-    console.log('%cfb_readRec: path= ' + _path +
-      '  key= ' + _key + '  dir= ' + _dir, 'color: brown;');
-    firebase.database().ref(_path + '/' + _key + '/' + _dir).once("value", gotRecord, fb_readErr);
-  //if there is no dir, read key
-  } else {
-    console.log('%cfb_readRec: path= ' + _path +
-      '  key= ' + _key, 'color: brown;');
-    firebase.database().ref(_path + '/' + _key).once("value", gotRecord, fb_readErr);
-  }
+  console.log('%cfb_readRec: path= ' + _path +
+    '  key= ' + _key, 'color: brown;');
+  firebase.database().ref(_path + '/' + _key).once("value", gotRecord, fb_readErr);
 
   function gotRecord(snapshot) {
     _procFunc(snapshot, _save, fbV_readStatus, _callBack);
