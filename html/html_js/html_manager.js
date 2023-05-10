@@ -93,8 +93,23 @@ function manager_login() {
 
   fbV_loginStatus = "logged in";
 
-  //Check registraiton if user has logged in
-  fb_readRec(fbV_REGISTRATIONPATH, fbV_userDetails.uid, fbV_registerDetails, fbR_procRegistration, manager_checkReg);
+  //Check registraiton if user has logged in, and saving the read values if they have
+  fb_readRec(fbV_REGISTRATIONPATH, fbV_userDetails.uid, fbV_registerDetails, fbR_procRegistration,
+    _ => {
+      //Checking if there is registration data
+      if (fbV_registerDetails.userName === "" || fbV_registerDetails.userName === null) {
+        fbV_registerStatus = "not registered";
+      } else {
+        fbV_registerStatus = "registered";
+      }
+
+      //Making sure that there is no timing issues and saving it again when it is done
+      manager_saveValues();
+      manager_checkReg();
+
+      //Checking if user is an admin.
+      manager_checkAdmin();
+    });
 
   //Clearing buttons and saving values
   manager_clearButtons();
@@ -163,7 +178,7 @@ function manager_checkLogin(ids) {
     "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/html/html_flappy.html"
   ) {
     alert("How did you get here without logging in?");
-    alert("Not that it matters, go login.");
+    alert("Go login.");
     window.location = "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/index.html";
   }
 
@@ -198,8 +213,10 @@ function manager_disableButton() {
 function manager_saveValues() {
   console.log("manager_saveValues();");
 
-  //Setting the login status.
+  //Setting the user statuses.
   sessionStorage.setItem("loginStatus", fbV_loginStatus);
+  sessionStorage.setItem("adminStatus", fbV_adminStatus);
+  sessionStorage.setItem("registerStatus", fbV_registerStatus);
 
   for (i = 0; i < manager_SAVEOBJECTS.length; i++) {
     let object = manager_SAVEOBJECTS[i];
@@ -222,6 +239,11 @@ function manager_saveValues() {
 function manager_getValues() {
   console.log("manager_getValues();");
 
+  //Getting the user statuses.
+  fbV_loginStatus = sessionStorage.getItem("loginStatus");
+  fbV_adminStatus = sessionStorage.getItem("adminStatus");
+  fbV_registerStatus = sessionStorage.getItem("registerStatus");
+
   //Getting the keys of the objects to iterate through and get the values from session storage
   for (i = 0; i < manager_SAVEOBJECTS.length; i++) {
     let object = manager_SAVEOBJECTS[i];
@@ -233,11 +255,11 @@ function manager_getValues() {
     for (x = 0; x < objecKeys.length; x++) {
       object[objecKeys[x]] = sessionStorage.getItem(objecKeys[x]);
     }
+    //Converting numeric values back to a number
+    if (object.highScore === undefined) { continue; };
+    object.highScore = Number(object.highScore);
+    object.score = Number(object.score);
   }
-  
-  //Converting numeric values back to a number
-  fbV_flappyHighScore.highScore = Number(fbV_flappyHighScore.highScore);
-  fbV_flappyHighScore.score = Number(fbV_flappyHighScore.score);
 }
 
 /*************************************************************/
@@ -248,9 +270,8 @@ function manager_getValues() {
 function manager_checkReg() {
   console.log("manager_checkReg();");
 
-  //Checking if there is registration data
-  if (fbV_registerDetails.userName === "" || fbV_registerDetails.userName === null) {
-    fbV_registerStatus = "not registered";
+  //Checking if user is registered
+  if (fbV_registerStatus === "not registered") {
 
     //Going to register page if user is not registered
     alert("Please register to play my games.");
@@ -261,6 +282,42 @@ function manager_checkReg() {
 
   //Saving registerStatus to session storage
   sessionStorage.setItem("registerStatus", fbV_registerStatus);
+}
+
+/*************************************************************/
+//manager_checkAdmin()
+//checks if user is an admin or not
+//called when logging in by manager_login
+/*************************************************************/
+function manager_checkAdmin() {
+  console.log("manager_checkAdmin();");
+  fb_readRec(fbV_ROLESPATH, '', '',
+    _ => {
+      //if the read succeeds and procfunc is called then the user must have admin previleges
+      //other wise the user must not be an admin.
+      fbV_adminStatus = true;
+      manager_saveValues();
+      manger_adminPanel();
+    });
+}
+
+/*************************************************************/
+//manager_adminPanel()
+//displays the admin panel if the user is an admin
+//called on load on each page.
+/*************************************************************/
+function manger_adminPanel() {
+  console.log("manger_adminPanel();");
+
+  //Get admin status from session storage if is not null
+  if (sessionStorage.getItem("adminStatus") !== null) { fbV_adminStatus = sessionStorage.getItem("adminStatus") };
+  console.log("User is an admin: " + fbV_adminStatus);
+  
+  if (fbV_adminStatus === false) {
+    document.getElementById("adminPanel").style.display = 'none';
+  } else {
+    document.getElementById("adminPanel").style.display = 'block';
+  }
 }
 
 /*******************************************************/

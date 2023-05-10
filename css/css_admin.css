@@ -1,8 +1,127 @@
 /*------------------------------------------------------------*
   ADMIN page styling
 /*------------------------------------------------------------*/
-#s_adminPage {
+/*This was written by Martin Jin****************************************************************/
+/*Written in term 2 2023****************************************************************/
+
+body {
+  width: 100%;
+  height: 100%;
+  font-family: 'Verdana';
+}
+
+/*nav bar****************************************************************/
+.topnav {
+  overflow: auto;
+  background-color: #00020b;
+  width: 100vw;
+}
+
+.topnav a {
+  overflow: auto;
+  float: left;
   display: block;
-  height: 86vh;
-  overflow: scroll;
+  width: 15%;
+  color: #BFACE2;
+  text-align: center;
+  padding: 12px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.topnav a:hover {
+  background-color: #393053;
+}
+
+.topnav a.active {
+  color: #e2daf2;
+  border-bottom: 3px solid #BFACE2;
+}
+
+/*headers****************************************************************/
+.admin_h_background {
+  background-image: url("/images/background.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  height: 300px;
+  position: relative;
+}
+
+.admin_title{
+  color: #00020b;
+  font-size: 40px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  padding-left: 80px;
+  padding-right: 80px;
+}
+
+.admin_h_sub{
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 80px;
+  padding-right: 80px;
+  font-size: 50px;
+  background-color: #00020b;
+  color: #e2daf2;
+  border: none;
+  border-color: #BFACE2;
+  border-bottom-style: solid;
+}
+
+.admin_h{
+  color: white;
+  font-size: 75px;
+  text-align: center;
+  text-shadow: 2px 2px 8px #BFACE2;
+  bottom: 70%;
+  position: absolute;
+}
+
+/*centering elements****************************************************************/
+.center {
+  text-align: center;
+  position: absolute;
+  margin: auto;
+  width: 100%;
+}
+
+
+/*table styling****************************************************************/
+.cell {
+  background-color: white;
+}
+
+.table_container{
+  background-color: white;
+  border: none;
+  width: 80%;
+  margin: auto;
+  height: 100%;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.table_background {
+  width: 100%;
+  height: 100%;
+  padding-top: 200px;
+  padding-bottom: 300px;
+  background-image: url('/images/backgroundRegister.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/*footer****************************************************************/
+footer{
+  border: none;
+  color: #BFACE2;
+  background-color: #00020b;
+  bottom: 0;
+  width: 100vw;
+  position: fixed;
+  height: 55px;
+  text-align: center;
+  border-color: #BFACE2;
+  border-top-style: solid;
 }

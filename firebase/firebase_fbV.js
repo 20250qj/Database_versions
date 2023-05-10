@@ -6,7 +6,7 @@ console.log('%c' + MODULENAME + ': ', 'color: blue;');
 
 /*dbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdb*/
 // database variables
-const fbV_ROLES = "userRoles";      //<=============== Firebase paths
+const fbV_ROLESPATH = "userRoles";      //<=============== Firebase paths
 const fbV_FLAPPYSCOREPATH = "userScores/flappyBird";      //<=============== Firebase paths   
 const fbV_PFSCOREPATH = "userScores/platformer";      //<=============== Firebase paths
 const fbV_REGISTRATIONPATH = "userDetails/registrationDetails";      //<=============== Firebase paths
@@ -14,6 +14,7 @@ const fbV_LOGINDETAILSPATH = "userDetails/loginDetails";      //<===============
 
 var fbV_loginStatus = 'logged out';
 var fbV_registerStatus = "not registered";
+var fbV_adminStatus = false;
 var fbV_readStatus = ' ';
 var fbV_writeStatus = ' ';
 

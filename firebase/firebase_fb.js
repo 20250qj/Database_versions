@@ -62,12 +62,12 @@ function fb_logout() {
 }
 
 /**************************************************************/
-// fb_writeRec(_path, _key, _data, _procFunc, _callBack)
+// fb_writeRec(_path, _key, _data, _procErr, _callBack)
 // Write a specific record & key to the DB
 // Input:  path to write to, the key and the data to write
-//         procFunc to process the errors, and optional callBack
+//         procErr to process the errors, and optional callBack
 /**************************************************************/
-function fb_writeRec(_path, _key, _data, _procFunc, _callBack) {
+function fb_writeRec(_path, _key, _data, _procErr, _callBack) {
   fbV_writeStatus = "waiting...";
 
   console.log('%cfb_WriteRec: path= ' + _path + '  key= ' + _key,
@@ -76,28 +76,30 @@ function fb_writeRec(_path, _key, _data, _procFunc, _callBack) {
   firebase.database().ref(_path + '/' + _key).set(_data,
     gotError);
 
-  //Recieves the error from write rec, then call procFunc to process it
+  //Recieves the error from write rec, then call procErr to process it
   function gotError(error) {
-    _procFunc(error, _callBack);
+    _procErr(error, _callBack);
   }
 }
 
 /**************************************************************/
 // fb_readAll(_path, _data, _procFunc, _callBack)
 // Read all DB records for the path
-// Input:  path to read from and where to save the data, optional _callBack
+// Input:  path to read from and where to save the data, 
+//         proc func to process data
+//         optional _callBack
 /**************************************************************/
 function fb_readAll(_path, _data, _procFunc, _callBack) {
   console.log('%cfb_readAll: path= ' + _path, 'color: brown;');
   fbV_readStatus = "waiting...";
 
-  firebase.database().ref(_path).once("value", gotRecord, readErr);
+  firebase.database().ref(_path).once("value", gotRecord, fb_readErr);
 
   function gotRecord(snapshot) {
     _procFunc(snapshot, _data, fbV_readStatus, _callBack);
   }
 
-  function readErr(error) {
+  function fb_readErr(error) {
     fbV_readStatus = "Failed";
     console.log(error);
   }
@@ -107,6 +109,7 @@ function fb_readAll(_path, _data, _procFunc, _callBack) {
 // fb_readRec(_path, _key, _data, _procFunc, _callBack)
 // Read a specific DB record
 // Input:  path & key of record to read and where to save the data
+//         proc func to process data and 
 //         optional call back function
 /**************************************************************/
 function fb_readRec(_path, _key, _save, _procFunc, _callBack) {

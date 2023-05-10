@@ -33,7 +33,7 @@ function ad_user() {
   ad_console('ad_user', 'called', COL_FUNC);
 
   ad_alterClass('ad_btn', 'grey');
-  document.getElementById("b_adUser").style.backgroundColor = "cyan";
+  document.getElementById("b_adUser").style.backgroundColor = "white";
 
   fb_readAll(fbV_LOGINDETAILSPATH, '', ad_processUSERReadAll);
 }
@@ -49,7 +49,7 @@ function ad_FB() {
   ad_console('ad_FB', 'called', COL_FUNC);
 
   ad_alterClass('ad_btn', 'grey');
-  document.getElementById("b_adFB").style.backgroundColor = "cyan";
+  document.getElementById("b_adFB").style.backgroundColor = "white";
 
   fb_readAll(fbV_FLAPPYSCOREPATH, '', ad_processFBReadAll);
 }
@@ -65,7 +65,7 @@ function ad_PF() {
   ad_console('ad_PF', 'called', COL_FUNC);
 
   ad_alterClass('ad_btn', 'grey');
-  document.getElementById("b_adPF").style.backgroundColor = "cyan";
+  document.getElementById("b_adPF").style.backgroundColor = "white";
 
   fb_readAll(fbV_PFSCOREPATH, '', ad_processPFReadAll);
 }
@@ -375,12 +375,14 @@ function ad_genTableEntry(_tableInfo, _array, _action, _tableId, _item, _path) {
       });
       let cell = row.insertCell();
       cell.appendChild(button);
+      cell.classList.add("cell");
     }
 
     for (key in element) {
       let cell = row.insertCell();
       let text = document.createTextNode(element[key]);
       cell.appendChild(text);
+      cell.classList.add("cell");
     }
   }
 }

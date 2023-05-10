@@ -1,37 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <title>12COMP assessment</title>
   <meta charset="UTF-8">
   <meta name="description" content="12COMP assessment">
   <meta name="author" content="Martin Jin">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
+
   <!-- stylesheets *******************************************-->
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
   <link rel="stylesheet" href="/css/css_games.css">
   <link href='https://fonts.googleapis.com/css?family=Open Sans' rel='stylesheet'>
- 
+
   <!-- P5.js & P5.play ***************************************-->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.5.0/p5.min.js"></script> 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.5.0/p5.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.10.2/addons/p5.sound.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.dom.min.js"></script>
   <script src="https://p5play.org/v3/planck.min.js"></script>
   <script src="https://p5play.org/v3/p5play.js"></script>
-  
+
   <!-- firebase start ****************************************-->
   <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
   <!-- Firebase App (core Firebase SDK) always required & must be listed 1st -->
-  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-app.js"></script>  
+  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-app.js"></script>
   <!-- Add Firebase products that you want to use -->
-  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-auth.js"></script>  
+  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-database.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-analytics.js"></script> 
+  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-analytics.js"></script>
   <!-- firebase end ******************************************-->
-  
+
   <!-- JQUERY ************************************************-->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-  
+
   <!-- Your modules ******************************************-->
   <script defer src="/firebase/firebase_fb.js"></script>
   <script defer src="/firebase/firebase_fbR.js"></script>
@@ -43,16 +44,19 @@
 <!--*************************************************************
   BODY
 **************************************************************-->
-<body onload="manager_checkLogin(['flappyBird', 'platformer']), form_checkReg(['flappyBird', 'platformer'])">
+
+<body
+  onload="manager_getValues(), manger_adminPanel(), manager_checkLogin(['flappyBird', 'platformer']), form_checkReg(['flappyBird', 'platformer'])">
   <!--nav bar-->
   <div class="topnav" id="myTopnav">
     <a href="/../index.html">Home</a>
     <a href="/html/html_games.html" class="active">Games</a>
     <a href="/html/html_leaderBoard.html">Leader Board</a>
     <a href="/html/html_register.html">Register</a>
+    <a id="adminPanel" href="/html/html_admin.html">Admin panel</a>
   </div>
   <!--nav bar end-->
-  
+
   <!--headers-->
   <div class="games_h_background"></div>
   <header class="games_h center">Martin's games</header>
@@ -64,20 +68,25 @@
     <!--row 1 text//////////////////////////////////////////////////////////////////////////////-->
     <div class="w3-row">
       <p class="w3-col s6 m6 l6 paragraph">
-        Flappy Bird is a mobile game developed by the Vietnamese video game artist and programmer Dong Nguyen 
-        (Vietnamese: Nguyễn Hà Đông), under his game development company .Gears. The game is a side-scroller where 
-        the player controls a bird, attempting to fly between columns of green pipes without hitting them. Nguyen 
-        created the game over the period of several days, using a bird protagonist that he had designed for a cancelled 
+        Flappy Bird is a mobile game developed by the Vietnamese video game artist and programmer Dong Nguyen
+        (Vietnamese: Nguyễn Hà Đông), under his game development company .Gears. The game is a side-scroller where
+        the player controls a bird, attempting to fly between columns of green pipes without hitting them. Nguyen
+        created the game over the period of several days, using a bird protagonist that he had designed for a cancelled
         game in 2012.
 
-        In August 2014, a revised version of Flappy Bird, called Flappy Birds Family, was released exclusively for the 
+        In August 2014, a revised version of Flappy Bird, called Flappy Birds Family, was released exclusively for the
         Amazon Fire TV. Bay Tek Games also released a licensed coin-operated Flappy Bird arcade game.
-        
-        Flappy Bird is an arcade-style game in which the player controls the bird Faby, which moves persistently to the right. 
-        The player is tasked with navigating Faby through pairs of pipes that have equally sized gaps placed at random heights.
-        Faby automatically descends and only ascends when the player taps the touchscreen. Each successful pass through a pair 
-        of pipes awards the player one point. Colliding with a pipe or the ground ends the gameplay. During the game over screen,
-        the player is awarded a bronze medal if they reached ten or more points, a silver medal from twenty points, a gold medal
+
+        Flappy Bird is an arcade-style game in which the player controls the bird Faby, which moves persistently to the
+        right.
+        The player is tasked with navigating Faby through pairs of pipes that have equally sized gaps placed at random
+        heights.
+        Faby automatically descends and only ascends when the player taps the touchscreen. Each successful pass through
+        a pair
+        of pipes awards the player one point. Colliding with a pipe or the ground ends the gameplay. During the game
+        over screen,
+        the player is awarded a bronze medal if they reached ten or more points, a silver medal from twenty points, a
+        gold medal
         from thirty points, and a platinum medal from forty points.
       </p>
 
@@ -89,15 +98,15 @@
     <!--row 2 text //////////////////////////////////////////////////////////////////////////////-->
     <div class="w3-row">
       <p class="w3-col s12 m12 l12 paragraph">
-        Flappy Bird was originally released on May 24, 2013, with support for the iPhone 5. 
-        The game was subsequently updated for iOS 7 in September 2013. Although originally unsuccessful, 
+        Flappy Bird was originally released on May 24, 2013, with support for the iPhone 5.
+        The game was subsequently updated for iOS 7 in September 2013. Although originally unsuccessful,
         the game received a massive influx of players after being reviewed by the Swedish YouTuber PewDiePie.
-        In January 2014, it topped the Free Apps chart in the US and Chinese App Stores, and later that 
-        month topped the same section of the UK App Store where it was touted as "the new Angry Birds". It 
-        ended January as the most downloaded App on the App Store.The Android version of Flappy Bird was 
-        released to the Google Play store on January 30, 2014.In early 2014, Nguyen said in an interview 
+        In January 2014, it topped the Free Apps chart in the US and Chinese App Stores, and later that
+        month topped the same section of the UK App Store where it was touted as "the new Angry Birds". It
+        ended January as the most downloaded App on the App Store.The Android version of Flappy Bird was
+        released to the Google Play store on January 30, 2014.In early 2014, Nguyen said in an interview
         with The Verge that the game was earning around $50,000 a day in revenue through its in-game advertising.
-      (source from wikipedia)</p>
+        (source from wikipedia)</p>
     </div>
     <!--row 2 text end//////////////////////////////////////////////////////////////////////////////-->
     <!--flappy bird play button-->
@@ -122,15 +131,22 @@
     </div>
     <!--row 3 text end//////////////////////////////////////////////////////////////////////////////-->
     <!--row 4 text //////////////////////////////////////////////////////////////////////////////-->
-    <div class = "w3-row">
+    <div class="w3-row">
       <p class="w3-col s12 m12 l12 paragraph">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-        Id leo in vitae turpis massa sed. Est velit egestas dui id ornare arcu odio ut. Porttitor rhoncus dolor purus non enim praesent 
-        elementum facilisis leo. Et netus et malesuada fames ac turpis egestas integer eget. Risus commodo viverra maecenas accumsan 
-        lacus vel facilisis volutpat. Convallis aenean et tortor at risus viverra adipiscing. Senectus et netus et malesuada fames ac 
-        turpis egestas sed. Ullamcorper morbi tincidunt ornare massa eget. Turpis tincidunt id aliquet risus feugiat in ante. Risus at
-        ultrices mi tempus imperdiet. Magna fermentum iaculis eu non. Lobortis feugiat vivamus at augue eget arcu. In iaculis nunc sed 
-        augue. Dolor magna eget est lorem ipsum. Orci eu lobortis elementum nibh tellus molestie nunc non. Volutpat consequat mauris nunc 
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+        magna aliqua.
+        Id leo in vitae turpis massa sed. Est velit egestas dui id ornare arcu odio ut. Porttitor rhoncus dolor purus
+        non enim praesent
+        elementum facilisis leo. Et netus et malesuada fames ac turpis egestas integer eget. Risus commodo viverra
+        maecenas accumsan
+        lacus vel facilisis volutpat. Convallis aenean et tortor at risus viverra adipiscing. Senectus et netus et
+        malesuada fames ac
+        turpis egestas sed. Ullamcorper morbi tincidunt ornare massa eget. Turpis tincidunt id aliquet risus feugiat in
+        ante. Risus at
+        ultrices mi tempus imperdiet. Magna fermentum iaculis eu non. Lobortis feugiat vivamus at augue eget arcu. In
+        iaculis nunc sed
+        augue. Dolor magna eget est lorem ipsum. Orci eu lobortis elementum nibh tellus molestie nunc non. Volutpat
+        consequat mauris nunc
         congue nisi vitae.
       </p>
     </div>
@@ -144,13 +160,14 @@
       </button>
     </div>
   </div>
-  
+
   <!--footer-->
   <footer>
     <p>copyright Martin</p>
   </footer>
   <!--footer end-->
 </body>
+
 </html>
 <!--*************************************************************
   END OF INDEX.HTML

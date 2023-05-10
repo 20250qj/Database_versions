@@ -43,13 +43,15 @@
 <!--*************************************************************
   BODY
 **************************************************************-->
-<body onload="fbR_initialise(), manager_checkLogin([]), manager_getValues(), form_checkReg([]);">
+
+<body onload="fbR_initialise(), manager_getValues(), manger_adminPanel(), manager_checkLogin([]), form_checkReg([]);">
   <!--nav bar-->
   <div class="topnav" id="myTopnav">
     <a href="/../index.html">Home</a>
     <a href="/html/html_games.html">Games</a>
     <a href="/html/html_leaderBoard.html">Leader Board</a>
     <a href="/html/html_register.html" class="active">Register</a>
+    <a id="adminPanel" href="/html/html_admin.html">Admin panel</a>
   </div>
   <!--nav bar end-->
 
@@ -59,7 +61,7 @@
   <div class="register_h_sub w3-container">Register</div>
   <!--headers end-->
 
-  <div class = "backgroundImage">
+  <div class="backgroundImage">
     <!--page-->
     <div class="register_page">
       <!--ROW/////////////////////////////////////////////////////-->
@@ -73,20 +75,20 @@
               <div class="p_form">Username:</div>
               <input type="text" name="userName" id="userName" size="35" placeholder="Enter your username"><br>
               <div class="error_msg" id="nameMsg"></div>
-  
+
               <div class="marginTop p_form">Phone number:</div>
               <input type="text" name="userPN" id="userPN" size="35" placeholder="Enter you phone number"><br>
               <div class="error_msg" id="phoneMsg"></div>
-  
+
               <div class="marginTop p_form">Age:</div>
               <input type="text" name="userAge" id="userAge" size="35"
                 placeholder="Enter your age (need to be 16 or over)"><br>
               <div class="error_msg" id="ageMsg"></div>
-  
+
               <div class="marginTop p_form">Address:</div>
               <input type="text" name="userAddress" id="userAddress" size="35" placeholder="Enter your address"><br>
               <div class="error_msg" id="addressMsg"></div>
-  
+
               <!--radio buttons-->
               <div class="marginTop p_form">Gender:</div>
               <div class="form-check margin_radio">
@@ -96,7 +98,8 @@
                 </label>
               </div>
               <div class="form-check margin_radio">
-                <input class="form-check-input marginLeft" type="radio" name="gender" id="female" checked value="female">
+                <input class="form-check-input marginLeft" type="radio" name="gender" id="female" checked
+                  value="female">
                 <label class="form-check-label p_radio" for="female">
                   Female
                 </label>
@@ -108,7 +111,7 @@
                 </label>
               </div>
               <!--radio button end-->
-  
+
               <!--text boxes-->
               <div class="marginTop p_form">Country:</div>
               <input type="text" name="userCountry" id="userCountry" size="35"
@@ -117,7 +120,7 @@
             </div>
           </form>
           <!---form end-->
-  
+
           <!--submit button-->
           <div>
             <button class="button" onclick="form_submit();" style="text-decoration: none" id="submitButton">
@@ -126,7 +129,7 @@
           </div>
         </div>
         <!--COLUMN LEFT END/////////////////////////////////////////////////////-->
-  
+
         <!--COLUMN RIGHT/////////////////////////////////////////////////////-->
         <div class="w3-col s6 m6 l6 margin_rules">
           <div class="p_rules">
