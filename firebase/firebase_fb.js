@@ -52,12 +52,13 @@ function fb_logout() {
   console.log('%cfb_logout: ', 'color: brown;');
   firebase.auth().signOut();
 
-  //Setting login and registration status to logged out in session storage
+  //Resetting user statuses
   fbV_loginStatus = 'logged out';
   fbV_registrationStatus = 'not registered';
+  fbV_adminStatus = false;
 
-  sessionStorage.setItem("loginStatus", fbV_loginStatus);
-  sessionStorage.setItem("registerStatus", fbV_registrationStatus);
+  manager_saveValues();
+  
   window.location.reload();
 }
 

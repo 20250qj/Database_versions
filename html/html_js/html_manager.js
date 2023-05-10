@@ -295,7 +295,7 @@ function manager_checkAdmin() {
     _ => {
       //if the read succeeds and procfunc is called then the user must have admin previleges
       //other wise the user must not be an admin.
-      fbV_adminStatus = true;
+      fbV_adminStatus = "true";
       manager_saveValues();
       manger_adminPanel();
     });
@@ -313,7 +313,7 @@ function manger_adminPanel() {
   if (sessionStorage.getItem("adminStatus") !== null) { fbV_adminStatus = sessionStorage.getItem("adminStatus") };
   console.log("User is an admin: " + fbV_adminStatus);
   
-  if (fbV_adminStatus === false) {
+  if (fbV_adminStatus === "false") {
     document.getElementById("adminPanel").style.display = 'none';
   } else {
     document.getElementById("adminPanel").style.display = 'block';

@@ -14,7 +14,7 @@ const fbV_LOGINDETAILSPATH = "userDetails/loginDetails";      //<===============
 
 var fbV_loginStatus = 'logged out';
 var fbV_registerStatus = "not registered";
-var fbV_adminStatus = false;
+var fbV_adminStatus = "false";
 var fbV_readStatus = ' ';
 var fbV_writeStatus = ' ';
 
