@@ -107,6 +107,9 @@ function manager_login() {
       manager_saveValues();
       manager_checkReg();
 
+      //Since user is logged in display nav bar.
+      manager_displayNav();
+
       //Checking if user is an admin.
       manager_checkAdmin();
     });
@@ -164,34 +167,29 @@ function manager_checkLogin(ids) {
     }
   }
 
-  //If at home page and logged in, remove login button
   if (fbV_loginStatus === 'logged in') {
+    //Display nav bar elements if user is logged in:
+    manager_displayNav();
+    //If at home page and logged in, remove login button
     if (window.location.href ===
       "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/index.html"
     ) {
       manager_clearButtons();
     }
   }
+}
 
-  //If at game page somehow without logging in, kick user back to home page
-  if (fbV_loginStatus !== 'logged in' && window.location.href ===
-    "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/html/html_flappy.html"
-  ) {
-    alert("How did you get here without logging in?");
-    alert("Go login.");
-    window.location = "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/index.html";
-  }
 
-  //If at register or leaderboard without logging in, kick user back to home page
-  if (fbV_loginStatus !== 'logged in') {
-    if (window.location.href === "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/html/html_register.html") {
-      alert("Please login first");
-      window.location = "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/index.html";
-    }
-    if (window.location.href === "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/html/html_leaderBoard.html") {
-      alert("Please login first");
-      window.location = "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/index.html";
-    }
+/*************************************************************/
+//manager_disableButton()
+//Displays nav bar.
+//Called by: manager_checkLogin(), and manager_login().
+/*************************************************************/
+function manager_displayNav() {
+  let navBarElements = document.getElementById("myTopnav").children;
+  for (i = 0; i < navBarElements.length; i++) {
+    let element = navBarElements[i];
+    element.style.display = 'block';
   }
 }
 
@@ -265,7 +263,7 @@ function manager_getValues() {
 /*************************************************************/
 //manager_checkReg()
 //checks if user is registered.
-//called as a call back function by proc resgister
+//called by multiple functions to check if user is registered.
 /*************************************************************/
 function manager_checkReg() {
   console.log("manager_checkReg();");
@@ -312,10 +310,9 @@ function manger_adminPanel() {
   //Get admin status from session storage if is not null
   if (sessionStorage.getItem("adminStatus") !== null) { fbV_adminStatus = sessionStorage.getItem("adminStatus") };
   console.log("User is an admin: " + fbV_adminStatus);
-  
-  if (fbV_adminStatus === "false") {
-    document.getElementById("adminPanel").style.display = 'none';
-  } else {
+
+  //If admin status is true then show admin button
+  if (fbV_adminStatus === "true") {
     document.getElementById("adminPanel").style.display = 'block';
   }
 }
