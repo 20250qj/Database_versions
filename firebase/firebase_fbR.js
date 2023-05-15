@@ -174,7 +174,7 @@ function fbR_procUserHighScore(snapshot, _save, readStatus, _callBack) {
     _save.score = dbData.score;
     _save.uid = dbData.uid;
     _save.photoURL = dbData.photoURL;
-    _save.name = dbData.name;
+    _save.userName = dbData.userName;
   }
 
   console.log('fbR_procUserHighScore: status = ' + readStatus);
@@ -205,7 +205,7 @@ function fbR_procFlappyUserHighScoreAll(snapshot, _save, readStatus, _callBack) 
     for (i = 0; i < dbKeys.length; i++) {
       let key = dbKeys[i];
       _save.push({
-        name: dbData[key].name,
+        userName: dbData[key].userName,
         highScore: dbData[key].highScore,
         photoURL: dbData[key].photoURL
       })

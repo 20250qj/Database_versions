@@ -143,7 +143,7 @@ function ad_processFBReadAll(snapshot) {
       ad_adminArray.push({
         uid: childKey,
         highScore: childData.highScore,
-        name: childData.name,
+        userName: childData.userName,
         score: childData.score,
       });
     });
@@ -184,7 +184,7 @@ function ad_processPFReadAll(snapshot) {
       ad_adminArray.push({
         uid: childKey,
         highScore: childData.highScore,
-        name: childData.name,
+        userName: childData.userName,
         score: childData.score
       });
     });

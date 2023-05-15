@@ -26,8 +26,8 @@ function manager_checkLeaderBoard(_data) {
 
   for (i = 0; i < _data.length; i++) {
     //Creating a string that will display the score
-    row = _data[i].name + ": " + _data[i].highScore;
-    console.log(_data[i].name + ": " + _data[i].highScore);
+    row = _data[i].userName + ": " + _data[i].highScore;
+    console.log(_data[i].userName + ": " + _data[i].highScore);
 
     leaderBoardContents.push({ display: row, photoURL: _data[i].photoURL, highScore: _data[i].highScore });
   }
@@ -224,8 +224,8 @@ function manager_saveValues() {
     let objectValues = Object.values(object);
 
     //Saving values to sesion storage
-    for (i = 0; i < objecKeys.length; i++) {
-      sessionStorage.setItem(objecKeys[i], objectValues[i]);
+    for (x = 0; x < objecKeys.length; x++) {
+      sessionStorage.setItem(objecKeys[x], objectValues[x]);
     }
   }
 }
@@ -312,8 +312,8 @@ function manger_adminPanel() {
   console.log("User is an admin: " + fbV_adminStatus);
 
   //If admin status is true then show admin button
-  if (fbV_adminStatus === "true") {
-    document.getElementById("adminPanel").style.display = 'block';
+  if (fbV_adminStatus === "false") {
+    document.getElementById("adminPanel").style.display = 'none';
   }
 }
 

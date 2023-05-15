@@ -14,10 +14,10 @@ const form_NONSTRING = /[^a-zA-Z0-9]/g; //Includes numbers, as for address or us
 
 //Limits
 const form_AGELIMIT = 16;
-const form_AGEMAX = 100;
+const form_AGEMAX = 99;
 
 const form_PHONENUMLIMIT = 10;
-const form_PHONENUMMAX = 14;
+const form_PHONENUMMAX = 20;
 
 const form_USERNAMELIMIT = 1;
 const form_USERNAMEMAX = 20;
@@ -26,7 +26,7 @@ const form_STRINGLIMIT = 1;
 const form_STRINGMAX = 20;
 
 //Validation
-let form_validateBool = true;
+let form_dataValid = true;
 
 //Form varaibles
 const form_GENDERS = ["male", "female", "other"];
@@ -39,7 +39,7 @@ let form_userGender;
 /*************************************************************/
 //form_validate()
 //validates user input
-//called by: ...
+//called by: form_validateData();
 //input: value, type, msgId, id, limit, max, comparison
 //return: validated value.
 /*************************************************************/
@@ -51,7 +51,7 @@ function form_validate(value, type, msgId, id, limit, max, comparison) {
 
   //Checking if value was null
   if (value == null || value == "") {
-    form_validateBool = false;
+    form_dataValid = false;
     document.getElementById(msgId).innerHTML = "Invalid value.";
     return;
   }
@@ -62,7 +62,7 @@ function form_validate(value, type, msgId, id, limit, max, comparison) {
 
     if (comparison == "Size") {
       if (value < limit || value > max || value <= 0) {
-        form_validateBool = false;
+        form_dataValid = false;
         document.getElementById(msgId).innerHTML = "Value too large or too small.";
         return;
       }
@@ -70,7 +70,7 @@ function form_validate(value, type, msgId, id, limit, max, comparison) {
 
     if (comparison == "Length") {
       if (value.length < limit || value.length > max || value <= 0) {
-        form_validateBool = false;
+        form_dataValid = false;
         document.getElementById(msgId).innerHTML = "Length too long or too short.";
         return;
       }
@@ -83,7 +83,7 @@ function form_validate(value, type, msgId, id, limit, max, comparison) {
 
     //Checking string length
     if (value == "" || value.length < limit || value.length > max) {
-      form_validateBool = false;
+      form_dataValid = false;
       document.getElementById(msgId).innerHTML = "Length too long or short";
       return;
     }
@@ -111,7 +111,7 @@ function form_submit() {
   form_checkBox();
 
   //Validating data
-  form_validateBool = true;
+  form_dataValid = true;
   form_validateData();
 
   //Writing to database
@@ -147,7 +147,7 @@ function form_write() {
   console.log("form_write();");
 
   //Checking if validation was sucessful
-  if (form_validateBool === false) {
+  if (form_dataValid === false) {
     console.log("Validation failed.")
     return;
   }
@@ -164,7 +164,7 @@ function form_write() {
   //Writing registration detials to database, and creating the highscores for the user for the first time.
   for (i = 0; i < fbV_USERHIGHSCORES.length; i++) {
     let highScores = fbV_USERHIGHSCORES[i];
-    highScores.name = fbV_registerDetails.userName;
+    highScores.userName = fbV_registerDetails.userName;
     highScores.score = 0;
     highScores.highScore = 0;
     highScores.uid = fbV_userDetails.uid;
@@ -174,7 +174,7 @@ function form_write() {
   fb_writeRec(fbV_FLAPPYSCOREPATH, fbV_flappyHighScore.uid, fbV_flappyHighScore, fbR_procWriteError, manager_saveValues);
   fb_writeRec(fbV_PFSCOREPATH, fbV_PFHighScore.uid, fbV_PFHighScore, fbR_procWriteError, manager_saveValues);
 
-  fb_writeRec(fbV_REGISTRATIONPATH, fbV_userDetails.uid, fbV_registerDetails, fbR_procWriteError, form_registerSuccess);
+  fb_writeRec(fbV_REGISTRATIONPATH, fbV_userDetails.uid, fbV_registerDetails, fbR_procWriteError, form_registerSuccess, manager_saveValues);
 }
 
 /*************************************************************/

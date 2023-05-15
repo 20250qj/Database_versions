@@ -29,7 +29,7 @@ var fbV_flappyHighScore = {  //<=============== Object to store the scores of th
   highScore: '',
   score: '',
   uid: '',
-  name: '',
+  userName: '',
   photoURL: ''
 }
 
@@ -37,7 +37,7 @@ var fbV_PFHighScore = {  //<=============== Object to store the scores of the cu
   highScore: '',
   score: '',
   uid: '',
-  name: '',
+  userName: '',
   photoURL: ''
 }
 
