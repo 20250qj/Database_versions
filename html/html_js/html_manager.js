@@ -225,7 +225,14 @@ function manager_saveValues() {
 
     //Saving values to sesion storage
     for (x = 0; x < objecKeys.length; x++) {
-      sessionStorage.setItem(objecKeys[x], objectValues[x]);
+      if (objectValues[x] !== '' || undefined || null) {
+        sessionStorage.setItem(objecKeys[x], objectValues[x]);
+        /*console.log('%c'
+          + "key: "
+          + objecKeys[x]
+          + " \nvalue saved: "
+          + sessionStorage.getItem(objecKeys[x]), 'color: blue;');*/
+      }
     }
   }
 }
@@ -312,8 +319,8 @@ function manger_adminPanel() {
   console.log("User is an admin: " + fbV_adminStatus);
 
   //If admin status is true then show admin button
-  if (fbV_adminStatus === "false") {
-    document.getElementById("adminPanel").style.display = 'none';
+  if (fbV_adminStatus !== "false") {
+    document.getElementById("adminPanel").style.display = 'block';
   }
 }
 

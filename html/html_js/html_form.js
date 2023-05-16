@@ -174,6 +174,7 @@ function form_write() {
   fb_writeRec(fbV_FLAPPYSCOREPATH, fbV_flappyHighScore.uid, fbV_flappyHighScore, fbR_procWriteError, manager_saveValues);
   fb_writeRec(fbV_PFSCOREPATH, fbV_PFHighScore.uid, fbV_PFHighScore, fbR_procWriteError, manager_saveValues);
 
+  console.log(fbV_registerDetails);
   fb_writeRec(fbV_REGISTRATIONPATH, fbV_userDetails.uid, fbV_registerDetails, fbR_procWriteError, form_registerSuccess, manager_saveValues);
 }
 
