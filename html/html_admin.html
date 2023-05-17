@@ -11,6 +11,7 @@
   <!-- stylesheets *******************************************-->
   <link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet'>
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="/css/css_general.css">
   <link rel="stylesheet" href="/css/css_admin.css">
 
   <!-- P5.js & P5.play ***************************************-->
@@ -41,7 +42,7 @@
   <script defer src="/html/html_js/html_admin.js"></script>
 </head>
 
-<body onload="manager_getValues(), ad_load();">
+<body onload="manager_getValues(), ad_load(), manager_checkLogin([]), manger_adminPanel();">
   <!--***********************************************************
 			ADMIN PAGE 
   ************************************************************-->
@@ -51,13 +52,14 @@
     <a href="/html/html_games.html">Games</a>
     <a href="/html/html_leaderBoard.html">Leader Board</a>
     <a href="/html/html_register.html">Register</a>
-    <a href="/html/html_admin.html" class="active">Admin panel</a>
+    <a href="/html/html_admin.html" id="adminPanel" style="display:none;" class="active">Admin panel</a>
   </div>
   <!--nav bar end-->
 
   <!--headers-->
-  <div class="admin_h_background"></div>
-  <header class="admin_h center">Martin's games</header>
+  <div class="admin_h_background">
+    <header class="admin_h">Martin's games</header>
+  </div>
   <div class="admin_h_sub w3-container">Admin panel</div>
   <!--headers end-->
   <div class="table_background">

@@ -179,18 +179,15 @@ function manager_checkLogin(ids) {
   }
 }
 
-
 /*************************************************************/
 //manager_disableButton()
 //Displays nav bar.
 //Called by: manager_checkLogin(), and manager_login().
 /*************************************************************/
 function manager_displayNav() {
-  let navBarElements = document.getElementById("myTopnav").children;
-  for (i = 0; i < navBarElements.length; i++) {
-    let element = navBarElements[i];
-    element.style.display = 'block';
-  }
+  console.log("manager_displayNav();");
+  let navBar = document.getElementById("myTopnav");
+  navBar.style.display = 'block';
 }
 
 /*************************************************************/
@@ -225,7 +222,7 @@ function manager_saveValues() {
 
     //Saving values to sesion storage
     for (x = 0; x < objecKeys.length; x++) {
-      if (objectValues[x] !== '' || undefined || null) {
+      if (objectValues[x] !== '' || objectValues[x] !== undefined ||  objectValues[x] !== null) {
         sessionStorage.setItem(objecKeys[x], objectValues[x]);
         /*console.log('%c'
           + "key: "
@@ -319,9 +316,9 @@ function manger_adminPanel() {
   console.log("User is an admin: " + fbV_adminStatus);
 
   //If admin status is true then show admin button
-  if (fbV_adminStatus !== "false") {
+  if (fbV_adminStatus === "true") {
     document.getElementById("adminPanel").style.display = 'block';
-  }
+  } else {document.getElementById("adminPanel").style.display = 'none'}
 }
 
 /*******************************************************/

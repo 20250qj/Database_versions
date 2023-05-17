@@ -1,37 +1,12 @@
-/*This was written by Martin Jin****************************************************************/
-/*Written in term 1 2023****************************************************************/
+/*------------------------------------------------------------*
+  Index page styling
+/*------------------------------------------------------------*/
+/*This was written by Martin Jin*/
+/*Written in term 2 2023*/
+
 body {
   color: black;
   font-family: 'Verdana';
-}
-
-/*nav bar****************************************************************/
-.topnav {
-  overflow: auto;
-  background-color: #00020b;
-  width: 100vw;
-}
-
-.topnav a {
-  overflow: auto;
-  float: left;
-  display: block;
-  width: 15%;
-  color: #BFACE2;
-  text-align: center;
-  padding: 12px 16px;
-  text-decoration: none;
-  font-size: 17px;
-  display: none;
-}
-
-.topnav a:hover {
-  background-color: #393053;
-}
-
-.topnav a.active {
-  color: #e2daf2;
-  border-bottom: 3px solid #BFACE2;
 }
 
 /*headers****************************************************************/
@@ -149,18 +124,4 @@ h1::after {
 /*hide elements before user has logged in****************************************************************/
 .preLogin {
   display: none;
-}
-
-/*footer****************************************************************/
-footer{
-  border: none;
-  color: #BFACE2;
-  background-color: #00020b;
-  bottom: 0;
-  width: 100vw;
-  position: fixed;
-  height: 55px;
-  text-align: center;
-  border-color: #BFACE2;
-  border-top-style: solid;
 }
