@@ -146,26 +146,15 @@ function manager_clearButtons() {
 
 /*************************************************************/
 //manager_checkLogin()
-//Does different things based on what page the user is on, 
-//and whether if they are logged in.
-//Called when user clicks on play button
-//input: array of ids to be disabled
+//Clears required elements when user is logged in.
+//Called: onload
 /*************************************************************/
-function manager_checkLogin(ids) {
+function manager_checkLogin() {
   console.log("manager_checkLogin();");
 
   //Get login status from session storage if is not null
   if (sessionStorage.getItem("loginStatus") !== null) { fbV_loginStatus = sessionStorage.getItem("loginStatus") };
   console.log("User is " + fbV_loginStatus);
-
-  //If not logged in then disable buttons
-  if (fbV_loginStatus !== 'logged in' && ids !== null) {
-    for (i = 0; i < ids.length; i++) {
-      let x = document.getElementById(ids[i]);
-      x.setAttribute("href", "");
-      x.addEventListener("click", manager_disableButton);
-    }
-  }
 
   if (fbV_loginStatus === 'logged in') {
     //Display nav bar elements if user is logged in:
@@ -180,12 +169,13 @@ function manager_checkLogin(ids) {
 }
 
 /*************************************************************/
-//manager_disableButton()
+//manager_displayNav()
 //Displays nav bar.
 //Called by: manager_checkLogin(), and manager_login().
 /*************************************************************/
 function manager_displayNav() {
   console.log("manager_displayNav();");
+
   let navBar = document.getElementById("myTopnav");
   navBar.style.display = 'block';
 }
@@ -220,15 +210,15 @@ function manager_saveValues() {
     let objecKeys = Object.keys(object);
     let objectValues = Object.values(object);
 
-    //Saving values to sesion storage
+    //Saving values to session storage
     for (x = 0; x < objecKeys.length; x++) {
-      if (objectValues[x] !== '' || objectValues[x] !== undefined ||  objectValues[x] !== null) {
+      if (objectValues[x] != '' && objectValues[x] != undefined && objectValues[x] != null) {
         sessionStorage.setItem(objecKeys[x], objectValues[x]);
-        /*console.log('%c'
-          + "key: "
-          + objecKeys[x]
-          + " \nvalue saved: "
-          + sessionStorage.getItem(objecKeys[x]), 'color: blue;');*/
+        // console.log('%c'
+        //   + "key: "
+        //   + objecKeys[x]
+        //   + " \nvalue saved: "
+        //   + sessionStorage.getItem(objecKeys[x]), 'color: blue;');
       }
     }
   }
@@ -255,10 +245,20 @@ function manager_getValues() {
 
     //Getting values from session storage
     for (x = 0; x < objecKeys.length; x++) {
-      object[objecKeys[x]] = sessionStorage.getItem(objecKeys[x]);
+      if (sessionStorage.getItem(objecKeys[x]) != ''
+        && sessionStorage.getItem(objecKeys[x]) != undefined
+        && sessionStorage.getItem(objecKeys[x]) != null) {
+        object[objecKeys[x]] = sessionStorage.getItem(objecKeys[x]);
+        // console.log('%c'
+        //   + "key: "
+        //   + objecKeys[x]
+        //   + " \nvalue gotten: "
+        //   + sessionStorage.getItem(objecKeys[x]), 'color: blue;');
+      }
     }
-    //Converting numeric values back to a number
-    if (object.highScore === undefined) { continue; };
+    //Converting numeric values back to a number if it exists
+    if (object.highScore == undefined) { continue; };
+
     object.highScore = Number(object.highScore);
     object.score = Number(object.score);
   }
@@ -266,12 +266,16 @@ function manager_getValues() {
 
 /*************************************************************/
 //manager_checkReg()
-//checks if user is registered.
-//called by multiple functions to check if user is registered.
+//Sends user to registration page if they are not registered.
+//Called by: manager_login(), and onload on mutiple pages.
 /*************************************************************/
 function manager_checkReg() {
   console.log("manager_checkReg();");
+  console.log("User is " + fbV_registerStatus);
 
+  //Getting registration status
+  fbV_registerStatus = sessionStorage.getItem("registerStatus");
+  
   //Checking if user is registered
   if (fbV_registerStatus === "not registered") {
 
@@ -279,8 +283,6 @@ function manager_checkReg() {
     alert("Please register to play my games.");
     window.location = "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/html/html_register.html";
   }
-  else { fbV_registerStatus = "registered"; }
-  console.log("User is " + fbV_registerStatus);
 
   //Saving registerStatus to session storage
   sessionStorage.setItem("registerStatus", fbV_registerStatus);
@@ -318,7 +320,7 @@ function manger_adminPanel() {
   //If admin status is true then show admin button
   if (fbV_adminStatus === "true") {
     document.getElementById("adminPanel").style.display = 'block';
-  } else {document.getElementById("adminPanel").style.display = 'none'}
+  } else { document.getElementById("adminPanel").style.display = 'none' }
 }
 
 /*******************************************************/

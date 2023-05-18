@@ -22,7 +22,7 @@ function fbR_procUserLogin(user, _save, loginStatus, _callBack) {
   //Reading the user high scores path and saving it when it is done.
   fb_readRec(fbV_FLAPPYSCOREPATH, _save.uid, fbV_flappyHighScore, fbR_procUserHighScore, manager_saveValues);
   fb_readRec(fbV_PFSCOREPATH, _save.uid, fbV_PFHighScore, fbR_procUserHighScore, manager_saveValues);
-  
+
   fb_writeRec(fbV_LOGINDETAILSPATH, _save.uid, _save, fbR_procWriteError, _callBack);
 
   console.log('fbR_login: status = ' + loginStatus);

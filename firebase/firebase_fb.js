@@ -56,9 +56,7 @@ function fb_logout() {
   fbV_loginStatus = 'logged out';
   fbV_registrationStatus = 'not registered';
   fbV_adminStatus = false;
-
-  manager_saveValues();
-  
+  sessionStorage.clear();
   window.location.reload();
 }
 

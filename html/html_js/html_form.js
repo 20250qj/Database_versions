@@ -194,49 +194,6 @@ function form_validateData() {
   fbV_registerDetails.userGender = form_userGender;
 }
 
-
-/*************************************************************/
-//form_checkReg()
-//If user is registered already kick them out
-//called on load.
-//input: ids of buttons that needs to be disabled if user is not registered
-/*************************************************************/
-function form_checkReg(ids) {
-  console.log("form_checkReg();");
-
-  //Get register status from session storage if is not null
-  if (sessionStorage.getItem("registerStatus") !== null) { fbV_registerStatus = sessionStorage.getItem("registerStatus") };
-  console.log("User is " + fbV_registerStatus);
-
-
-  //If logged in but not registered in then disable buttons
-  if (fbV_registerStatus !== 'registered' && ids !== null && fbV_loginStatus !== 'logged out') {
-    for (i = 0; i < ids.length; i++) {
-      let x = document.getElementById(ids[i]);
-      x.setAttribute("href", "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/html/html_register.html");
-      x.addEventListener("click", form_disableButton);
-    }
-  }
-
-  //If user tries to acess register page when they are reigstered, kick them out.
-  if (fbV_registerStatus == "registered" && window.location.href ==
-    "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/html/html_register.html"
-  ) {
-    alert("You are already registered");
-    window.location = "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/index.html";
-  }
-}
-
-/*************************************************************/
-//form_disableButton()
-//Dummy function that is called when user clicks on button without registering
-/*************************************************************/
-function form_disableButton() {
-  console.log("form_disableButton();");
-  //If user isnt registered and tries to play game, make them register first.
-  alert("Please register first.");
-}
-
 /*************************************************************/
 //form_registerSuccess()
 //A callback function that is passed in write rec,
