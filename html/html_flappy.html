@@ -37,15 +37,16 @@
   <script defer src="/firebase/firebase_fb.js"></script>
   <script defer src="/firebase/firebase_fbR.js"></script>
   <script defer src="/firebase/firebase_fbV.js"></script>
-  <script defer src="/games/game_flappy.js"></script>
   <script defer src="/html/html_js/html_manager.js"></script>
+  <script defer src="/games/game_flappy.js"></script>
 </head>
 <!--*************************************************************
   BODY
 **************************************************************-->
 
 <!--Getting data from session storage, and reading the score of the user-->
-<body onload="fbR_initialise(), manager_getValues()">
+<body onload="fbR_initialise(), manager_getValues(), fb_readRec(fbV_FLAPPYSCOREPATH, fbV_userDetails.uid, fbV_flappyHighScore, fbR_procUserHighScore, manager_saveValues), fb_readRec(fbV_PFSCOREPATH, fbV_userDetails.uid, fbV_PFHighScore, fbR_procUserHighScore, manager_saveValues);">
+  
   <!--headers-->
   <header id="header" class="flappy_h center2">Flappy bird</header>
 

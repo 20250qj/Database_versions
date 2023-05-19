@@ -144,7 +144,6 @@ function PFEnemies_spawnEnemies(x, y, enemies, max, spawnAmount, size, hp, layer
   //Have to create a new group for the current wave of enemies, 
   //overlaps call back function dosent recongnise new sprites added to the group
   //after the call back has been initialised.
-  
   //Resetting the collider for the new enemies
   PFSetUp_sword.overlapping(enemyWave, (sword, enemy) => { PFEnemies_hit(enemy, sword, PFSetUp_SWORDDAMAGE, PFSetUp_SWORDXKNOCKBACK, PFSetUp_SWORDYKNOCKBACK, PFSetUp_SWORDSTUNDUR); });
 
