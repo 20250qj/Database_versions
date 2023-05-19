@@ -5,9 +5,7 @@
 // Finished on: 15/2/23
 // V.1.1.0
 
-// Description: Not the classic flappy bird if you die
-// when you touch the pipe, but instead when the bird is bounced
-// off the screen, everything else is standard.
+// Description: User need to try pass in between the pipes. If they fall below the screen they will die.
 /*******************************************************/
 MODULENAME = "game_flappy.js";
 console.log('%c' + MODULENAME + ': ', 'color: blue;');
@@ -42,7 +40,7 @@ const flappy_WALLHEIGHT = 8;
 const flappy_GRAVITYCONSTANT = -0.65;
 
 //Game properties
-const flappy_DEATHZONE = -100;
+const flappy_DEATHZONE = 100;
 
 var flappy_score;
 var flappy_ready = false;
@@ -73,11 +71,6 @@ function flappy_createSprites() {
   flappy_bird = new Sprite(width / 3, height / 2, flappy_BIRDSIZE + flappy_BIRDSIZE / flappy_BIRDSIZERATIO, flappy_BIRDSIZE, "d");
   flappy_bird.addImage(bird);
   bird.resize(flappy_BIRDSIZE + flappy_BIRDSIZE / flappy_BIRDSIZERATIO, flappy_BIRDSIZE);
-
-  //Walls
-  wall_bottom = new Sprite(width / 2, height + flappy_WALLHEIGHT, width, flappy_WALLHEIGHT, "k");
-  wall_bottom.addImage(hidden);
-  hidden.resize(width, flappy_WALLHEIGHT);
 
   wall_top = new Sprite(width / 2, 0, width, flappy_WALLHEIGHT, "k");
   wall_top.addImage(hidden);
@@ -164,8 +157,8 @@ function setup() {
     console.log("player ready");
 
     //Detecting collision
-    flappy_bird.collides(colliderGroup, flappy_addScore);
     flappy_bird.collides(pipeGroup, flappy_killBird);
+    colliderGroup.overlapping(flappy_bird, flappy_addScore);
 
     //Movement
     document.addEventListener("keyup", function(event) {
@@ -198,7 +191,7 @@ function draw() {
       flappy_bird.velocity.y += flappy_BIRDGRAVITY;
     }
 
-    if (flappy_bird.x < flappy_DEATHZONE || flappy_bird.x > width - flappy_DEATHZONE) {
+    if (flappy_bird.y > height + flappy_DEATHZONE) {
       flappy_ready = false;
       flappy_restart();
     }
@@ -254,6 +247,9 @@ function flappy_createPipes() {
   pipeGroup.add(pipe_below);
   pipeGroup.add(pipe_above);
   colliderGroup.add(collider);
+
+  //Setting up callback
+  collider.overlapping(flappy_bird, flappy_addScore);
 }
 
 /*************************************************************/
@@ -273,9 +269,9 @@ function flappy_intervalPipes(interval) {
 //flappy_addScore()
 //Giving the player score.
 //called by the callback function upon collision.
-//input: param1, the collider that has collided with the bird.
+//input: the bird and the collider.
 /*************************************************************/
-function flappy_addScore(flappy_bird, collider) {
+function flappy_addScore(collider, flappy_bird) {
   console.log("flappy_addScore();");
 
   //Removes the collider once collided
@@ -297,7 +293,7 @@ function flappy_addScore(flappy_bird, collider) {
   //Saving values to session storage
   manager_saveValues();
 
-  console.log("score: " + flappy_score);
+  console.log("score is " + flappy_score);
   document.getElementById("score").innerHTML = flappy_score;
 }
 
@@ -324,9 +320,6 @@ function flappy_restart() {
   //Writing to data base
   fbV_flappyHighScore.score = flappy_score;
   fb_writeRec(fbV_FLAPPYSCOREPATH, fbV_flappyHighScore.uid, fbV_flappyHighScore, fbR_procWriteError);
-
-  //Saving values to session storage
-  manager_saveValues();
 
   //Checking high score
   flappy_checkHighScore(fbV_FLAPPYSCOREPATH, fbV_flappyHighScore.uid, fbV_flappyHighScore, fbR_procUserHighScore, flappy_score);
@@ -365,11 +358,7 @@ function flappy_checkHighScore(_path, _key, _save, _procFunc, score) {
   if (score > _save.highScore) {
     _save.highScore = score;
     fb_writeRec(_path, _save.uid, _save, fbR_procWriteError);
-
-    //Saving values to session storage
-    manager_saveValues();
-
-    console.log("High score is: " + _save.highScore);
+    console.log("High score is " + _save.highScore);
   }
 
   //Resetting here to make sure score is only reset after high score was checked.

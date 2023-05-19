@@ -198,10 +198,18 @@ function manager_disableButton() {
 function manager_saveValues() {
   console.log("manager_saveValues();");
 
-  //Setting the user statuses.
+  //Saving the user statuses.
   sessionStorage.setItem("loginStatus", fbV_loginStatus);
   sessionStorage.setItem("adminStatus", fbV_adminStatus);
   sessionStorage.setItem("registerStatus", fbV_registerStatus);
+
+  //Score is saved seperately and not automated because the key
+  //name of the score and highscore is the same, and so one games
+  //score will overwrite the other depending on which one is saved last.
+  sessionStorage.setItem("flappyScore", fbV_flappyHighScore.score);
+  sessionStorage.setItem("PFScore", fbV_PFHighScore.score);
+  sessionStorage.setItem("flappyHighScore", fbV_flappyHighScore.highScore);
+  sessionStorage.setItem("PFHighScore", fbV_PFHighScore.highScore);
 
   for (i = 0; i < manager_SAVEOBJECTS.length; i++) {
     let object = manager_SAVEOBJECTS[i];
@@ -212,7 +220,8 @@ function manager_saveValues() {
 
     //Saving values to session storage
     for (x = 0; x < objecKeys.length; x++) {
-      if (objectValues[x] != '' && objectValues[x] != undefined && objectValues[x] != null) {
+      if (objectValues[x] != '' && objectValues[x] != undefined && objectValues[x] != null
+        && objecKeys[x] != 'highScore' && objecKeys[x] != 'score') {
         sessionStorage.setItem(objecKeys[x], objectValues[x]);
         // console.log('%c'
         //   + "key: "
@@ -235,6 +244,14 @@ function manager_getValues() {
   fbV_loginStatus = sessionStorage.getItem("loginStatus");
   fbV_adminStatus = sessionStorage.getItem("adminStatus");
   fbV_registerStatus = sessionStorage.getItem("registerStatus");
+
+  //Score is gotten seperately and not automated because the key
+  //name of the score and highscore is the same, and so one games
+  //score will overwrite the other depending on which one is saved last.
+  fbV_flappyHighScore.score = sessionStorage.getItem("flappyScore");
+  fbV_PFHighScore.score = sessionStorage.getItem("PFScore");
+  fbV_flappyHighScore.highScore = sessionStorage.getItem("flappyHighScore");
+  fbV_PFHighScore.highScore = sessionStorage.getItem("PFHighScore");
 
   //Getting the keys of the objects to iterate through and get the values from session storage
   for (i = 0; i < manager_SAVEOBJECTS.length; i++) {
@@ -275,7 +292,7 @@ function manager_checkReg() {
 
   //Getting registration status
   fbV_registerStatus = sessionStorage.getItem("registerStatus");
-  
+
   //Checking if user is registered
   if (fbV_registerStatus === "not registered") {
 
