@@ -9,17 +9,20 @@ var leaderBoardContents = []
 
 //array to store the names of all the objects that would be saved
 const manager_SAVEOBJECTS = [fbV_userDetails, fbV_flappyHighScore, fbV_registerDetails, fbV_PFHighScore];
-/*************************************************************/
-//manager_checkLeaderBoard(_data)
-//Checks the user high scores, gets data from firebase
-//called as a call back by proc userHighScores all
-//input: data from firebase
-/*************************************************************/
-function manager_checkLeaderBoard(_data) {
-  console.log("manager_checkLeaderBoard();");
 
+/*************************************************************/
+//manager_leaderBoard(_data, _path)
+//sorts the user high scores, then display leaderboard
+//called as a call back by proc userHighScoresAll
+//input: scores data read from firebase, and the path that was
+//read (flappy bird or platformer) to display the html accordingly
+/*************************************************************/
+function manager_leaderBoard(_data, _path) {
+  console.log("manager_leaderBoard();");
   //Creating variable to store one row of data.
   let row = '';
+  //Clearing the leaderboard contents from previous leaderboard
+  leaderBoardContents = [];
 
   //Sorts high score from high to low
   _data.sort((a, b) => (a.highScore < b.highScore) ? 1 : -1);
@@ -31,21 +34,32 @@ function manager_checkLeaderBoard(_data) {
 
     leaderBoardContents.push({ display: row, photoURL: _data[i].photoURL, highScore: _data[i].highScore });
   }
-  manager_displayLeaderBoard(leaderBoardContents);
+  manager_displayLeaderBoard(leaderBoardContents, _path);
 }
 
 
 /*************************************************************/
-//manager_displayLeaderBoard(_data)
+//manager_displayLeaderBoard(_data, _path)
 //Displays the leader board
 //called when page loads
-//input: what to put on the leaderboard
+//input: what to put on the leaderboard, and the path that was read
+//to determine what to display on the html
 /*************************************************************/
-function manager_displayLeaderBoard(_data) {
+function manager_displayLeaderBoard(_data, _path) {
   console.log("manager_displayLeaderBoard();");
 
   //Setting the title now that leader board is loaded
-  document.getElementById("leaderBoard_title").innerHTML = "Flappy bird high scores:";
+  if (_path === fbV_FLAPPYSCOREPATH) {
+    document.getElementById("leaderBoard_title").innerHTML = "Flappy bird high scores:";
+    //Removing the underline style from the platformer button and setting it to the flappy button
+    document.getElementById("pf_btn").classList.remove("button_active");
+    document.getElementById("flappy_btn").classList.add("button_active");
+  } else {
+    document.getElementById("leaderBoard_title").innerHTML = "Platformer high scores:";
+    //Removing the underline style from the flappy button and setting it to the platformer button
+    document.getElementById("flappy_btn").classList.remove("button_active");
+    document.getElementById("pf_btn").classList.add("button_active");
+  };
 
   let leaderBoard = document.getElementById("leaderBoard");
 
@@ -80,6 +94,22 @@ function manager_displayLeaderBoard(_data) {
     let node2 = document.createTextNode(" " + display);
     div1.appendChild(node2);
   }
+}
+
+/*************************************************************/
+//manager_clearLeaderBoard()
+//Clears the leaderboard
+//called when user clicks on flappy bird or platformer button
+//for the leaderboard
+/*************************************************************/
+function manager_clearLeaderBoard() {
+  console.log("manager_clearLeaderBoard();");
+  let leaderBoard = document.getElementById("leaderBoard");
+  while (leaderBoard.firstChild) {
+    leaderBoard.removeChild(leaderBoard.firstChild);
+  }
+  //Set title to loading as data is currently being read from the database
+  document.getElementById("leaderBoard_title").innerHTML = "Loading leaderboard...";
 }
 
 /*************************************************************/

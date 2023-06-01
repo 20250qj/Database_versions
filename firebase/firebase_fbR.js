@@ -186,12 +186,13 @@ function fbR_procUserHighScore(snapshot, _save, readStatus, _callBack) {
 }
 
 /**************************************************************/
-// fbR_procFlappyUserHighScoreAll(snapshot, _save, readStatus, _callBack)
+// fbR_procUserHighScoreAll(snapshot, _save, readStatus, _callBack, _path);
 // Process read all data in user high scores path
-// Input:  the data and loucation to save to, optional _callBack function. 
+// Input:  the data and loucation to save to, optional _callBack function,
+// and path.
 /**************************************************************/
-function fbR_procFlappyUserHighScoreAll(snapshot, _save, readStatus, _callBack) {
-  console.log("fbR_procFlappyUserHighScoreAll();")
+function fbR_procUserHighScoreAll(snapshot, _save, readStatus, _callBack, _path) {
+  console.log("fbR_procUserHighScoreAll();")
   if (snapshot.val() == null) {
     readStatus = "Not found";
   }
@@ -202,6 +203,9 @@ function fbR_procFlappyUserHighScoreAll(snapshot, _save, readStatus, _callBack) 
     let dbKeys = Object.keys(dbData);
     console.log(dbKeys);
 
+    //Clear the save then push the new data in
+    _save = [];
+
     for (i = 0; i < dbKeys.length; i++) {
       let key = dbKeys[i];
       _save.push({
@@ -210,11 +214,11 @@ function fbR_procFlappyUserHighScoreAll(snapshot, _save, readStatus, _callBack) 
         photoURL: dbData[key].photoURL
       })
     }
-    console.log('fbR_procFlappyUserHighScoreAll: status = ' + readStatus);
+    console.log('fbR_procUserHighScoreAll: status = ' + readStatus);
   }
   //Passing the call back function the data read, if is the check leaderboard func.
-  if (_callBack == manager_checkLeaderBoard) {
-    _callBack(_save);
+  if (_callBack == manager_leaderBoard) {
+    _callBack(_save, _path);
   }
 }
 

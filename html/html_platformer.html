@@ -47,6 +47,7 @@
 <!--*************************************************************
   BODY
 **************************************************************-->
+
 <body onload="fbR_initialise(), manager_getValues(), PFManager_addHoverSound(), PFManager_addClickSound();">
 
   <!--headers-->
@@ -54,6 +55,10 @@
 
   <!--button-->
   <div class="center">
+    <button class="button" onclick="PFManager_displayInstructions();" id="instructionsButton"
+      style="text-decoration: none">
+      Instructions
+    </button>
     <button class="button" onclick="PFSetUp_startGame();" id="startButton" style="text-decoration: none">
       Play now!
     </button>
@@ -61,20 +66,34 @@
 
   <!--exit button-->
   <div class="center_exit">
-    <a href="/../index.html" style="text-decoration: none">
-      <button class="button_exit" id="exitButton">
-        &larr; Back to home
-      </button>
-    </a>
+    <button class="button_exit" id="exitButton" onclick="location.href='/../index.html'">
+      &larr; Back to home
+    </button>
   </div>
 
+  <!-- deathScreen that is displayed when the user dies -->
   <div id="deathScreen" class="deathScreen center2">
     <h1 class="restartHead">You have died!</h1>
-    <a href="/html/html_platformer.html" style="text-decoration: none">
-      <button class="button_restart" id="backButton">Back to start screen</button>
-    </a>
+    <button class="button_restart" id="backButton" onclick="location.href='/html/html_platformer.html'"
+      style="text-decoration: none">Back
+      to start screen</button>
+    <div class="score" id="score"></div>
     <button id="restartButton" class="button_restart" onclick="PFManager_restart();">Restart</button>
   </div>
+
+  <!-- instructions that is displayed when the user clicks on the instructions button -->
+  <div id="instructions_container" class="instructions_container">
+    <p>1. Use W, A, D, to move.</p>
+    <p>2. Click to swing your sword.</p>
+    <p>3. Kill enemies to gain points.</p>
+    <p>4. Square enemies give 1 point and triangles enemies give 2.</p>
+    <p>5. The game will end when you die.</p>
+    <p>6. The map is continously generated so you can keep going foward to fight more enemies.</p>
+    <button id="instructionBackBtn" class="button" onclick="location.href='/html/html_platformer.html'">
+      Back
+    </button>
+  </div>
+
 </body>
 
 </html>

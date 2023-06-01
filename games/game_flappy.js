@@ -49,6 +49,10 @@ var flappy_ready = false;
 const flappy_JUMPKEY = "KeyW";
 const flappy_KEYDISPLAY = "W";
 
+//Audio
+var flap = new Audio('/game_assets/game_sounds/swordSwoosh.mp3');
+var score = new Audio('/game_assets/game_sounds/scoreSound.mp3')
+
 /*************************************************************/
 //preload()
 //Preloads the images.
@@ -165,6 +169,12 @@ function setup() {
       if (event.code === flappy_JUMPKEY && flappy_birdDied === false) {
         flappy_bird.vel.y += flappy_FLIGHTSTRENGTH;
 
+        //Creating a clone of the audio so mutiple instances can be played at the same time
+        let flapClone = flap.cloneNode(true);
+        flapClone.playbackRate = 2;
+        flapClone.volume = 0.3;
+        flapClone.play();
+
         //Limits the maximum y velocity of the bird.
         if (flappy_bird.vel.y < flappy_FLIGHTCONSTANT * flappy_FLIGHTSTRENGTH) {
           flappy_bird.vel.y = flappy_FLIGHTCONSTANT * flappy_FLIGHTSTRENGTH;
@@ -191,7 +201,7 @@ function draw() {
       flappy_bird.velocity.y += flappy_BIRDGRAVITY;
     }
 
-    if (flappy_bird.y > height + flappy_DEATHZONE) {
+    if (flappy_bird.y > height + flappy_DEATHZONE || flappy_bird.x > (width + flappy_DEATHZONE) || flappy_bird.x < -flappy_DEATHZONE) {
       flappy_ready = false;
       flappy_restart();
     }
@@ -282,7 +292,14 @@ function flappy_addScore(collider, flappy_bird) {
   flappy_bird.x += 1;
 
   //Adding the score
-  flappy_score += 1;
+  flappy_score += 1
+  flappy_checkHighScore(fbV_FLAPPYSCOREPATH, fbV_flappyHighScore.uid, fbV_flappyHighScore, fbR_procUserHighScore, flappy_score);
+
+  //Score audio
+  //Creating a clone of the audio so mutiple instances can be played at the same time
+  let scoreClone = score.cloneNode(true);
+  scoreClone.playbackRate = 1.5;
+  scoreClone.play();
 
   //Writing to data base
   fbV_flappyHighScore.score = flappy_score;
@@ -338,6 +355,14 @@ function flappy_restart() {
   //Stopping pipes spawning
   clearInterval(flappy_pipeSpawn);
 
+  //Resetting score
+  flappy_score = 0;
+  fbV_flappyHighScore.score = flappy_score;
+  fb_writeRec(fbV_FLAPPYSCOREPATH, fbV_flappyHighScore.uid, fbV_flappyHighScore, fbR_procWriteError);
+
+  //Saving values to session storage
+  manager_saveValues();
+
   //Restarting
   flappy_confirm();
 }
@@ -360,14 +385,6 @@ function flappy_checkHighScore(_path, _key, _save, _procFunc, score) {
     fb_writeRec(_path, _save.uid, _save, fbR_procWriteError);
     console.log("High score is " + _save.highScore);
   }
-
-  //Resetting here to make sure score is only reset after high score was checked.
-  flappy_score = 0;
-  fbV_flappyHighScore.score = flappy_score;
-  fb_writeRec(_path, _key, _save, fbR_procWriteError);
-
-  //Saving values to session storage
-  manager_saveValues();
 }
 
 /*******************************************************/

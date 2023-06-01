@@ -86,7 +86,7 @@ function fb_writeRec(_path, _key, _data, _procErr, _callBack) {
 // Read all DB records for the path
 // Input:  path to read from and where to save the data, 
 //         proc func to process data
-//         optional _callBack
+//         optional _callBack and path
 /**************************************************************/
 function fb_readAll(_path, _data, _procFunc, _callBack) {
   console.log('%cfb_readAll: path= ' + _path, 'color: brown;');
@@ -95,7 +95,7 @@ function fb_readAll(_path, _data, _procFunc, _callBack) {
   firebase.database().ref(_path).once("value", gotRecord, fb_readErr);
 
   function gotRecord(snapshot) {
-    _procFunc(snapshot, _data, fbV_readStatus, _callBack);
+    _procFunc(snapshot, _data, fbV_readStatus, _callBack, _path);
   }
 
   function fb_readErr(error) {

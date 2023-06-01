@@ -12,9 +12,9 @@ console.log('%c' + MODULENAME + ': ', 'color: blue;');
 /*******************************************************/
 // Constants and variables
 /*******************************************************/
-const PFManager_STARTSCREENELEMENTS = ["startButton", "header"]
-const PFManager_RESTARTELEMENTS = ["deathScreen", "restartButton"];
-const PFManager_BUTTONARRAY = ["startButton", "restartButton", "exitButton", "backButton"];
+const PFManager_STARTSCREENELEMENTS = ["startButton", "header", "instructionsButton"]
+const PFManager_RESTARTELEMENTS = ["deathScreen", "restartButton", "score"];
+const PFManager_BUTTONARRAY = ["startButton", "restartButton", "exitButton", "backButton", "instructionsButton", "instructionBackBtn"];
 
 //Click audio when user clicks or hovers on buttons
 var click = new Audio('/game_assets/game_sounds/click.mp3');
@@ -53,12 +53,24 @@ function PFManager_playerDied() {
     //Stopping draw and removing all the sprites
     gameSprites.remove();
     PFSetUp_gameStarted = false;
+    background("#62daff");
 
     //Stopping the music
     backGroundMusic.pause();
 
     //Displaying restart screen
     PFManager_display(PFManager_RESTARTELEMENTS);
+
+    //Display the users score before clearing it:
+    document.getElementById("score").innerHTML = "Your score was: " + PFSetUp_playerScore;
+
+    //Clearing the users score
+    PFSetUp_playerScore = 0;
+    fbV_PFHighScore.score = PFSetUp_playerScore;
+    fb_writeRec(fbV_PFSCOREPATH, fbV_PFHighScore.uid, fbV_PFHighScore, fbR_procWriteError, manager_saveValues);
+
+    //Checking highscore
+    PFManager_checkHighScore();
   };
 }
 
@@ -107,7 +119,6 @@ function PFManager_restart() {
   PFSetUp_gameStarted = true;
   PFSetUp_playerDied = false;
   PFEnemies_weakEnemyAlive = 0;
-  PFSetUp_playerScore = 0;
   PFEnemies_weakEnemies = [];
   PFEnemies_rangedEnemies = [];
   PFWorld_gravityEffectedSprites = [];
@@ -172,42 +183,70 @@ function PFManager_setHealthBar() {
 
       //the background for the healthbar
       healthBarBack = new Sprite(sprite.x, sprite.y - PFManager_HEALTHBAROFFSET,
-        PFManager_HEALTHBARBACKWIDTH, PFManager_HEALTHBARBACKHEIGHT, "n"); 
-      
+        PFManager_HEALTHBARBACKWIDTH, PFManager_HEALTHBARBACKHEIGHT, "n");
+
       healthBar.color = PFManager_HEALTHBARCOLOR;
       healthBarBack.color = PFManager_BARBACKCOLOR;
-      
+
       //Setting the healthBar a layer ahead.
       healthBar.layer = PFManager_HEALTHBARLAYER;
       healthBarBack.layer = PFManager_HEALTHBARLAYER - 1;
-      
+
       sprite.bar = healthBar;
       sprite.barBack = healthBarBack;
-      
+
       //Adding to group
       gameSprites.add(healthBar);
       gameSprites.add(healthBarBack);
 
       //Health bar created so set to true
       sprite.healthBar = true;
-      
+
       //If the sprite already has a health bar then just move it to the sprite
     } else if (sprite.healthBar === true) {
       let barWidth = (sprite.health / sprite.maxHealth) * PFManager_HEALTHBARWIDTH;
       let healthBarBack = sprite.barBack;
       let healthBar = sprite.bar;
-      
+
       healthBar.width = barWidth;
-      if (sprite.health / sprite.maxHealth <= 0.3) {healthBar.color = PFManager_LOWHEALTHCOLOR}
-      else if ((sprite.health / sprite.maxHealth) <= 0.6) {healthBar.color = PFManager_MIDHEALTHCOLOR};
+      if (sprite.health / sprite.maxHealth <= 0.3) { healthBar.color = PFManager_LOWHEALTHCOLOR }
+      else if ((sprite.health / sprite.maxHealth) <= 0.6) { healthBar.color = PFManager_MIDHEALTHCOLOR };
 
       let barX = sprite.x - PFManager_HEALTHBARWIDTH / 2 + barWidth / 2;
-      
+
       //Moving the bar to above the sprite
       healthBar.pos = { x: barX, y: sprite.y - PFManager_HEALTHBAROFFSET };
       healthBarBack.pos = { x: sprite.x, y: sprite.y - PFManager_HEALTHBAROFFSET };
     }
   }
+}
+
+/*************************************************************/
+//PFManager_checkHighScore()
+//check if the user score is a highscore after the game ends
+//if the score is a highScore then write to database
+//called by: PFManager_playerDied();
+/*************************************************************/
+function PFManager_checkHighScore() {
+  console.log("PFManager_checkHighScore();");
+  //If current score bigger than the highscore then set it to new highScore.
+  if (PFSetUp_playerScore > fbV_PFHighScore.highScore) {
+    fbV_PFHighScore.highScore = PFSetUp_playerScore;
+    fb_writeRec(fbV_PFSCOREPATH, fbV_PFHighScore.uid, fbV_PFHighScore, fbR_procWriteError, manager_saveValues);
+  }
+}
+
+/*************************************************************/
+//PFManager_displayInstructions()
+//displays the instructions and clears the starting screen elements
+//called by: when user clicks on instructions button;
+/*************************************************************/
+function PFManager_displayInstructions() {
+  console.log("PFManager_displayInstructions();");
+  //Clearing HTML
+  PFManager_clear(PFManager_STARTSCREENELEMENTS);
+  //Displaying Instructions
+  document.getElementById("instructions_container").style.display = "block";
 }
 
 //

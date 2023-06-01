@@ -43,7 +43,7 @@ const PFEnemies_WEAKENEMYSTUNDUR = 400;
 const PFEnemies_WEAKPROXIMITY = 10;
 const PFEnemies_WEAKDAMAGE = 1;
 
-const PFEnemies_WEAKPOINTS = 100;
+const PFEnemies_WEAKPOINTS = 1;
 
 //Ranged enemy variables
 const PFEnemies_RANGEDSPAWNAMOUNT = 2;
@@ -59,7 +59,7 @@ const PFEnemies_RANGEDPROXIMITY = 500;
 const PFEnemies_RANGEDATTACKINTERVAL = 100;
 var PFEnemies_rangedEnemyRange;
 
-const PFEnemies_RANGEDPOINTS = 200;
+const PFEnemies_RANGEDPOINTS = 2;
 
 //Ranged enemy projectile variables
 const PFEnemies_PROJECTILESIZE = 13;
@@ -69,7 +69,7 @@ const PFEnemies_PROJECTILESPEED = 35;
 const PFEnemies_PROJECTILEDESPAWNTIME = 700;
 const PFEnemies_PROJECTTILEKNOCKBACKX = 2.5;
 const PFEnemies_PROJECTTILEKNOCKBACKY = -2.5;
-const PFEnemies_PROJECTILEDAMAGE = 0.1;
+const PFEnemies_PROJECTILEDAMAGE = 0.2;
 const PFEnemies_PROJECTTILESTUNDUR = 100;
 const PFEnemies_PROJECTILEROTATIONSPEED = 200;
 const PFEnemies_PROJECTILEDRAG = 0;
@@ -201,6 +201,9 @@ function PFEnemies_setImmune(target, color, array) {
       array.splice(array.indexOf(target), 1);
       //If array provided then is an enemy that has died, so give score.
       PFSetUp_playerScore += target.points;
+      //Writing score to database
+      fbV_PFHighScore.score = PFSetUp_playerScore;
+      fb_writeRec(fbV_PFSCOREPATH, fbV_PFHighScore.uid, fbV_PFHighScore, fbR_procWriteError, manager_saveValues);
     }
     //Removing from gravity effected sprites
     PFWorld_gravityEffectedSprites.splice(PFWorld_gravityEffectedSprites.indexOf(target), 1);

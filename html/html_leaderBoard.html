@@ -45,7 +45,7 @@
 **************************************************************-->
 
 <body
-  onload="fbR_initialise(), manager_getValues(), fb_readAll(fbV_FLAPPYSCOREPATH, fbV_flappyHighScoreArray, fbR_procFlappyUserHighScoreAll, manager_checkLeaderBoard), manager_checkLogin([]), manger_adminPanel();">
+  onload="fbR_initialise(), manager_getValues(), manager_clearLeaderBoard(), fb_readAll(fbV_FLAPPYSCOREPATH, '', fbR_procUserHighScoreAll, manager_leaderBoard), manager_checkLogin(), manger_adminPanel();">
   <!--nav bar-->
   <div class="topnav" id="myTopnav">
     <a href="/../index.html">Home</a>
@@ -64,10 +64,16 @@
 
   <div class="leaderBoard_page">
     <div id="leaderBoard_title" class="leaderBoard_title">Loading leaderboard...</div>
+    <!-- Leaderboard buttons -->
+    <button id = "flappy_btn"class="button button_active"
+      onclick="manager_clearLeaderBoard(), fb_readAll(fbV_FLAPPYSCOREPATH, '', fbR_procUserHighScoreAll, manager_leaderBoard);">Flappy
+      bird</button><button id ="pf_btn" class="button"
+      onclick="manager_clearLeaderBoard(), fb_readAll(fbV_PFSCOREPATH, '', fbR_procUserHighScoreAll, manager_leaderBoard);">Platformer</button>
     <div class="leaderBoard_container">
       <div id="leaderBoard"></div>
     </div>
   </div>
+
   <!--footer-->
   <footer>
     <p>copyright Martin</p>
