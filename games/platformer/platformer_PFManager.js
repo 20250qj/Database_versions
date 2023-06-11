@@ -64,11 +64,6 @@ function PFManager_playerDied() {
     //Display the users score before clearing it:
     document.getElementById("score").innerHTML = "Your score was: " + PFSetUp_playerScore;
 
-    //Clearing the users score
-    PFSetUp_playerScore = 0;
-    fbV_PFHighScore.score = PFSetUp_playerScore;
-    fb_writeRec(fbV_PFSCOREPATH, fbV_PFHighScore.uid, fbV_PFHighScore, fbR_procWriteError, manager_saveValues);
-
     //Checking highscore
     PFManager_checkHighScore();
   };
@@ -234,6 +229,11 @@ function PFManager_checkHighScore() {
     fbV_PFHighScore.highScore = PFSetUp_playerScore;
     fb_writeRec(fbV_PFSCOREPATH, fbV_PFHighScore.uid, fbV_PFHighScore, fbR_procWriteError, manager_saveValues);
   }
+  
+  //Clearing the users score
+  PFSetUp_playerScore = 0;
+  fbV_PFHighScore.score = PFSetUp_playerScore;
+  fb_writeRec(fbV_PFSCOREPATH, fbV_PFHighScore.uid, fbV_PFHighScore, fbR_procWriteError, manager_saveValues);
 }
 
 /*************************************************************/

@@ -41,7 +41,7 @@ const PFEnemies_WEAKENEMYXKNOCKBACK = 5;
 const PFEnemies_WEAKENEMYYKNOCKBACK = -10;
 const PFEnemies_WEAKENEMYSTUNDUR = 400;
 const PFEnemies_WEAKPROXIMITY = 10;
-const PFEnemies_WEAKDAMAGE = 1;
+const PFEnemies_WEAKDAMAGE = 0.5;
 
 const PFEnemies_WEAKPOINTS = 1;
 
