@@ -5,10 +5,11 @@ MODULENAME = "firebase_fb.js";
 console.log('%c' + MODULENAME + ': ', 'color: blue;');
 
 /**************************************************************/
-// fb_login(_save, _procFunc, _callBack)
+// fb_login()
 // Called by login button;
 // Login to Firebase
-// Input:  object for login data to save to, _callBack function,
+// Input:  object for login data to save to, procfunc and optional 
+// callBack function
 /**************************************************************/
 function fb_login(_save, _procFunc, _callBack, _procError) {
   console.log('%cfb_login: ', 'color: brown;');
@@ -61,7 +62,7 @@ function fb_logout() {
 }
 
 /**************************************************************/
-// fb_writeRec(_path, _key, _data, _procErr, _callBack)
+// fb_writeRec()
 // Write a specific record & key to the DB
 // Input:  path to write to, the key and the data to write
 //         procErr to process the errors, and optional callBack
@@ -82,7 +83,7 @@ function fb_writeRec(_path, _key, _data, _procErr, _callBack) {
 }
 
 /**************************************************************/
-// fb_readAll(_path, _data, _procFunc, _callBack)
+// fb_readAll()
 // Read all DB records for the path
 // Input:  path to read from and where to save the data, 
 //         proc func to process data
@@ -105,7 +106,7 @@ function fb_readAll(_path, _data, _procFunc, _callBack) {
 }
 
 /**************************************************************/
-// fb_readRec(_path, _key, _data, _procFunc, _callBack)
+// fb_readRec()
 // Read a specific DB record
 // Input:  path & key of record to read and where to save the data
 //         proc func to process data and 

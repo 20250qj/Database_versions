@@ -90,7 +90,7 @@ const PFEnemies_PROJECTILEMINXVEL = 2;
 //called by: PFWorld_terrainCheck(), when player crosses a trigger point
 //input: 2 x coordinates, which the enemies will spawn between, and the varibles to determine the type of enemy spawned
 /*************************************************************/
-function PFEnemies_spawnEnemies(x1, x2, enemies, max, spawnAmount, size, hp, layer, type) {
+function PFEnemies_spawnEnemies(x, y, enemies, max, spawnAmount, size, hp, layer, type) {
   //Don't Spawn enemies if over limit or if game has ended
   if (enemies.length + spawnAmount > max || PFSetUp_gameStarted !== true) {
     return;
@@ -102,12 +102,12 @@ function PFEnemies_spawnEnemies(x1, x2, enemies, max, spawnAmount, size, hp, lay
   for (i = 0; i < spawnAmount; i++) {
     let enemy;
     if (type === "weak") {
-      enemy = new Sprite(random(x1, x2), PFEnemies_SPAWNHEIGHT,
+      enemy = new Sprite(random(x, y), PFEnemies_SPAWNHEIGHT,
         size, size, "d");
       //Setting the amount of points weak enemies are worth
       enemy.points = PFEnemies_WEAKPOINTS;
     } else if (type === "ranged") {
-      enemy = new Sprite(random(x1, x2), PFEnemies_SPAWNHEIGHT, size, size, "d");
+      enemy = new Sprite(random(x, y), PFEnemies_SPAWNHEIGHT, size, size, "d");
       //Drawing the triangle ontop of the enemy otherwise it dosent count as a sprite
       enemy.draw = function() { triangle(-size / 2, size / 2, 0, -size / 2, size / 2, size / 2); };
       //Setting the amount of points ranged enemies are worth
@@ -246,7 +246,7 @@ function PFEnemies_move(enemies, range, idleSpeed, idleTime, speed, jumpStrength
     let dy = enemy.y - PFSetUp_player.y;
 
     //Kill enemy if they are too far away or if they are dead
-    if (abs(dx) > 1.25 * PFWorld_TRIGGERDISTANCE) {
+    if (abs(dx) > 1.3 * PFWorld_TRIGGERDISTANCE) {
       //removing from arrays
       enemies.splice(enemies.indexOf(enemy), 1);
       PFWorld_gravityEffectedSprites.splice(PFWorld_gravityEffectedSprites.indexOf(enemy), 1);

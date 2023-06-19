@@ -10,7 +10,7 @@ console.log('%c' + MODULENAME + ': ', 'color: blue;');
 //Regex
 const form_NONNUMBER = /[^0-9]/g;
 const form_SPACE = /\s/g;
-const form_NONSTRING = /[^a-zA-Z0-9]/g; //Includes numbers, as for address or username user may have numbers.
+const form_NONSTRING = /[^a-zA-Z]/g;
 
 //Limits
 const form_AGELIMIT = 16;
@@ -60,6 +60,12 @@ function form_validate(value, type, msgId, id, limit, max, comparison) {
     value = value.replace(form_NONNUMBER, "");
     value = value.replace(form_SPACE, "");
 
+    if (value == "") {
+      form_dataValid = false;
+      document.getElementById(msgId).innerHTML = "Invalid value.";
+      return;
+    }
+
     if (comparison == "Size") {
       if (value < limit || value > max || value <= 0) {
         form_dataValid = false;
@@ -71,7 +77,7 @@ function form_validate(value, type, msgId, id, limit, max, comparison) {
     if (comparison == "Length") {
       if (value.length < limit || value.length > max || value <= 0) {
         form_dataValid = false;
-        document.getElementById(msgId).innerHTML = "Length too long or too short.";
+        document.getElementById(msgId).innerHTML = "Length too long or short.";
         return;
       }
     }
@@ -81,10 +87,16 @@ function form_validate(value, type, msgId, id, limit, max, comparison) {
     value = value.replace(form_SPACE, "");
     value = value.replace(form_NONSTRING, "");
 
-    //Checking string length
-    if (value == "" || value.length < limit || value.length > max) {
+    if (value == "") {
       form_dataValid = false;
-      document.getElementById(msgId).innerHTML = "Length too long or short";
+      document.getElementById(msgId).innerHTML = "Invalid value.";
+      return;
+    }
+
+    //Checking string length
+    if (value.length < limit || value.length > max) {
+      form_dataValid = false;
+      document.getElementById(msgId).innerHTML = "Length too long or short.";
       return;
     }
   }

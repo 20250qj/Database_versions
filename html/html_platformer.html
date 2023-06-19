@@ -71,13 +71,16 @@
     </button>
   </div>
 
+  <!-- score -->
+  <p id="score" class="score" style="position: absolute;">0</p>
+
   <!-- deathScreen that is displayed when the user dies -->
   <div id="deathScreen" class="deathScreen center2">
     <h1 class="restartHead">You have died!</h1>
     <button class="button_restart" id="backButton" onclick="location.href='/html/html_platformer.html'"
       style="text-decoration: none">Back
       to start screen</button>
-    <div class="score" id="score"></div>
+    <div class="score" id="score_result"></div>
     <button id="restartButton" class="button_restart" onclick="PFManager_restart();">Restart</button>
   </div>
 

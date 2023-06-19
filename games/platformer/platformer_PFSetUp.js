@@ -124,7 +124,7 @@ function setup() {
   PFEnemies_rangedEnemyRange = width / 2;
   PFEnemies_weakEnemyRange = width / 2;
 
-  PFWorld_PLATFORMMINY = 0.825 * height;
+  PFWorld_PLATFORMMINY = 0.84 * height;
   PFWorld_PLATFORMMAXY = PFWorld_PLATFORMMINY - PFWorld_PLATFORMMINHEIGHT;
 
   //Resetting camera to be at the start
@@ -143,6 +143,9 @@ function setup() {
   //Only call functions when user clicks on start button;
   if (PFSetUp_gameStarted !== true) { return; }
   console.log("setup();");
+
+  //Displaying score
+  PFManager_updateScore();
 
   //Overlapping starting screen floor because the width for the actual floor sections are larger
   PFWorld_generateGround(0, PFWorld_TRIGGERDISTANCE, false);
@@ -258,11 +261,11 @@ function PFSetUp_createSprites() {
   PFSetUp_player.stunned = false;
   PFSetUp_player.layer = PFSetUp_PLAYERLAYER;
   PFSetUp_player.healthBar = false;
-  
+
   //Storing the sprites for the front and back of the health bar
   PFSetUp_player.bar;
   PFSetUp_player.barBack;
-  
+
   PFSetUp_player.maxHealth = PFSetUp_PLAYERHEALTH;
 
   //Adding to gravity effected sprites

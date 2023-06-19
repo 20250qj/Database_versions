@@ -26,13 +26,13 @@
   <!-- firebase start ****************************************-->
   <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
   <!-- Firebase App (core Firebase SDK) always required & must be listed 1st -->
-  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-app.js"></script>  
+  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-app.js"></script>
   <!-- Add Firebase products that you want to use -->
-  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-auth.js"></script>  
+  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-database.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-analytics.js"></script> 
+  <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-analytics.js"></script>
   <!-- firebase end ******************************************-->
-  
+
   <!-- My modules ******************************************-->
   <script defer src="/firebase/firebase_fb.js"></script>
   <script defer src="/firebase/firebase_fbR.js"></script>
@@ -45,14 +45,16 @@
 **************************************************************-->
 
 <!--Getting data from session storage, and reading the score of the user-->
-<body onload="fbR_initialise(), manager_getValues(), fb_readRec(fbV_FLAPPYSCOREPATH, fbV_userDetails.uid, fbV_flappyHighScore, fbR_procUserHighScore, manager_saveValues), fb_readRec(fbV_PFSCOREPATH, fbV_userDetails.uid, fbV_PFHighScore, fbR_procUserHighScore, manager_saveValues);">
-  
+
+<body
+  onload="fbR_initialise(), manager_getValues(), fb_readRec(fbV_FLAPPYSCOREPATH, fbV_userDetails.uid, fbV_flappyHighScore, fbR_procUserHighScore, manager_saveValues), fb_readRec(fbV_PFSCOREPATH, fbV_userDetails.uid, fbV_PFHighScore, fbR_procUserHighScore, manager_saveValues);">
+
   <!--headers-->
   <header id="header" class="flappy_h center2">Flappy bird</header>
 
   <p id="score" class="score">0</p>
   <p id="confirm" class="confirm"></p>
-  
+
   <!--button-->
   <div id="start_button" class="center">
     <a onclick="flappy_startGame();" style="text-decoration: none">

@@ -60,9 +60,11 @@ function PFManager_playerDied() {
 
     //Displaying restart screen
     PFManager_display(PFManager_RESTARTELEMENTS);
+    PFManager_clear(['score']);
 
     //Display the users score before clearing it:
-    document.getElementById("score").innerHTML = "Your score was: " + PFSetUp_playerScore;
+    document.getElementById("score_result").style.display = "block";
+    document.getElementById("score_result").innerHTML = "Your score was: " + PFSetUp_playerScore;
 
     //Checking highscore
     PFManager_checkHighScore();
@@ -247,6 +249,17 @@ function PFManager_displayInstructions() {
   PFManager_clear(PFManager_STARTSCREENELEMENTS);
   //Displaying Instructions
   document.getElementById("instructions_container").style.display = "block";
+}
+
+/*************************************************************/
+//PFManager_updateScore()
+//Updates the html to display the score for the game
+//called by: when user clicks on instructions button;
+/*************************************************************/
+function PFManager_updateScore() {
+  let score = document.getElementById("score");
+  score.style.display = "block";
+  score.innerHTML = PFSetUp_playerScore;
 }
 
 //
