@@ -13,11 +13,11 @@ console.log('%c' + MODULENAME + ': ', 'color: blue;');
 // Constants and variables
 /*******************************************************/
 //Sprites
-let PFSetUp_player, PFSetUp_wallTop, PFSetUp_wallLeft, PFSetUp_sword;
+var PFSetUp_player, PFSetUp_wallTop, PFSetUp_wallLeft, PFSetUp_sword;
 const PFSetUp_SETUPSPRITES = [PFSetUp_player, PFSetUp_sword, PFSetUp_wallTop, PFSetUp_wallLeft, PFManager_healthBar];
 
 //Groups
-let platformGroup, gameSprites, spikeGroup, projectileGroup;
+var platformGroup, gameSprites, spikeGroup, projectileGroup;
 
 //Wall variables
 const PFSetUp_WALLBOUNCE = 0;
@@ -87,7 +87,7 @@ var oof = new Audio('/game_assets/game_sounds/oof.mp3');
 oof.volume = 0.1;
 
 //Images
-let hidden, sword, platformImg, groundImg, spikes;
+var hidden, sword, platformImg, groundImg, spikes;
 
 //
 /**************************************************************************************************************/

@@ -37,14 +37,14 @@ function fbR_initialise() {
   console.log('%cfb_initialise: ', 'color: brown;');
 
   var FIREBASECONFIG = {
-    apiKey: fbV_apiKey,
-    authDomain: fbV_authDomain,
-    databaseURL: fbV_databaseURL,
-    projectId: fbV_projectId,
-    storageBucket: fbV_storageBucket,
-    messagingSenderId: fbV_messagingSenderId,
-    appId: fbV_appId,
-    measurementId: fbV_measurementId
+    apiKey: fbV_APIKEY,
+    authDomain: fbV_AUTHDOMAIN,
+    databaseURL: fbV_DATABASEURL,
+    projectId: fbV_PROJECTID,
+    storageBucket: fbV_STORAGEBUCKET,
+    messagingSenderId: fbV_MESSAGINGSENDERID,
+    appId: fbV_APPID,
+    measurementId: fbV_MEASUREMENTID
   };
 
   // Check if firebase already initialised

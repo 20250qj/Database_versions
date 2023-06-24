@@ -50,18 +50,33 @@
   onload="fbR_initialise(), manager_getValues(), fb_readRec(fbV_FLAPPYSCOREPATH, fbV_userDetails.uid, fbV_flappyHighScore, fbR_procUserHighScore, manager_saveValues), fb_readRec(fbV_PFSCOREPATH, fbV_userDetails.uid, fbV_PFHighScore, fbR_procUserHighScore, manager_saveValues);">
 
   <!--headers-->
-  <header id="header" class="flappy_h center2">Flappy bird</header>
+  <header id="header" class="flappy_h header_center">Flappy bird</header>
 
   <p id="score" class="score">0</p>
   <p id="confirm" class="confirm"></p>
 
-  <!--button-->
-  <div id="start_button" class="center">
-    <a onclick="flappy_startGame();" style="text-decoration: none">
-      <button class="button">
-        Play now!
-      </button>
-    </a>
+  <!-- Button container -->
+  <div id="button_container" class="button_container">
+    <!-- Start button -->
+    <button class="button" id="start_button" onclick="flappy_startGame();">
+      Play now!
+    </button>
+
+    <!-- Instructions button -->
+    <button class="button" id="instructions_button" onclick="flappy_displayInstructions();">
+      Insturctions
+    </button>
+  </div>
+
+  <!-- Instructions -->
+  <div id="instructions_container" class="instructions_container">
+    <p>1. Press W to fly</p>
+    <p>2. Pass inbetween the pipes to gain score</p>
+    <p>3. The game ends when you touch one of the pipes</p>
+    <p>4. If you fly below the screen you will also lose</p>
+    <button id="instructionBackBtn" class="button" onclick="location.href='/html/html_flappy.html'">
+      Back
+    </button>
   </div>
 
   <!--exit button-->

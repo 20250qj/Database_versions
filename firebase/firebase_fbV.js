@@ -54,12 +54,12 @@ const fbV_USERHIGHSCORES = [fbV_PFHighScore, fbV_flappyHighScore];
 
 var fbV_flappyHighScoreArray = [];   //<=============== Object to store the leaderBoard
 
-const fbV_apiKey = "AIzaSyBcsj4cU4YG7H4v7p_-OzsbYrfZFaIbOqY";
-const fbV_authDomain = "comp-2022---martin.firebaseapp.com";
-const fbV_databaseURL = "https://comp-2022---martin-default-rtdb.firebaseio.com";
-const fbV_projectId = "comp-2022---martin";
-const fbV_storageBucket = "comp-2022---martin.appspot.com";
-const fbV_messagingSenderId = "656504325496";
-const fbV_appId = "1:656504325496:web:0ce16cc7dee211a4ec348d";
-const fbV_measurementId = "G-PS1J41H32Q";
+const fbV_APIKEY = "AIzaSyBcsj4cU4YG7H4v7p_-OzsbYrfZFaIbOqY";
+const fbV_AUTHDOMAIN = "comp-2022---martin.firebaseapp.com";
+const fbV_DATABASEURL = "https://comp-2022---martin-default-rtdb.firebaseio.com";
+const fbV_PROJECTID = "comp-2022---martin";
+const fbV_STORAGEBUCKET = "comp-2022---martin.appspot.com";
+const fbV_MESSAGINGSENDERID = "656504325496";
+const fbV_APPID = "1:656504325496:web:0ce16cc7dee211a4ec348d";
+const fbV_MEASUREMENTID = "G-PS1J41H32Q";
 /*dbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdb*/

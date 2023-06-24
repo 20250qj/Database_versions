@@ -387,6 +387,20 @@ function flappy_checkHighScore(_path, _key, _save, _procFunc, score) {
   }
 }
 
+/*************************************************************/
+//flappy_displayInstructions()
+//displays the instructions and clears the starting screen elements
+//called by: when user clicks on instructions button;
+/*************************************************************/
+function flappy_displayInstructions() {
+  console.log("flappy_displayInstructions();");
+  //Clearing HTML
+  document.getElementById("button_container").style.display = "none";
+  document.getElementById("header").style.display = "none";
+  //Displaying Instructions
+  document.getElementById("instructions_container").style.display = "block";
+}
+
 /*******************************************************/
 //  END OF APP
 /*******************************************************/
