@@ -5,7 +5,17 @@ MODULENAME = "html_manager.js";
 console.log('%c' + MODULENAME + ': ', 'color: blue;');
 
 //array to store the contents of the leader board
-var leaderBoardContents = []
+var leaderBoardContents = [];
+
+//Array of ids that needs to be hidden after logging in
+const PRELOGINELEMENTS = ['loginButton'];
+
+//Array of ids that needs to be shown after logging in.
+const AFTERLOGINELEMENTS = ['playButton', 'logOutButton'];
+
+//Bool to store whehter is the first time the useres is logining in, so that
+//it dosent kick the user to the registration page on load if they are not registered.
+var manager_firstLogin = 'false';
 
 //array to store the names of all the objects that would be saved
 const manager_SAVEOBJECTS = [fbV_userDetails, fbV_flappyHighScore, fbV_registerDetails, fbV_PFHighScore];
@@ -126,6 +136,7 @@ function manager_login() {
   //Check registraiton if user has logged in, and saving the read values if they have
   fb_readRec(fbV_REGISTRATIONPATH, fbV_userDetails.uid, fbV_registerDetails, fbR_procRegistration,
     _ => {
+      //EVERYTHING IN HERE IS THE CALLBACK FUNCTION FOR WHEN THE READ IS DONE
       //Checking if there is registration data
       if (fbV_registerDetails.userName === "" || fbV_registerDetails.userName === null) {
         fbV_registerStatus = "not registered";
@@ -155,11 +166,6 @@ function manager_login() {
 /*************************************************************/
 function manager_clearButtons() {
   console.log("manager_clearButtons();");
-  //Array of ids that needs to be hidden after logging in
-  const PRELOGINELEMENTS = ['loginButton'];
-
-  //Array of ids that needs to be shown after logging in.
-  const AFTERLOGINELEMENTS = ['playButton', 'logOutButton'];
 
   //Hiding prelogin elements 
   for (i = 0; i < PRELOGINELEMENTS.length; i++) {
@@ -177,10 +183,13 @@ function manager_clearButtons() {
 /*************************************************************/
 //manager_checkLogin()
 //Clears required elements when user is logged in.
-//Called: onload
+//Called: onload in the login page
 /*************************************************************/
 function manager_checkLogin() {
   console.log("manager_checkLogin();");
+
+  //Getting whether is first login or not
+  manager_firstLogin = sessionStorage.getItem("manager_firstLogin");
 
   //Get login status from session storage if is not null
   if (sessionStorage.getItem("loginStatus") !== null) { fbV_loginStatus = sessionStorage.getItem("loginStatus") };
@@ -190,8 +199,9 @@ function manager_checkLogin() {
     //Display nav bar elements if user is logged in:
     manager_displayNav();
     //If at home page and logged in, remove login button
-    if (window.location.href ===
+    if (window.location ==
       "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/index.html"
+      || window.location == "https://12comp-programming-and-db-assessment-martinjin2.12comp-gl-2023.repl.co/"
     ) {
       manager_clearButtons();
     }
@@ -208,16 +218,6 @@ function manager_displayNav() {
 
   let navBar = document.getElementById("myTopnav");
   navBar.style.display = 'block';
-}
-
-/*************************************************************/
-//manager_disableButton()
-//dummy function that alerts user when clicking on a disabled button
-//Called by manager_checkLogin()
-/*************************************************************/
-function manager_disableButton() {
-  console.log("manager_disableButton();");
-  alert("You must be logged in to access this feature.");
 }
 
 /*************************************************************/
@@ -240,6 +240,9 @@ function manager_saveValues() {
   sessionStorage.setItem("PFScore", fbV_PFHighScore.score);
   sessionStorage.setItem("flappyHighScore", fbV_flappyHighScore.highScore);
   sessionStorage.setItem("PFHighScore", fbV_PFHighScore.highScore);
+
+  //saving whether is first login or not
+  sessionStorage.setItem("manager_firstLogin", manager_firstLogin);
 
   for (i = 0; i < manager_SAVEOBJECTS.length; i++) {
     let object = manager_SAVEOBJECTS[i];
@@ -368,6 +371,17 @@ function manger_adminPanel() {
   if (fbV_adminStatus === "true") {
     document.getElementById("adminPanel").style.display = 'block';
   } else { document.getElementById("adminPanel").style.display = 'none' }
+}
+
+/*************************************************************/
+//manager_checkPage()
+//Kicks the user off the home page if they go back while registering
+//called onload in the login page
+/*************************************************************/
+function manager_checkPage() {
+  if (fbV_registerStatus === "not registered" && manager_firstLogin == 'false') {
+    window.location = "/html/html_regsiter.html"
+  }
 }
 
 /*******************************************************/

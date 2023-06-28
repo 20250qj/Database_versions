@@ -89,11 +89,10 @@ function flappy_createSprites() {
 function flappy_startGame() {
   console.log("flappy_startGame();");
 
-  var x = document.getElementById("start_button");
-  x.style.display = "none";
-
-  x = document.getElementById("header");
-  x.style.display = "none";
+  //Clearing starting screen elements
+  document.getElementById("start_button").style.display = "none";
+  document.getElementById("header").style.display = "none";
+  document.getElementById("instructions_button").style.display = "none";
 
   //Displaying the controls
   document.getElementById("confirm").innerHTML = "Press " + flappy_KEYDISPLAY + " to begin.";
