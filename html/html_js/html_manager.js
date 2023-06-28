@@ -13,10 +13,6 @@ const PRELOGINELEMENTS = ['loginButton'];
 //Array of ids that needs to be shown after logging in.
 const AFTERLOGINELEMENTS = ['playButton', 'logOutButton'];
 
-//Bool to store whehter is the first time the useres is logining in, so that
-//it dosent kick the user to the registration page on load if they are not registered.
-var manager_firstLogin = 'false';
-
 //array to store the names of all the objects that would be saved
 const manager_SAVEOBJECTS = [fbV_userDetails, fbV_flappyHighScore, fbV_registerDetails, fbV_PFHighScore];
 
@@ -188,9 +184,6 @@ function manager_clearButtons() {
 function manager_checkLogin() {
   console.log("manager_checkLogin();");
 
-  //Getting whether is first login or not
-  manager_firstLogin = sessionStorage.getItem("manager_firstLogin");
-
   //Get login status from session storage if is not null
   if (sessionStorage.getItem("loginStatus") !== null) { fbV_loginStatus = sessionStorage.getItem("loginStatus") };
   console.log("User is " + fbV_loginStatus);
@@ -240,9 +233,6 @@ function manager_saveValues() {
   sessionStorage.setItem("PFScore", fbV_PFHighScore.score);
   sessionStorage.setItem("flappyHighScore", fbV_flappyHighScore.highScore);
   sessionStorage.setItem("PFHighScore", fbV_PFHighScore.highScore);
-
-  //saving whether is first login or not
-  sessionStorage.setItem("manager_firstLogin", manager_firstLogin);
 
   for (i = 0; i < manager_SAVEOBJECTS.length; i++) {
     let object = manager_SAVEOBJECTS[i];
@@ -372,18 +362,6 @@ function manger_adminPanel() {
     document.getElementById("adminPanel").style.display = 'block';
   } else { document.getElementById("adminPanel").style.display = 'none' }
 }
-
-/*************************************************************/
-//manager_checkPage()
-//Kicks the user off the home page if they go back while registering
-//called onload in the login page
-/*************************************************************/
-function manager_checkPage() {
-  if (fbV_registerStatus === "not registered" && manager_firstLogin == 'false') {
-    window.location = "/html/html_regsiter.html"
-  }
-}
-
 /*******************************************************/
 //  END OF APP
 /*******************************************************/
